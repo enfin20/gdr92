@@ -1,0 +1,31 @@
+<script>
+	export let benevole;
+
+	let buttonStatutBg = 'bg-green-400 hover:bg-green-600';
+
+	function ChangeStatus() {
+		console.log(benevole.benevole);
+		if (benevole.statut === 'Non') {
+			benevole.statut = 'Oui';
+			buttonStatutBg = 'bg-green-400 hover:bg-green-600';
+		} else {
+			benevole.statut = 'Non';
+			buttonStatutBg = 'bg-red-200 hover:bg-red-400';
+		}
+	}
+</script>
+
+<div class="md:flex md:items-center mb-1">
+	<div class="md:w-1/3" />
+	<div class="md:w-1/2">
+		<span class="block text-gray-500 md:text-left mb-1 md:mb-0 pr-4">
+			{benevole.benevole}
+		</span>
+	</div>
+	<div class="md:w-1/6">
+		<button
+			class="bg-green-400 hover:bg-green-600 text-gray-600 font-bold py-2 px-4 rounded {buttonStatutBg}"
+			on:click={ChangeStatus}>{benevole.statut}</button
+		>
+	</div>
+</div>

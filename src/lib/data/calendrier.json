@@ -1,0 +1,51 @@
+[
+    {
+    "id":"20220103_1",
+    "equipe":"lundi",
+    "soiree":"Lundi 03 janvier 2022",
+    "plage":"18h15-19h45",
+    "lieu":"gare"
+},
+{
+    "id":"20220103_2",
+    "equipe":"lundi",
+    "soiree":"Lundi 03 janvier 2022",
+    "plage":"20-21h30",
+    "lieu":"Gabiel Peri"
+},
+{
+    "id":"20220105_1",
+    "equipe":"mercredi",
+    "soiree":"Mercredi 05 janvier 2022",
+    "plage":"18h15-19h45",
+    "lieu":"gare"
+},
+{
+    "id":"20220105_2",
+    "equipe":"mercredi",
+    "soiree":"Mercredi 05 janvier 2022",
+    "plage":"20-21h30",
+    "lieu":"Gabiel Peri"
+},
+{
+    "id":"20220110_1",
+    "equipe":"lundi",
+    "soiree":"Lundi 10 janvier 2022",
+    "plage":"18h15-19h45",
+    "lieu":"gare"
+},
+{
+    "id":"20220110_2",
+    "equipe":"lundi",
+    "soiree":"Lundi 10 janvier 2022",
+    "plage":"20-21h30",
+    "lieu":"Gabiel Peri"
+},
+{
+    "id":"20220115_1",
+    "equipe":"autre",
+    "soiree":"Samedi 15 janvier 2022",
+    "plage":"9h30-11h30",
+    "lieu":"entrepôt"
+}
+]
