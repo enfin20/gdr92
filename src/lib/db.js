@@ -15,7 +15,7 @@ if (!MONGODB_URI) {
 if (!MONGODB_DB) {
 	throw new Error('Define the MONGODB_DB environmental variable');
 }
-//test vercel
+alert(MONGODB_URI);
 let cachedClient = null;
 let cachedDb = null;
 
