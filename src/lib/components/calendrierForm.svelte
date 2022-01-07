@@ -77,7 +77,7 @@
 	>
 		<div class="w-2/12 text-wrap text-center flex flex-col justify-center items-center mr-2 p-2">
 			<img
-				src="../src/lib/images/{calendrier.lieu}.png"
+				src="/src/lib/images/{calendrier.lieu}.png"
 				class=""
 				alt=""
 				style="display: inline"

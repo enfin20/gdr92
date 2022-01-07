@@ -99,7 +99,7 @@
 			const soireeD = cal.tableau[0][i - 1].substring(6, 8);
 			cal.tableau[0][i] = soireeD + '/' + soireeM;
 			lieux[i] =
-				'<img src="../src/lib/images/' +
+				'<img src="/src/lib/images/' +
 				cal.tableau[0][i - 1].substring(11) +
 				'.png" alt ="" width="32px" height="32px"/>';
 		}
