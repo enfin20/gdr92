@@ -22,7 +22,7 @@
 	let soireeVisible = 'none';
 	let plageActive = [true, true, true];
 	var plage = ['18h15-20h', '20h-21h30', '14h-18h'];
-	let lieu = ['gare', 'Gabriel Péri', 'entrepot'];
+	let lieu = ['gare', 'gp', 'entrepot'];
 	let statutEnregistrement = '';
 
 	let email = '';
@@ -101,7 +101,9 @@
 			lieux[i] =
 				'<img src="/src/lib/images/' +
 				cal.tableau[0][i - 1].substring(11) +
-				'.png" alt ="" width="32px" height="32px"/>';
+				'.png" alt ="' +
+				cal.tableau[0][i - 1].substring(11) +
+				'" width="32px" height="32px"/>';
 		}
 		lieux[0] = '';
 		cal.tableau[0][0] = 'Calendrier ';

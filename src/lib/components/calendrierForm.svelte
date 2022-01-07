@@ -79,7 +79,7 @@
 			<img
 				src="/src/lib/images/{calendrier.lieu}.png"
 				class=""
-				alt=""
+				alt={calendrier.lieu}
 				style="display: inline"
 				width="36px"
 				height="36px"
