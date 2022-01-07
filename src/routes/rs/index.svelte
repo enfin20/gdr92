@@ -7,7 +7,7 @@
 	import RetourSoireeForm from '/src/lib/components/retourSoireeForm.svelte';
 	import LoginForm from '/src/lib/components/loginForm.svelte';
 	const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-	const dateCal = { year: 'numeric', month: 'numeric', day: 'numeric' };
+	//	const dateCal = { year: 'numeric', month: 'numeric', day: 'numeric' };
 	let loginVisible = 'flex';
 	let statutVisible = 'none';
 	let retourVisible = 'none';
@@ -38,7 +38,7 @@
 				const soireeY = retourSoiree.soiree.substring(0, 4);
 				const soireeM = retourSoiree.soiree.substring(4, 6);
 				const soireeD = retourSoiree.soiree.substring(6, 8);
-				console.log(ben);
+				//console.log(ben);
 				const benT = [];
 				retourSoiree.soireeD = new Date(soireeY + '-' + soireeM + '-' + soireeD).toLocaleDateString(
 					'fr-FR',

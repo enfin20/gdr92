@@ -2,6 +2,18 @@ import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
 
 export async function get(request) {
+	let currentYear = new Date().getFullYear();
+	const currentMonth = new Date().getMonth() + 1;
+	let nextMonth = '0';
+	if (currentMonth <= 9) {
+		nextMonth = nextMonth.concat(currentMonth + 1);
+	}
+	// cas du mois de décembre
+	if (currentMonth === 12) {
+		currentYear = currentYear + 1;
+		nextMonth = '01';
+	}
+	//	console.log('filtre : ' + currentYear.toString().concat(nextMonth));
 	try {
 		const email = request.query.get('email');
 		//console.log('email = ' + email);
@@ -10,10 +22,14 @@ export async function get(request) {
 		const collection = db.collection('CalendrierBenevoles');
 
 		const calendrier = await collection
-			.find({ email: email, actif: 'Oui' })
+			.find({
+				email: email,
+				actif: 'Oui',
+				soiree: { $regex: currentYear.toString().concat(nextMonth) }
+			})
 			.sort({ soiree: 1, plage: 1 })
 			.toArray();
-		console.log(calendrier);
+		//console.log(calendrier);
 		return {
 			status: 200,
 			body: {

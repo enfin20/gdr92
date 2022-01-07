@@ -75,12 +75,20 @@
 	<div
 		class="select-none flex flex-1 items-center p-1 rounded-xl hover:shadow-2xl border-gray-400 {rowbg} mt-1"
 	>
-		<div class="flex-1 pl-1 mr-16 ">
-			<div class="font-medium text-gray-800">
-				{soiree} : {calendrier.plage}
-			</div>
+		<div class="w-2/12 text-wrap text-center flex flex-col justify-center items-center mr-2 p-2">
+			<img
+				src="../src/lib/images/{calendrier.lieu}.png"
+				class=""
+				alt=""
+				style="display: inline"
+				width="36px"
+				height="36px"
+			/>
 		</div>
-		<div class="w-1/6 text-wrap text-center flex flex-col justify-center items-center mr-2 p-2">
+		<div class="w-8/12 font-medium text-gray-800">
+			{soiree} : {calendrier.plage}
+		</div>
+		<div class="w-2/12 text-wrap text-left flex flex-col justify-center items-center mr-2 p-2">
 			<button
 				class="{buttonStatutBg} text-gray-600 font-bold py-2 px-4 rounded bg"
 				on:click={ChangeStatus}>{calendrier.statut}</button

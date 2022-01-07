@@ -1,10 +1,10 @@
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI; //'mongodb+srv://enfin:iRpLDsDY8iD3nNs@cluster0.qqdfc.mongodb.net/gdrColombes';
-const MONGODB_DB = process.env.MONGODB_DB; //'gdrColombes';
+//const MONGODB_URI = process.env.MONGODB_URI; //'mongodb+srv://enfin:iRpLDsDY8iD3nNs@cluster0.qqdfc.mongodb.net/gdrColombes';
+//const MONGODB_DB = process.env.MONGODB_DB; //'gdrColombes';
 
-//const MONGODB_URI = 'mongodb+srv://enfin:iRpLDsDY8iD3nNs@cluster0.qqdfc.mongodb.net/gdrColombes';
-//const MONGODB_DB = 'gdrColombes';
+const MONGODB_URI = 'mongodb+srv://enfin:iRpLDsDY8iD3nNs@cluster0.qqdfc.mongodb.net/gdrColombes';
+const MONGODB_DB = 'gdrColombes';
 
 // check the MongoDB URI
 if (!MONGODB_URI) {
@@ -15,7 +15,7 @@ if (!MONGODB_URI) {
 if (!MONGODB_DB) {
 	throw new Error('Define the MONGODB_DB environmental variable');
 }
-alert(MONGODB_URI);
+console.log(MONGODB_URI);
 let cachedClient = null;
 let cachedDb = null;
 
