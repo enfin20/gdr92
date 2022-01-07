@@ -77,7 +77,7 @@
 	>
 		<div class="w-2/12 text-wrap text-center flex flex-col justify-center items-center mr-2 p-2">
 			<img
-				src="../src/lib/images/{calendrier.lieu}.png"
+				src="https://www.orientsport.fr/oflash/img/{calendrier.lieu}.png"
 				class=""
 				alt={calendrier.lieu}
 				style="display: inline"
