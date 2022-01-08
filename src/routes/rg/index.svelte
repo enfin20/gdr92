@@ -121,7 +121,10 @@
 				var obj = new Object();
 				obj._id = calendriers[i][j]._id;
 				obj.statut = calendriers[i][j].presence;
-				calUpdated.push(obj);
+				obj.updated = '';
+				if (calendriers[i][j].updated === 'Oui') {
+					calUpdated.push(obj);
+				}
 			}
 		}
 		console.log('0 1' + calendriers[0][1]._id);
@@ -142,6 +145,7 @@
 					row = i;
 					col = j;
 					presence = calendriers[i][j].presence;
+					calendriers[i][j].updated = 'Oui';
 				}
 			}
 		}
