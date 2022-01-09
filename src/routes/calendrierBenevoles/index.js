@@ -9,7 +9,7 @@ export async function get(request) {
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = await collection
 			.find({ soiree: { $gt: soiree } })
-			.sort({ soiree: 1, plage: 1 })
+			.sort({ benevole: 1, soiree: 1, plage: 1 })
 			.toArray();
 		const soirees = [...new Set(calendrier.map((x) => x.soiree + ' : ' + x.lieu))];
 		const benevoles = [...new Set(calendrier.map((x) => x.benevole))];
