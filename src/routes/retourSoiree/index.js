@@ -17,7 +17,7 @@ export async function get(request) {
 			.toArray();
 		const benevoles = await coll2.distinct('benevole', {
 			soiree: soireeY.concat(soireeM).concat(soireeD),
-			statut: 'Oui'
+			statut: { $in: ['Oui', 'Vaisselle'] }
 		});
 		//	.toArray();
 		//		console.log('retourSoiree : ' + retourSoiree);
