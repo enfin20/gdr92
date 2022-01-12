@@ -8,7 +8,7 @@ export async function get(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = await collection
-			.find({ soiree: { $gt: soiree } })
+			.find({ soiree: { $regex: soiree } })
 			.sort({ benevole: 1, soiree: 1, plage: 1 })
 			.toArray();
 		const soirees = [...new Set(calendrier.map((x) => x.soiree + ' : ' + x.lieu))];
@@ -93,4 +93,27 @@ export async function put(request) {
 
 export async function post(request) {}
 
-export async function del(request) {}
+export async function del(request) {
+	try {
+		const dbConnection = await connectToDatabase();
+		const db = dbConnection.db;
+		const collection = db.collection('CalendrierBenevoles');
+		const soiree = JSON.parse(request.body);
+		console.log('soiree : ' + soiree);
+		await collection.deleteMany({ soiree: { $regex: soiree } });
+
+		return {
+			status: 200,
+			body: {
+				message: 'Success'
+			}
+		};
+	} catch (err) {
+		return {
+			status: 500,
+			body: {
+				error: 'Server error'
+			}
+		};
+	}
+}

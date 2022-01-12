@@ -26,7 +26,7 @@
 
 	export async function getBenevole(event) {
 		email = event.detail.text;
-		const res = await fetch('./benevole?email=' + email);
+		const res = await fetch('./benevoles/benevole?email=' + email);
 		const benevole = await res.json();
 		try {
 			if (benevole.benevole.rs === 'Oui') {

@@ -1,12 +1,16 @@
 <script>
 	export let email;
+	export let pwd;
+	export let pwdVisible = 'none';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
 	function getBenevole() {
+		console.log('email : ' + email + ' pwd : ' + pwd);
 		dispatch('message', {
-			text: email
+			text: email,
+			pwd: pwd
 		});
 	}
 </script>
@@ -23,6 +27,22 @@
 			bind:value={email}
 			name="email"
 			placeholder="Email"
+			class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+		/>
+	</div>
+</div>
+<div class="md:flex md:items-center mb-6" style="display:{pwdVisible}">
+	<div class="md:w-1/3">
+		<label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="pwd">
+			mot de passe
+		</label>
+	</div>
+	<div class="md:w-2/3">
+		<input
+			type="password"
+			bind:value={pwd}
+			name="pwd"
+			placeholder="mot de passe"
 			class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 		/>
 	</div>

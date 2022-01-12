@@ -19,8 +19,9 @@
 	let email = '';
 	export async function getBenevole(event) {
 		email = event.detail.text;
-		const res = await fetch('./benevole?email=' + email);
+		const res = await fetch('./benevoles/benevole?email=' + email + '&pwd=""');
 		const benevole = await res.json();
+		console.log('benevole : ' + benevole);
 		try {
 			loggedBenevole = benevole.benevole.prenom + ' ' + benevole.benevole.nom;
 			if (benevole.benevole.maraude === undefined) {
@@ -35,7 +36,7 @@
 			}
 			console.log('maraude : ' + maraude + ' prepa : ' + prepa);
 			// pour charger le calendrier du bénévole
-			const res = await fetch('./calendrierBenevole?email=' + email);
+			const res = await fetch('./calendrierBenevoles/calendrierBenevole?email=' + email);
 			const calendriers = await res.json();
 			try {
 				loginVisible = 'none';
