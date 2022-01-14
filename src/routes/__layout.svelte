@@ -2,7 +2,7 @@
 	import Nav from '../lib/components/nav.svelte';
 </script>
 
-<div class="container my-6 max-w-5xl mx-auto">
+<div class="container my-6 max-w-6xl mx-auto">
 	<slot />
 </div>
 

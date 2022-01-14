@@ -19,7 +19,7 @@ export async function get(request) {
 
 		for (var i = 0; i < benevoles.length; i++) {
 			var tab = [];
-			tab.push(benevoles[i]);
+			tab.push(benevoles[i].substring(0, benevoles[i].indexOf(' ') + 2) + '.');
 			for (var j = 0; j < soirees.length; j++) {
 				for (var k = 0; k < calendrier.length; k++) {
 					if (

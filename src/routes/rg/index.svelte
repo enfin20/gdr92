@@ -3,13 +3,14 @@
 
 <script>
 	import { respond } from '@sveltejs/kit/ssr';
-	import { claim_element, each, text, time_ranges_to_array } from 'svelte/internal';
+	import { claim_element, clear_loops, each, text, time_ranges_to_array } from 'svelte/internal';
 	import LoginForm from '/src/lib/components/loginForm.svelte';
 	import RetourSoireeForm from '/src/lib/components/retourSoireeForm.svelte';
 	const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
 	var calendriers = [];
 	var presences = [];
+	let benevolesListe = [];
 	let loginVisible = 'flex';
 	let soiree = '';
 	let soirees = [];
@@ -55,6 +56,13 @@
 		dateVisible = 'none';
 		calendrierVisible = 'none';
 		soireeVisible = 'none';
+		const res = await fetch('/calendrierBenevoles/updateBenevole', {
+			method: 'PUT',
+			body: JSON.stringify('essai')
+		});
+		/* 		const res = await fetch('./benevoles');
+		benevolesListe = await res.json();
+		console.log(benevolesListe); */
 	}
 	export async function showDate() {
 		benevoleVisible = 'none';
@@ -414,7 +422,7 @@
 				>
 			</div>
 		</div>
-		<div class="table text-center">
+		<div class="table text-center text-sm">
 			<div class="table-header-group">
 				{#each soirees as cell}
 					<div class=" table-cell text-center w-1/12">{cell}</div>
@@ -437,30 +445,33 @@
 			{#each calendriers as row}
 				<div class="table-row-group align-middle">
 					{#each row as cell}
-						<div class=" table-cell text-center w-1/12 align-middle">
-							{#if typeof cell._id != 'undefined'}
+						{#if typeof cell._id != 'undefined'}
+							<div class=" table-cell text-center w-1/12 align-middle">
 								<button
 									class={cell.presence === 'Oui'
-										? 'bg-green-400 hover:bg-green-600 text-gray-500 py-2 px-2 rounded'
+										? 'bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded'
 										: cell.presence === 'RS'
-										? 'bg-pink-300 hover:bg-pink-400 text-gray-500 py-2 px-2 rounded'
+										? 'bg-pink-300 hover:bg-pink-400 text-gray-500 py-1 px-1 rounded'
 										: cell.presence === 'Dispo'
-										? 'bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 px-2 rounded'
+										? 'bg-gray-200 hover:bg-gray-300 text-gray-600 py-1 px-1 rounded'
 										: cell.presence === 'Maraude'
-										? 'bg-yellow-400 hover:bg-yellow-600 text-gray-500 py-2 px-2 rounded'
+										? 'bg-yellow-400 hover:bg-yellow-600 text-gray-500 py-1 px-1 rounded'
 										: cell.presence === 'Vaisselle'
-										? 'bg-blue-300 hover:bg-blue-400 text-gray-500 py-2 px-2 rounded'
+										? 'bg-blue-300 hover:bg-blue-400 text-gray-500 py-1 px-1 rounded'
 										: cell.presence === 'Absent'
-										? 'bg-red-500 hover:bg-red-600 text-gray-200 py-2 px-2 rounded'
-										: 'text-gray-500 py-2 px-2 rounded'}
+										? 'bg-red-500 hover:bg-red-600 text-gray-200 py-1 px-1 rounded'
+										: 'text-gray-500 py-1 px-1 rounded'}
 									id={cell._id}
 									on:click={CalendrierChangeStatut(cell._id, cell.presence)}
 								>
 									{cell.presence.substring(0, 3)}
 								</button>
-							{:else}{cell}
-							{/if}
-						</div>
+							</div>
+						{:else}
+							<div class=" table-cell text-left w-1/4 align-middle py-1 px-1">
+								{cell}
+							</div>
+						{/if}
 					{/each}
 				</div>
 			{/each}
