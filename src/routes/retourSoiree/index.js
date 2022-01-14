@@ -65,7 +65,11 @@ export async function put(request) {
 			if (retourSoiree.benevoles[i].statut === 'Non') {
 				retourSoiree.benevoles[i].statut = 'Absent';
 				await coll2.updateMany(
-					{ benevole: retourSoiree.benevoles[i].benevole, soiree: retourSoiree.soiree },
+					{
+						benevole: retourSoiree.benevoles[i].benevole,
+						soiree: retourSoiree.soiree,
+						lieu: { $in: ['gare', 'gp'] }
+					},
 					{ $set: { statut: retourSoiree.benevoles[i].statut } }
 				);
 			}

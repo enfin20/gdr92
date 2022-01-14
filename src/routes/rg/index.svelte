@@ -24,15 +24,18 @@
 	var plage = ['18h15-20h', '20h-21h30', '14h-18h'];
 	let lieu = ['gare', 'gp', 'entrepot'];
 	let statutEnregistrement = '';
+	const pwdVisible = 'flex';
 
 	let email = '';
+	let pwd = '';
 
 	// login du rg
 	export async function getBenevole(event) {
 		email = event.detail.text;
-		console.log('email ' + email);
-		const res = await fetch('./benevole?email=' + email);
+		let pwd = event.detail.pwd;
+		const res = await fetch('./benevoles/benevole?email=' + email + '&rg=Oui&pwd=' + pwd);
 		const benevole = await res.json();
+		console.log('bene,' + benevole.benevole.nom);
 		try {
 			if (benevole.benevole.rg === 'Oui') {
 				menuVisible = 'flex';
@@ -90,7 +93,7 @@
 		soirees = [];
 		const soireeNormed = soiree.substring(3, 8).toString().concat(soiree.substring(0, 2));
 		console.log('Normed : ' + soireeNormed);
-		const res = await fetch('./calendrierBenevoles?soiree=' + soireeNormed + '00');
+		const res = await fetch('./calendrierBenevoles?soiree=' + soireeNormed);
 		const cal = await res.json();
 
 		// remise au format des dates et des entêtes
@@ -112,7 +115,14 @@
 		calendriers = await cal.tableau.slice(1);
 		nbBenevoles();
 	}
-
+	export async function deleteCalendrier() {
+		const soireeNormed = soiree.substring(3, 8).toString().concat(soiree.substring(0, 2));
+		console.log('Normed : ' + soireeNormed);
+		const res = await fetch('/calendrierBenevoles', {
+			method: 'DELETE',
+			body: JSON.stringify(soireeNormed)
+		});
+	}
 	export async function saveCalendrier() {
 		var calUpdated = [];
 
@@ -237,7 +247,7 @@
 				if (plageActive[j]) {
 					obj.plage = plage[j];
 					obj.lieu = lieu[j];
-					const res = await fetch('/addCalendrierBenevoles', {
+					const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
 						method: 'POST',
 						body: JSON.stringify(obj)
 					});
@@ -253,7 +263,7 @@
 		obj2.rs = '';
 		obj2.benevoles = '';
 
-		const retourSoiree = await fetch('/addRetourSoirees', {
+		const retourSoiree = await fetch('/retourSoirees/addRetourSoirees', {
 			method: 'POST',
 			body: JSON.stringify(obj2)
 		});
@@ -268,7 +278,7 @@
 <span style="display: {loginVisible};">
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login Responsable du groupe</h1>
-		<LoginForm {email} on:message={getBenevole} />
+		<LoginForm {email} {pwdVisible} on:message={getBenevole} />
 	</div>
 </span>
 <div style="display: {menuVisible};">
@@ -370,9 +380,9 @@
 <div style="display: {calendrierVisible};">
 	<div class="py-2 grid gap-1">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer le calendrier</p>
-		<form on:submit|preventDefault={getCalendrier}>
-			<div class="md:flex md:items-center">
-				<div class="md:w-2/3">
+		<div class="md:flex md:items-center">
+			<div class="md:w-2/3">
+				<form on:submit|preventDefault={getCalendrier}>
 					<input
 						type="text"
 						bind:value={soiree}
@@ -383,9 +393,18 @@
 						class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
 						>Entrer</button
 					>
-				</div>
+				</form>
 			</div>
-		</form>
+			<div class="md:w-2/3">
+				<form on:submit|preventDefault={deleteCalendrier}>
+					<button
+						type="submit"
+						class="shadow bg-red-400 hover:bg-red-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
+						>Supprimer</button
+					>
+				</form>
+			</div>
+		</div>
 		<div class="md:flex md:items-center">
 			<div class="md:w-2/3">
 				<button
