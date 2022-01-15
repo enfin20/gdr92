@@ -6,16 +6,19 @@ export async function get(request) {
 		const email = request.query.get('email');
 		const pwd = request.query.get('pwd');
 		const rg = request.query.get('rg');
-		let filter = { email: email };
+
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('Benevoles');
+		const benevole = await collection.findOne({ email: email });
 		if (rg === 'Oui') {
-			let filter = { email: email, pwd: 'toy' };
-			console.log('rg oui ' + filter.pwd);
+			if (benevole.pwd === pwd) {
+			} else {
+				benevole.rg = 'Non';
+			}
 		}
+		console.log('retour: ' + benevole.nom);
 
-		const benevole = await collection.findOne(filter);
 		return {
 			status: 200,
 			body: {

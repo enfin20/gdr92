@@ -18,13 +18,13 @@
 <div class="md:flex md:items-center mb-1">
 	<div class="md:w-1/3" />
 	<div class="md:w-1/2">
-		<span class="block text-gray-500 md:text-left mb-1 md:mb-0 pr-4">
+		<span class="block text-gray-500 md:text-left mb-1 md:mb-0 pr-4 text-sm">
 			{benevole.benevole}
 		</span>
 	</div>
 	<div class="md:w-1/6">
 		<button
-			class="bg-green-400 hover:bg-green-600 text-gray-600 font-bold py-2 px-4 rounded {buttonStatutBg}"
+			class="bg-green-400 hover:bg-green-600 text-gray-600 font-bold py-1 px-2 rounded {buttonStatutBg} text-sm"
 			on:click={ChangeStatus}>{benevole.statut}</button
 		>
 	</div>

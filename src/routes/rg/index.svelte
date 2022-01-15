@@ -2,10 +2,18 @@
 </script>
 
 <script>
+	import RetourSoireeForm from '$lib/components/retourSoireeForm.svelte';
 	import { respond } from '@sveltejs/kit/ssr';
-	import { claim_element, clear_loops, each, text, time_ranges_to_array } from 'svelte/internal';
+	import {
+		claim_element,
+		clear_loops,
+		each,
+		text,
+		time_ranges_to_array,
+		to_number
+	} from 'svelte/internal';
 	import LoginForm from '/src/lib/components/loginForm.svelte';
-	import RetourSoireeForm from '/src/lib/components/retourSoireeForm.svelte';
+	import RetourSoireeListe from '/src/lib/components/retourSoireesListe.svelte';
 	const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
 	var calendriers = [];
@@ -14,6 +22,7 @@
 	let loginVisible = 'flex';
 	let soiree = '';
 	let soirees = [];
+	let retourSoirees = [];
 	let lieux = [];
 	let mois = [];
 	let menuVisible = 'none';
@@ -26,6 +35,7 @@
 	let lieu = ['gare', 'gp', 'entrepot'];
 	let statutEnregistrement = '';
 	const pwdVisible = 'flex';
+	let loginStatus = '';
 
 	let email = '';
 	let pwd = '';
@@ -36,12 +46,12 @@
 		let pwd = event.detail.pwd;
 		const res = await fetch('./benevoles/benevole?email=' + email + '&rg=Oui&pwd=' + pwd);
 		const benevole = await res.json();
-		console.log('bene,' + benevole.benevole.nom);
 		try {
 			if (benevole.benevole.rg === 'Oui') {
 				menuVisible = 'flex';
 				loginVisible = 'none';
 			} else {
+				loginStatus = 'Email ou mot de passe non valide !';
 				menuVisible = 'none';
 				calendrierVisible = 'none';
 				dateVisible = 'none';
@@ -94,6 +104,9 @@
 		dateVisible = 'none';
 		calendrierVisible = 'none';
 		soireeVisible = 'flex';
+		const res = await fetch('./retourSoirees');
+		const soir = await res.json();
+		retourSoirees = await soir.retourSoirees;
 	}
 	export async function getCalendrier() {
 		calendriers = [];
@@ -287,6 +300,7 @@
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login Responsable du groupe</h1>
 		<LoginForm {email} {pwdVisible} on:message={getBenevole} />
+		<div>{loginStatus}</div>
 	</div>
 </span>
 <div style="display: {menuVisible};">
@@ -386,7 +400,7 @@
 	</div>
 </div>
 <div style="display: {calendrierVisible};">
-	<div class="py-2 grid gap-1">
+	<div class="py-2 grid gap-1 w-full">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer le calendrier</p>
 		<div class="md:flex md:items-center">
 			<div class="md:w-2/3">
@@ -425,19 +439,19 @@
 		<div class="table text-center text-sm">
 			<div class="table-header-group">
 				{#each soirees as cell}
-					<div class=" table-cell text-center w-1/12">{cell}</div>
+					<div class=" table-cell text-center [width:2%]">{cell}</div>
 				{/each}
 			</div>
 			<div class="table-header-group ">
 				{#each lieux as cell}
-					<div class=" table-cell  w-1/12">
+					<div class=" table-cell  [width:2%]">
 						<div class="flex items-center justify-center">{@html cell}</div>
 					</div>
 				{/each}
 			</div>
 			<div class="table-header-group align-middle">
 				{#each presences as cell}
-					<div class=" table-cell text-center font-bold w-1/12 text-gray-500 align-middle">
+					<div class=" table-cell text-center font-bold[width:2%] text-gray-500 align-middle">
 						{cell}
 					</div>
 				{/each}
@@ -446,7 +460,7 @@
 				<div class="table-row-group align-middle">
 					{#each row as cell}
 						{#if typeof cell._id != 'undefined'}
-							<div class=" table-cell text-center w-1/12 align-middle">
+							<div class=" table-cell text-center [width:2%] align-middle">
 								<button
 									class={cell.presence === 'Oui'
 										? 'bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded'
@@ -468,7 +482,7 @@
 								</button>
 							</div>
 						{:else}
-							<div class=" table-cell text-left w-1/4 align-middle py-1 px-1">
+							<div class=" table-cell text-left [width:8%] align-middle py-1 px-1">
 								{cell}
 							</div>
 						{/if}
@@ -484,7 +498,8 @@
 	</div>
 </div>
 <div style="display: {soireeVisible};">
-	<div class="py-2 grid gap-1">
+	<div class="py-2 grid gap-1 w-full md:w-1/2">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer les soirées</p>
+		<RetourSoireeListe {retourSoirees} />
 	</div>
 </div>
