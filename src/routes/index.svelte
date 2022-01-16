@@ -7,7 +7,8 @@
 
 	let loggedBenevole = '';
 	let loginVisible = 'flex';
-	let statutSauvegarde = '';
+	let statutSauvegarde =
+		' Même si tu ne viens pas du tout, enregistre-toi (ça évitera les relances)';
 	let calendrierVisible = 'none';
 	let menuVisible = 'none';
 	let retourVisible = 'none';
@@ -170,7 +171,7 @@
 				type="submit"
 				class="bg-green-400 hover:bg-green-600 text-gray-600 font-bold py-2 px-4 rounded"
 				>Enregistrer</button
-			><span class="text-xl my-2 text-gray-800 md:text-xl">{statutSauvegarde}</span>
+			><span class="text-xl my-2 text-gray-800 text-sm">{statutSauvegarde}</span>
 		</form>
 	</div>
 	<div class="py-4 grid gap-1 w-full md:w-1/3">
