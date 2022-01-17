@@ -122,7 +122,7 @@
 		retSoiree.nbPeri = retourSoiree.nbPeri;
 		retSoiree.commentaires = retourSoiree.commentaires;
 		retSoiree.benevoles = benevoles;
-		console.log(retSoiree);
+		console.log(' ret ' + retSoiree);
 		const res = await fetch('/retourSoirees/retourSoiree', {
 			method: 'PUT',
 			body: JSON.stringify(retSoiree)

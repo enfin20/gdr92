@@ -15,7 +15,7 @@ export async function get(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('RetourSoirees');
 		const retourSoirees = await collection
-			.find({ soiree: { $lt: currentYear.toString().concat(currentMonth).concat(currentDay) } })
+			.find({ soiree: { $lte: currentYear.toString().concat(currentMonth).concat(currentDay) } })
 			.sort({ soiree: -1 })
 			.toArray();
 		console.log('retourSoirees : ' + retourSoirees[0].nbGare);

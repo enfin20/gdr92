@@ -4,13 +4,18 @@
 	let buttonStatutBg = 'bg-green-400 hover:bg-green-600';
 
 	function ChangeStatus() {
+		var changed = false;
 		console.log(benevole.benevole);
 		if (benevole.statut === 'Non') {
+			changed = true;
 			benevole.statut = 'Oui';
 			buttonStatutBg = 'bg-green-400 hover:bg-green-600';
 		} else {
-			benevole.statut = 'Non';
-			buttonStatutBg = 'bg-red-200 hover:bg-red-400';
+			if (!changed) {
+				benevole.statut = 'Non';
+				buttonStatutBg = 'bg-red-200 hover:bg-red-400';
+				changed = true;
+			}
 		}
 	}
 </script>
@@ -24,7 +29,7 @@
 	</div>
 	<div class="md:w-1/6">
 		<button
-			class="bg-green-400 hover:bg-green-600 text-gray-600 font-bold py-1 px-2 rounded {buttonStatutBg} text-sm"
+			class=" text-gray-600 font-bold py-1 px-2 rounded {buttonStatutBg} text-sm"
 			on:click={ChangeStatus}>{benevole.statut}</button
 		>
 	</div>
