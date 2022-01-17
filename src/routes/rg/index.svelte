@@ -18,7 +18,7 @@
 
 	var calendriers = [];
 	var presences = [];
-	let benevolesListe = [];
+	let benevoles = [];
 	let loginVisible = 'flex';
 	let soiree = '';
 	let soirees = [];
@@ -30,12 +30,16 @@
 	let dateVisible = 'none';
 	let benevoleVisible = 'none';
 	let soireeVisible = 'none';
+	let delSoireesVisible = 'none';
 	let plageActive = [true, true, true];
 	var plage = ['18h15-20h', '20h-21h30', '14h-18h'];
 	let lieu = ['gare', 'gp', 'entrepot'];
 	let statutEnregistrement = '';
 	const pwdVisible = 'flex';
 	let loginStatus = '';
+	let new_prenom = '';
+	let new_nom = '';
+	let new_email = '';
 
 	let email = '';
 	let pwd = '';
@@ -61,30 +65,29 @@
 		}
 	}
 
-	export async function showBenevole() {
+	export async function showBenevoles() {
 		benevoleVisible = 'flex';
 		dateVisible = 'none';
 		calendrierVisible = 'none';
 		soireeVisible = 'none';
-		const res = await fetch('/calendrierBenevoles/updateBenevole', {
-			method: 'PUT',
-			body: JSON.stringify('essai')
-		});
-		/* 		const res = await fetch('./benevoles');
-		benevolesListe = await res.json();
-		console.log(benevolesListe); */
+		delSoireesVisible = 'none';
+		const res = await fetch('/benevoles');
+		const ben = await res.json();
+		benevoles = await ben.benevoles;
 	}
 	export async function showDate() {
 		benevoleVisible = 'none';
 		dateVisible = 'flex';
 		calendrierVisible = 'none';
 		soireeVisible = 'none';
+		delSoireesVisible = 'none';
 	}
 	export async function ShowCalendrier() {
 		benevoleVisible = 'none';
 		dateVisible = 'none';
 		calendrierVisible = 'flex';
 		soireeVisible = 'none';
+		delSoireesVisible = 'none';
 		let currentYear = new Date().getFullYear();
 		let currentMonth = new Date().getMonth() + 2;
 		let normedMonth = '0';
@@ -104,9 +107,28 @@
 		dateVisible = 'none';
 		calendrierVisible = 'none';
 		soireeVisible = 'flex';
+		delSoireesVisible = 'none';
 		const res = await fetch('./retourSoirees');
 		const soir = await res.json();
 		retourSoirees = await soir.retourSoirees;
+	}
+	export async function showDelSoirees() {
+		benevoleVisible = 'none';
+		dateVisible = 'none';
+		calendrierVisible = 'none';
+		soireeVisible = 'none';
+		delSoireesVisible = 'flex';
+		let currentYear = new Date().getFullYear();
+		let currentMonth = new Date().getMonth() + 2;
+		let normedMonth = '0';
+		if (currentMonth <= 9) {
+			normedMonth = normedMonth.concat(currentMonth);
+		}
+		if (currentMonth > 12) {
+			normedMonth = '01';
+			currentYear = currentYear + 1;
+		}
+		soiree = normedMonth + '/' + currentYear.toString();
 	}
 	export async function getCalendrier() {
 		calendriers = [];
@@ -227,6 +249,41 @@
 		nbBenevoles();
 	}
 
+	export async function updateBenevole(b_id, prenom, nom, email) {
+		var obj = new Object();
+		obj._id = b_id;
+		obj.prenom = prenom;
+		obj.nom = nom.toUpperCase();
+		obj.email = email;
+		const res = await fetch('/benevoles/benevole', {
+			method: 'PUT',
+			body: JSON.stringify(obj)
+		});
+	}
+
+	export async function insertBenevole(prenom, nom, email) {
+		var obj = new Object();
+		obj.prenom = prenom;
+		obj.nom = nom.toUpperCase();
+		obj.email = email;
+		const res = await fetch('/benevoles/benevole', {
+			method: 'POST',
+			body: JSON.stringify(obj)
+		});
+		new_prenom = '';
+		new_nom = '';
+		new_email = '';
+		showBenevoles();
+	}
+
+	export async function deleteBenevole(b_id) {
+		const res = await fetch('/benevoles/benevole', {
+			method: 'DELETE',
+			body: JSON.stringify(b_id)
+		});
+		showBenevoles();
+	}
+
 	function nbBenevoles() {
 		presences = [];
 		presences[0] = 'Nb bénévoles';
@@ -264,6 +321,7 @@
 		for (var i = 0; i < benevoles.benevoles.length; i++) {
 			obj.email = benevoles.benevoles[i].email;
 			obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
+			obj.b_id = benevoles.benevoles[i]._id;
 			for (var j = 0; j <= 2; j++) {
 				if (plageActive[j]) {
 					obj.plage = plage[j];
@@ -308,7 +366,7 @@
 		type="submit"
 		name="benevoles"
 		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showBenevole}
+		on:click={showBenevoles}
 	>
 		Bénévoles
 	</button>
@@ -335,6 +393,14 @@
 		on:click={showSoiree}
 	>
 		Soirées
+	</button>
+	<button
+		type="submit"
+		name="delSoirees"
+		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
+		on:click={showDelSoirees}
+	>
+		Suppression
 	</button>
 </div>
 <div style="display: {dateVisible};">
@@ -417,15 +483,6 @@
 					>
 				</form>
 			</div>
-			<div class="md:w-2/3">
-				<form on:submit|preventDefault={deleteCalendrier}>
-					<button
-						type="submit"
-						class="shadow bg-red-400 hover:bg-red-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
-						>Supprimer</button
-					>
-				</form>
-			</div>
 		</div>
 		<div class="md:flex md:items-center">
 			<div class="md:w-2/3">
@@ -495,11 +552,103 @@
 <div style="display: {benevoleVisible};">
 	<div class="py-2 grid gap-1">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer les bénévoles</p>
+		<div class="table text-center text-sm">
+			<div class="table-row-group align-middle">
+				<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">
+					<input
+						type="text"
+						bind:value={new_prenom}
+						class=" appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+					/>
+				</div>
+				<div class=" table-cell text-left w-1/4 align-middle py-1 px-1">
+					<input
+						type="text"
+						bind:value={new_nom}
+						class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+					/>
+				</div>
+				<div class=" table-cell text-left w-1/2 align-middle py-1 px-1">
+					<input
+						type="text"
+						bind:value={new_email}
+						class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+					/>
+				</div>
+				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+					<button
+						class="bg-green-600 hover:bg-green-800 text-white py-1 px-1 rounded"
+						on:click={insertBenevole(new_prenom, new_nom, new_email)}>Insérer</button
+					>
+				</div>
+				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1" />
+			</div>
+			{#each benevoles as b}
+				<div class="table-row-group align-middle">
+					<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">
+						<input
+							type="text"
+							bind:value={b.prenom}
+							class=" appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+						/>
+					</div>
+					<div class=" table-cell text-left w-1/4 align-middle py-1 px-1">
+						<input
+							type="text"
+							bind:value={b.nom}
+							class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+						/>
+					</div>
+					<div class=" table-cell text-left w-1/4 align-middle py-1 px-1">
+						<input
+							type="text"
+							bind:value={b.email}
+							class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+						/>
+					</div>
+					<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+						<button
+							class="bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded"
+							id={b._id}
+							on:click={updateBenevole(b._id, b.prenom, b.nom, b.email)}>Modifier</button
+						>
+					</div>
+					<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+						<button
+							class="bg-red-400 hover:bg-red-600 text-white py-1 px-1 rounded"
+							id={b._id}
+							on:click={deleteBenevole(b._id)}>Supprimer</button
+						>
+					</div>
+				</div>
+			{/each}
+		</div>
 	</div>
 </div>
 <div style="display: {soireeVisible};">
 	<div class="py-2 grid gap-1 w-full md:w-1/2">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer les soirées</p>
 		<RetourSoireeListe {retourSoirees} />
+	</div>
+</div>
+<div style="display: {delSoireesVisible};">
+	<div class="py-2 grid gap-1 w-full">
+		<p class="text-2xl font-bold text-gray-800 md:text-xl">Supprimer des dates</p>
+		<div class="md:flex md:items-center">
+			<div class="md:w-2/3">
+				<form on:submit|preventDefault={deleteCalendrier}>
+					<input
+						type="text"
+						bind:value={soiree}
+						class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+					/>
+					<button
+						type="submit"
+						class="shadow bg-red-400 hover:bg-red-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
+						>Supprimer</button
+					>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>

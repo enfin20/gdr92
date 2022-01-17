@@ -6,7 +6,7 @@ export async function get(request) {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('Benevoles');
-		const benevoles = await collection.find().toArray();
+		const benevoles = await collection.find().sort({ prenom: 1, nom: 1 }).toArray();
 
 		return {
 			status: 200,
@@ -24,28 +24,7 @@ export async function get(request) {
 	}
 }
 
-export async function post(request) {
-	try {
-		const dbConnection = await connectToDatabase();
-		const db = dbConnection.db;
-		const collection = db.collection('Benevoles');
-		const Benevoles = await collection.find().toArray();
-
-		return {
-			status: 200,
-			body: {
-				Benevoles
-			}
-		};
-	} catch (err) {
-		return {
-			status: 500,
-			body: {
-				erreur: err
-			}
-		};
-	}
-}
+export async function post(request) {}
 
 export async function put(request) {}
 

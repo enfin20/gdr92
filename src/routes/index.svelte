@@ -171,7 +171,7 @@
 				type="submit"
 				class="bg-green-400 hover:bg-green-600 text-gray-600 font-bold py-2 px-4 rounded"
 				>Enregistrer</button
-			><span class="text-xl my-2 text-gray-800 text-sm">{statutSauvegarde}</span>
+			><span class=" my-2 text-gray-800 text-sm">{statutSauvegarde}</span>
 		</form>
 	</div>
 	<div class="py-4 grid gap-1 w-full md:w-1/3">

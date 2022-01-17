@@ -2,16 +2,15 @@ import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
 
 export async function get(request) {}
+
 export async function put(request) {
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const champ = JSON.parse(request.body);
-		await collection.update(
-			{ email: 'anne,verger@kmsi,fr' },
-			{ $set: { email: 'anne.verger@kmsi.fr' } }
-		);
+		console.log('b_id: ' + champ._id + ' ' + champ.email);
+		await collection.update({ email: champ.email }, { $set: { b_id: champ._id } });
 
 		return {
 			status: 200,
