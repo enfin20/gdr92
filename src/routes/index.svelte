@@ -174,9 +174,9 @@
 			><span class=" my-2 text-gray-800 text-sm">{statutSauvegarde}</span>
 		</form>
 	</div>
-	<div class="py-4 grid gap-1 w-full md:w-1/3">
+	<div class="py-4 grid gap-1 w-full md:w-1/2">
 		<div class="container mb-2 flex mx-auto w-full items-center justify-center">
-			<ul class="flex flex-col p-4">
+			<ul class="flex flex-col p-4 w-full">
 				{#each soirees as calendrier}
 					<CalendrierForm {calendrier} {maraude} {prepa} />
 				{/each}

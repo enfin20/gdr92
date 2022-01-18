@@ -4,11 +4,19 @@ import { each } from 'svelte/internal';
 
 export async function get(request) {
 	try {
+		let lastYear = new Date().getFullYear() - 1;
+		const currentMonth = new Date().getMonth() + 1;
+		const currentDay = new Date().getDate();
+		let normedMonth = '0';
+		if (currentMonth <= 9) {
+			normedMonth = normedMonth.concat(currentMonth);
+		}
+
 		const pipeline = [
 			{
 				$match: {
 					statut: 'Vaisselle',
-					soiree: { $gte: '20220110' }
+					soiree: { $gte: lastYear.toString().concat(normedMonth).concat(currentDay) }
 				}
 			},
 			{

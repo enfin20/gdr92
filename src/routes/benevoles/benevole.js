@@ -125,7 +125,14 @@ export async function put(request) {
 
 		await collection.updateOne(
 			{ _id: ObjectId(benevole._id) },
-			{ $set: { prenom: benevole.prenom, nom: benevole.nom, email: benevole.email } }
+			{
+				$set: {
+					prenom: benevole.prenom,
+					nom: benevole.nom,
+					email: benevole.email,
+					tel: benevole.tel
+				}
+			}
 		);
 		await coll2.update(
 			{ b_id: benevole._id },
