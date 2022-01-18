@@ -43,6 +43,7 @@
 
 	let email = '';
 	let pwd = '';
+	let bgRow = 'bg-grey-200';
 
 	// login du rg
 	export async function getBenevole(event) {
@@ -496,7 +497,7 @@
 		<div class="table text-center text-sm">
 			<div class="table-header-group">
 				{#each soirees as cell}
-					<div class=" table-cell text-center [width:2%]">{cell}</div>
+					<div class=" table-cell text-center [width:2%] ">{cell}</div>
 				{/each}
 			</div>
 			<div class="table-header-group ">
@@ -514,7 +515,7 @@
 				{/each}
 			</div>
 			{#each calendriers as row}
-				<div class="table-row-group align-middle">
+				<div class="table-row-group align-middle ">
 					{#each row as cell}
 						{#if typeof cell._id != 'undefined'}
 							<div class=" table-cell text-center [width:2%] align-middle">
@@ -540,7 +541,14 @@
 							</div>
 						{:else}
 							<div class=" table-cell text-left [width:8%] align-middle py-1 px-1">
-								{cell}
+								{cell.benevole}<br />
+								{#if cell.nbVaisselle !== ''}
+									<span class="text-xs italic text-gray-400">
+										nb Vais. : {cell.nbVaisselle} : {cell.lastVaisselle.substring(6, 8) +
+											'/' +
+											cell.lastVaisselle.substring(4, 6)}
+									</span>
+								{/if}
 							</div>
 						{/if}
 					{/each}

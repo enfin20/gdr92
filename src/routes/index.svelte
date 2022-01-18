@@ -143,7 +143,7 @@
 	</div></span
 >
 <div style="display: {menuVisible};">
-	<div class="md:w-1/6">
+	<div class="w-1/2 md:w-1/6">
 		<input
 			id="soiree"
 			type="date"
@@ -152,7 +152,7 @@
 		/>
 	</div>
 	<div class="md:w-1/12" />
-	<div class="md:w-1/3">
+	<div class="w-1/2 md:w-1/3">
 		<button
 			type="submit"
 			name="benevoles"

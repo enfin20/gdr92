@@ -1,8 +1,25 @@
 import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
+import { each } from 'svelte/internal';
 
 export async function get(request) {
 	try {
+		const pipeline = [
+			{
+				$match: {
+					statut: 'Vaisselle',
+					soiree: { $gte: '20220110' }
+				}
+			},
+			{
+				$group: {
+					_id: '$benevole',
+					nbVaisselle: { $sum: 1 },
+					lastVaisselle: { $max: '$soiree' }
+				}
+			}
+		];
+
 		const soiree = request.query.get('soiree');
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
@@ -17,9 +34,22 @@ export async function get(request) {
 		var tableau = [];
 		tableau.push(soirees);
 
+		const vaisselle = await collection.aggregate(pipeline).toArray();
+
 		for (var i = 0; i < benevoles.length; i++) {
 			var tab = [];
-			tab.push(benevoles[i].substring(0, benevoles[i].indexOf(' ') + 2) + '.');
+			var ben = new Object();
+			ben.benevole = benevoles[i].substring(0, benevoles[i].indexOf(' ') + 2) + '.';
+			ben.nbVaisselle = '';
+			ben.lastVaisselle = '';
+			for (var k = 0; k < vaisselle.length; k++) {
+				if (benevoles[i] === vaisselle[k]._id) {
+					ben.nbVaisselle = vaisselle[k].nbVaisselle;
+					ben.lastVaisselle = vaisselle[k].lastVaisselle;
+				}
+			}
+			tab.push(ben);
+
 			for (var j = 0; j < soirees.length; j++) {
 				for (var k = 0; k < calendrier.length; k++) {
 					if (
