@@ -497,7 +497,71 @@
 				>
 			</div>
 		</div>
-		<div class="table text-center text-sm">
+
+		<table class="text-sm" id="tableCalendrier">
+			<thead class="">
+				<tr class="">
+					{#each soirees as cell}
+						<th class="">{cell}</th>
+					{/each}
+				</tr>
+				<tr class="">
+					{#each lieux as cell}
+						<th> <div class="flex items-center justify-center">{@html cell}</div></th>
+					{/each}
+				</tr>
+				<tr class="">
+					{#each presences as cell}
+						<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
+							{cell}
+						</th>
+					{/each}
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-100">
+				{#each calendriers as row}
+					<tr class="hover:bg-slate-100">
+						{#each row as cell}
+							{#if typeof cell._id != 'undefined'}
+								<td class="text-center align-middle">
+									<button
+										class={cell.presence === 'Oui'
+											? 'bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded'
+											: cell.presence === 'RS'
+											? 'bg-pink-300 hover:bg-pink-400 text-gray-500 py-1 px-1 rounded'
+											: cell.presence === 'Dispo'
+											? 'bg-gray-200 hover:bg-gray-300 text-gray-600 py-1 px-1 rounded'
+											: cell.presence === 'Maraude'
+											? 'bg-yellow-400 hover:bg-yellow-600 text-gray-500 py-1 px-1 rounded'
+											: cell.presence === 'Vaisselle'
+											? 'bg-blue-300 hover:bg-blue-400 text-gray-500 py-1 px-1 rounded'
+											: cell.presence === 'Absent'
+											? 'bg-red-500 hover:bg-red-600 text-gray-200 py-1 px-1 rounded'
+											: 'text-gray-500 py-1 px-1 rounded'}
+										id={cell._id}
+										on:click={CalendrierChangeStatut(cell._id, cell.presence)}
+									>
+										{cell.presence.substring(0, 3)}
+									</button>
+								</td>
+							{:else}
+								<td>
+									{cell.benevole}<br />
+									{#if cell.nbVaisselle !== ''}
+										<span class="text-xs italic text-gray-400">
+											nb Vais. : {cell.nbVaisselle} : {cell.lastVaisselle.substring(6, 8) +
+												'/' +
+												cell.lastVaisselle.substring(4, 6)}
+										</span>
+									{/if}
+								</td>
+							{/if}
+						{/each}
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+		<!-- 		<div class="table text-center text-sm">
 			<div class="table-header-group">
 				{#each soirees as cell}
 					<div class=" table-cell text-center [width:2%] ">{cell}</div>
@@ -557,14 +621,14 @@
 					{/each}
 				</div>
 			{/each}
-		</div>
+		</div> -->
 	</div>
 </div>
 <div style="display: {benevolesVisible};">
 	<div class="py-2 grid gap-1">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer les bénévoles</p>
 		<div class="table text-center text-sm">
-			<div class="table-row-group align-middle">
+			<div class="table-row-group align-middle hover:bg-slate-100">
 				<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">
 					<input
 						type="text"
@@ -602,7 +666,7 @@
 				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1" />
 			</div>
 			{#each benevoles as b}
-				<div class="table-row-group align-middle">
+				<div class="table-row-group align-middle hover:bg-slate-100">
 					<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">
 						<input
 							type="text"

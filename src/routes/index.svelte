@@ -75,6 +75,7 @@
 
 	//enregistrement du calendrier
 	export async function updateCalendrier() {
+		statutSauvegarde = '    ... en cours';
 		const res = await fetch('/calendrierBenevoles/calendrierBenevole', {
 			method: 'PUT',
 			body: JSON.stringify(soirees)
@@ -110,11 +111,13 @@
 	}
 
 	export async function getRetourSoirees() {
+		statutSauvegarde = '';
 		const res = await fetch('./retourSoirees');
 		const soir = await res.json();
 		retourSoirees = await soir.retourSoirees;
 	}
 	export async function updateSoiree() {
+		statutSauvegarde = '    ... en cours';
 		var retSoiree = new Object();
 		retSoiree.soiree = retourSoiree.soiree;
 		retSoiree.rs = loggedBenevole;
@@ -127,7 +130,7 @@
 			method: 'PUT',
 			body: JSON.stringify(retSoiree)
 		});
-		statutVisible = 'block';
+		statutSauvegarde = '    Soirée enregistrée';
 	}
 </script>
 
@@ -171,7 +174,9 @@
 				type="submit"
 				class="bg-green-400 hover:bg-green-600 text-gray-600 font-bold py-2 px-4 rounded"
 				>Enregistrer</button
-			><span class=" my-2 text-gray-800 text-sm">{statutSauvegarde}</span>
+			><span class=" my-2 text-gray-800 text-sm">
+				{statutSauvegarde}
+			</span>
 		</form>
 	</div>
 	<div class="py-4 grid gap-1 w-full md:w-1/2">
@@ -185,13 +190,6 @@
 	</div>
 </div>
 <div style="display: {retourVisible};">
-	<div
-		class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded"
-		style="display: {statutVisible};"
-	>
-		<span class="block sm:inline">Soirée enregistrée.</span>
-	</div>
-
 	<div class="py-2 grid gap-1 w-full md:w-1/2">
 		<div class="md:flex md:items-center mb-2">
 			<div class="md:w-1/2">
@@ -268,7 +266,9 @@
 						type="submit"
 						class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
 						>Entrer</button
-					>
+					><span class=" my-2 text-gray-800 text-sm">
+						{statutSauvegarde}
+					</span>
 				</div>
 			</div>
 		</form>
