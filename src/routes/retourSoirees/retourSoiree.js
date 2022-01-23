@@ -1,27 +1,64 @@
 import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
+import { date_YYYYMMDD } from '$lib/date_functions';
 
 export async function get(request) {
+	// récupération des données d'une soirée à partir de la date
 	try {
 		const soiree = request.query.get('soiree');
-		const soireeY = soiree.substring(0, 4);
-		const soireeM = soiree.substring(5, 7);
-		const soireeD = soiree.substring(8, 10);
-		console.log('ISO ' + soireeY.concat(soireeM).concat(soireeD));
+
+		const pipeline = [
+			{
+				$match: {
+					soiree: date_YYYYMMDD(soiree).date,
+					statut: {
+						$in: ['Oui', 'Vaisselle', 'RS']
+					}
+				}
+			},
+			{
+				$group: {
+					_id: null,
+					email: {
+						$addToSet: '$email'
+					}
+				}
+			},
+			{
+				$lookup: {
+					from: 'Benevoles',
+					localField: 'email',
+					foreignField: 'email',
+					as: 'b'
+				}
+			},
+			{
+				$unwind: {
+					path: '$b',
+					preserveNullAndEmptyArrays: false
+				}
+			},
+			{
+				$addFields: {
+					tel: '$b.tel',
+					prenom: '$b.prenom',
+					nom: '$b.nom',
+					email: '$b.email'
+				}
+			},
+			{
+				$sort: {
+					prenom: 1
+				}
+			}
+		];
+
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('RetourSoirees');
 		const coll2 = db.collection('CalendrierBenevoles');
-		const retourSoiree = await collection
-			.find({ soiree: soireeY.concat(soireeM).concat(soireeD) })
-			.toArray();
-		const benevoles = await coll2.distinct('benevole', {
-			soiree: soireeY.concat(soireeM).concat(soireeD),
-			statut: { $in: ['Oui', 'Vaisselle'] }
-		});
-		//	.toArray();
-		//		console.log('retourSoiree : ' + retourSoiree);
-		console.log('benevoles : ' + benevoles);
+		const retourSoiree = await collection.find({ soiree: date_YYYYMMDD(soiree).date }).toArray();
+		const benevoles = await coll2.aggregate(pipeline).toArray();
 		return {
 			status: 200,
 			body: {
@@ -42,13 +79,15 @@ export async function get(request) {
 export async function post(request) {}
 
 export async function put(request) {
+	// MAJ du retour de soirée et des bénévoles absents
 	try {
+		const retourSoiree = JSON.parse(request.body);
+
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('RetourSoirees');
 		const coll2 = db.collection('CalendrierBenevoles');
-		const retourSoiree = JSON.parse(request.body);
-		console.log('************');
+
 		await collection.updateOne(
 			{ soiree: retourSoiree.soiree },
 			{
@@ -61,20 +100,20 @@ export async function put(request) {
 			}
 		);
 
+		// mise à jour des statuts par bénévole
 		for (var i = 0; i < retourSoiree.benevoles.length; i++) {
 			if (retourSoiree.benevoles[i].statut === 'Non') {
-				retourSoiree.benevoles[i].statut = 'Absent';
 				await coll2.updateMany(
 					{
 						benevole: retourSoiree.benevoles[i].benevole,
 						soiree: retourSoiree.soiree,
 						lieu: { $in: ['gare', 'gp'] }
 					},
-					{ $set: { statut: retourSoiree.benevoles[i].statut } }
+					{ $set: { statut: 'Absent' } }
 				);
 			}
 		}
-		console.log('************');
+
 		return {
 			status: 200,
 			body: {

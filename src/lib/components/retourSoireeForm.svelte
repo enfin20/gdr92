@@ -28,6 +28,11 @@
 		</span>
 	</div>
 	<div class="md:w-1/6">
+		<span class="block text-gray-500 md:text-left mb-1 md:mb-0 pr-4 text-sm">
+			<a href="tel:+{benevole.tel}">{benevole.tel}</a>
+		</span>
+	</div>
+	<div class="md:w-1/6">
 		<button
 			class=" text-gray-600 font-bold py-1 px-2 rounded {buttonStatutBg} text-sm"
 			on:click={ChangeStatus}>{benevole.statut}</button

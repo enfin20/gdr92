@@ -1,24 +1,18 @@
 import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
+import { YYYYMMDD } from '$lib/date_functions';
 
 export async function get(request) {
+	// récupération des données d'une soirée par date (YYYYMMDD)
 	try {
-		let currentYear = new Date().getFullYear();
-		let currentMonth = new Date().getMonth() + 1;
-		if (currentMonth <= 9) {
-			currentMonth = '0'.concat(currentMonth);
-		}
-		let currentDay = new Date().getDate();
-		console.log('current date : ' + currentYear.toString().concat(currentMonth).concat(currentDay));
-
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('RetourSoirees');
 		const retourSoirees = await collection
-			.find({ soiree: { $lte: currentYear.toString().concat(currentMonth).concat(currentDay) } })
+			.find({ soiree: { $lte: YYYYMMDD(0).date } })
 			.sort({ soiree: -1 })
 			.toArray();
-		console.log('retourSoirees : ' + retourSoirees[0].nbGare);
+
 		return {
 			status: 200,
 			body: {
@@ -35,7 +29,29 @@ export async function get(request) {
 	}
 }
 
-export async function post(request) {}
+export async function post(request) {
+	// ajout par le rg d'une nouvelle soirée avec champ à vide
+	try {
+		const dbConnection = await connectToDatabase();
+		const db = dbConnection.db;
+		const collection = db.collection('RetourSoirees');
+		const retourSoiree = JSON.parse(request.body);
+		await collection.insertOne(retourSoiree);
+		return {
+			status: 200,
+			body: {
+				message: 'Success'
+			}
+		};
+	} catch (err) {
+		return {
+			status: 500,
+			body: {
+				error: 'Server error'
+			}
+		};
+	}
+}
 
 export async function put(request) {}
 

@@ -1,26 +1,16 @@
 <script>
+	import { date_dd_MM_YYYY } from '$lib/date_functions';
 	export let calendrier;
 	export let maraude;
 	export let prepa;
-	const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 	let soiree = '';
 	let rowbg = '';
 	let buttonStatutBg = '';
 	let displayPrepa = 'flex';
 
 	// mise au format français
-	try {
-		const soireeY = calendrier.soiree.substring(0, 4);
-		const soireeM = calendrier.soiree.substring(4, 6);
-		const soireeD = calendrier.soiree.substring(6, 8);
+	soiree = date_dd_MM_YYYY(calendrier.soiree).date;
 
-		soiree = new Date(soireeY + '-' + soireeM + '-' + soireeD).toLocaleDateString(
-			'fr-FR',
-			dateOptions
-		);
-	} catch (error) {
-		console.log(error);
-	}
 	//initialisation de l'affichage
 	if (calendrier.lieu === 'entrepot' && prepa !== 'Oui') {
 		displayPrepa = 'none';

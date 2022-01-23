@@ -1,56 +1,52 @@
 <script>
-	export let benevole;
-	const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-	let soiree = '';
-	let rowbg = '';
-	let buttonStatutBg = '';
-	let displayPrepa = 'flex';
-	console.log('Display ' + calendrier);
-	// mise au format français
-
-	function ChangeStatus() {
-		if (maraude === 'Oui') {
-			// cas spécifique des bénévoles faisant la maraude
-			if (calendrier.statut === 'Non') {
-				calendrier.statut = 'Oui';
-				buttonStatutBg = 'bg-green-400 hover:bg-green-600';
-			} else if (calendrier.statut === 'Oui') {
-				calendrier.statut = 'Maraude';
-				buttonStatutBg = 'bg-amber-300 hover:bg-amber-600';
-			} else {
-				calendrier.statut = 'Non';
-				buttonStatutBg = 'bg-red-200 hover:bg-red-400';
-			}
-		} else {
-			// cas standard
-			if (calendrier.statut === 'Non') {
-				calendrier.statut = 'Oui';
-				buttonStatutBg = 'bg-green-400 hover:bg-green-600';
-			} else {
-				calendrier.statut = 'Non';
-				buttonStatutBg = 'bg-red-200 hover:bg-red-400';
-			}
-		}
-	}
+	export let soirees;
+	export let lieux;
+	export let calendriers;
 </script>
 
-<li class="flex flex-row">
-	<div
-		class="select-none flex flex-1 items-center p-1 rounded-xl hover:shadow-2xl border-gray-400 mt-1"
-	>
-		<div class="flex-1 pl-1 mr-16 ">
-			<div class="font-medium text-gray-800">
-				c'est bon {benevole}
-			</div>
-		</div>
-		<div class="w-1/6 text-wrap text-center flex flex-col justify-center items-center mr-2 p-2">
-			<div class="font-medium text-gray-800" />
-		</div>
-		<div class="w-1/6 text-wrap text-center flex flex-col justify-center items-center mr-2 p-2">
-			<div class="font-medium text-gray-800" />
-		</div>
-		<div class="w-1/6 text-wrap text-center flex flex-col justify-center items-center mr-2 p-2">
-			<div class="font-medium text-gray-800" />
-		</div>
-	</div>
-</li>
+<!-- table pour les impressions -->
+<table id="tableCalendrier" class="text-sm text-gray-500">
+	<thead>
+		<tr>
+			{#each soirees as cell}
+				<th>{cell}</th>
+			{/each}
+		</tr>
+		<tr class="">
+			{#each lieux as cell}
+				<th> <div class="flex items-center justify-center">{@html cell}</div></th>
+			{/each}
+		</tr>
+	</thead>
+	<tbody>
+		{#each calendriers as row}
+			<tr class="items-center justify-center">
+				{#each row as cell}
+					{#if typeof cell._id != 'undefined'}
+						<td
+							class={cell.presence === 'Oui'
+								? 'bg-green-400  text-gray-500 py-1 px-1 '
+								: cell.presence === 'RS'
+								? 'bg-pink-300  text-gray-500 py-1 px-1 '
+								: cell.presence === 'Dispo'
+								? 'bg-gray-200  text-gray-600 py-1 px-1 '
+								: cell.presence === 'Maraude'
+								? 'bg-yellow-400  text-gray-500 py-1 px-1 '
+								: cell.presence === 'Vaisselle'
+								? 'bg-blue-300  text-gray-500 py-1 px-1 '
+								: cell.presence === 'Absent'
+								? 'bg-red-500  text-gray-200 py-1 px-1 '
+								: 'text-gray-500 py-1 px-1 '}
+						>
+							{cell.presence.substring(0, 3)}
+						</td>
+					{:else}
+						<td class="text-gray-500 py-1 px-1 text-left">
+							{cell.benevole}
+						</td>
+					{/if}
+				{/each}
+			</tr>
+		{/each}
+	</tbody>
+</table>

@@ -2,7 +2,7 @@
 </script>
 
 <script>
-	import RetourSoireeForm from '$lib/components/retourSoireeForm.svelte';
+	import { MM_YYYY, date_YYYYMM, date_DD_MM } from '$lib/date_functions';
 	import { respond } from '@sveltejs/kit/ssr';
 	import {
 		claim_element,
@@ -14,40 +14,44 @@
 	} from 'svelte/internal';
 	import LoginForm from '/src/lib/components/loginForm.svelte';
 	import RetourSoireeListe from '/src/lib/components/retourSoireesListe.svelte';
-	const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
-	var calendriers = [];
+	import CalendrierExcel from '/src/lib/components/calendrierDisplay.svelte';
+
+	let calendriers = [];
 	var presences = [];
 	let benevoles = [];
-	let loginVisible = 'flex';
+	let benevolesSansReponses = [];
 	let soiree = '';
 	let soirees = [];
 	let retourSoirees = [];
 	let lieux = [];
-	let mois = [];
+
+	let loginVisible = 'flex';
+	const pwdVisible = 'flex';
 	let menuVisible = 'none';
 	let calendrierVisible = 'none';
 	let dateVisible = 'none';
 	let benevolesVisible = 'none';
 	let soireeVisible = 'none';
 	let delSoireesVisible = 'none';
+
+	// nouvelle soirée
 	let plageActive = [true, true, true];
 	var plage = ['18h15-20h', '20h-21h30', '14h-18h'];
 	let lieu = ['gare', 'gp', 'entrepot'];
-	let statutEnregistrement = '';
-	const pwdVisible = 'flex';
-	let loginStatus = '';
+
+	// nouveau bénévole
 	let new_prenom = '';
 	let new_nom = '';
 	let new_email = '';
 	let new_tel = '';
 
+	let statutEnregistrement = '';
+	let loginStatus = '';
 	let email = '';
-	let pwd = '';
-	let bgRow = 'bg-grey-200';
 
-	// login du rg
 	export async function getBenevole(event) {
+		// login du rg
 		email = event.detail.text;
 		let pwd = event.detail.pwd;
 		const res = await fetch('./benevoles/benevole?email=' + email + '&rg=Oui&pwd=' + pwd);
@@ -68,84 +72,77 @@
 	}
 
 	export async function showBenevoles() {
+		// retrouve les bénévoles pour inert / update et delete
 		benevolesVisible = 'flex';
 		dateVisible = 'none';
 		calendrierVisible = 'none';
 		soireeVisible = 'none';
 		delSoireesVisible = 'none';
+
 		const res = await fetch('/benevoles');
 		const ben = await res.json();
 		benevoles = await ben.benevoles;
 	}
+
 	export async function showDate() {
+		// ajout des nouvelles soirées
 		benevolesVisible = 'none';
 		dateVisible = 'flex';
 		calendrierVisible = 'none';
 		soireeVisible = 'none';
 		delSoireesVisible = 'none';
 	}
+
 	export async function ShowCalendrier() {
+		// affichage du calendrier complet
 		benevolesVisible = 'none';
 		dateVisible = 'none';
 		calendrierVisible = 'flex';
 		soireeVisible = 'none';
 		delSoireesVisible = 'none';
-		let currentYear = new Date().getFullYear();
-		let currentMonth = new Date().getMonth() + 2;
-		let normedMonth = '0';
-		if (currentMonth <= 9) {
-			normedMonth = normedMonth.concat(currentMonth);
-		}
-		if (currentMonth > 12) {
-			normedMonth = '01';
-			currentYear = currentYear + 1;
-		}
-		soiree = normedMonth + '/' + currentYear.toString();
-		console.log(soiree);
+
+		// initialisation de soirée au mois suivant
+		soiree = MM_YYYY(1).date;
 		getCalendrier();
 	}
+
 	export async function showSoiree() {
+		// affichage des retours de soirée
 		benevolesVisible = 'none';
 		dateVisible = 'none';
 		calendrierVisible = 'none';
 		soireeVisible = 'flex';
 		delSoireesVisible = 'none';
+
 		const res = await fetch('./retourSoirees');
 		const soir = await res.json();
 		retourSoirees = await soir.retourSoirees;
 	}
+
 	export async function showDelSoirees() {
+		// Pour supprimer un mois
 		benevolesVisible = 'none';
 		dateVisible = 'none';
 		calendrierVisible = 'none';
 		soireeVisible = 'none';
 		delSoireesVisible = 'flex';
-		let currentYear = new Date().getFullYear();
-		let currentMonth = new Date().getMonth() + 2;
-		let normedMonth = '0';
-		if (currentMonth <= 9) {
-			normedMonth = normedMonth.concat(currentMonth);
-		}
-		if (currentMonth > 12) {
-			normedMonth = '01';
-			currentYear = currentYear + 1;
-		}
-		soiree = normedMonth + '/' + currentYear.toString();
+
+		// initialisation de soirée au mois suivant
+		soiree = MM_YYYY(1).date;
 	}
+
 	export async function getCalendrier() {
+		// mise en forme du calendrier
 		calendriers = [];
 		lieux = [];
 		soirees = [];
-		const soireeNormed = soiree.substring(3, 8).toString().concat(soiree.substring(0, 2));
-		console.log('Normed : ' + soireeNormed);
-		const res = await fetch('./calendrierBenevoles?soiree=' + soireeNormed);
+
+		const res = await fetch('./calendrierBenevoles?soiree=' + date_YYYYMM(soiree).date);
 		const cal = await res.json();
 
-		// remise au format des dates et des entêtes
+		// remise au format des dates et des entêtes DD/MM
 		for (var i = cal.tableau[0].length; i > 0; i--) {
-			const soireeM = cal.tableau[0][i - 1].substring(4, 6);
-			const soireeD = cal.tableau[0][i - 1].substring(6, 8);
-			cal.tableau[0][i] = soireeD + '/' + soireeM;
+			cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
 			lieux[i] =
 				'<img src="https://www.orientsport.fr/oflash/img/' +
 				cal.tableau[0][i - 1].substring(11) +
@@ -158,17 +155,22 @@
 		soirees = await cal.tableau[0];
 		// suppression de l'entête
 		calendriers = await cal.tableau.slice(1);
+
+		// calcul du nombre de bénévoles / soirées
 		nbBenevoles();
 	}
+
 	export async function deleteCalendrier() {
+		// suppression d'un mois YYYYMM
 		const soireeNormed = soiree.substring(3, 8).toString().concat(soiree.substring(0, 2));
-		console.log('Normed : ' + soireeNormed);
 		const res = await fetch('/calendrierBenevoles', {
 			method: 'DELETE',
 			body: JSON.stringify(soireeNormed)
 		});
 	}
+
 	export async function saveCalendrier() {
+		// tableau cible des mises à jour
 		var calUpdated = [];
 
 		for (var i = 0; i < calendriers.length; i++) {
@@ -178,19 +180,64 @@
 				obj.statut = calendriers[i][j].presence;
 				obj.updated = '';
 				if (calendriers[i][j].updated === 'Oui') {
+					// on n'intègre que les zones qui ont été mise à jour par CalendrierChangeStatut
 					calUpdated.push(obj);
 				}
 			}
 		}
-		console.log('0 1' + calendriers[0][1]._id);
+
 		const res = await fetch('/calendrierBenevoles', {
 			method: 'PUT',
 			body: JSON.stringify(calUpdated)
 		});
 	}
 
+	export async function addCalendrier() {
+		var obj = new Object();
+		var obj2 = new Object();
+
+		obj.soiree = soiree.replaceAll('-', '');
+		obj.statut = '';
+
+		// récupération des bénévoles
+		const res = await fetch('/benevoles');
+		let benevoles = await res.json();
+		for (var i = 0; i < benevoles.benevoles.length; i++) {
+			obj.email = benevoles.benevoles[i].email;
+			obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
+			obj.b_id = benevoles.benevoles[i]._id;
+			for (var j = 0; j <= 2; j++) {
+				if (plageActive[j]) {
+					obj.plage = plage[j];
+					obj.lieu = lieu[j];
+					const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
+						method: 'POST',
+						body: JSON.stringify(obj)
+					});
+				}
+			}
+		}
+
+		// enregistrement du retour de soirée
+		obj2.soiree = soiree.replaceAll('-', '');
+		obj2.nbGare = 0;
+		obj2.nbPeri = 0;
+		obj2.Commentaires = '';
+		obj2.rs = '';
+
+		const retourSoiree = await fetch('/retourSoirees', {
+			method: 'POST',
+			body: JSON.stringify(obj2)
+		});
+		statutEnregistrement = soiree + ' : enregistrée';
+	}
+
 	function CalendrierChangeStatut(button_id) {
+		// changement du statut du bouton appelant
+
+		// pour éviter les boucles
 		let changed = false;
+
 		let row = -1;
 		let col = -1;
 		let presence = '';
@@ -200,6 +247,7 @@
 					row = i;
 					col = j;
 					presence = calendriers[i][j].presence;
+					// pour indiquer qu'il y a eu un changement de statut
 					calendriers[i][j].updated = 'Oui';
 				}
 			}
@@ -248,10 +296,13 @@
 				changed = true;
 			}
 		}
+
+		// remise à jour du nombre de bénévoles
 		nbBenevoles();
 	}
 
 	export async function updateBenevole(b_id, prenom, nom, email, tel) {
+		// Mise à jour du bénévole
 		var obj = new Object();
 		obj._id = b_id;
 		obj.prenom = prenom;
@@ -288,7 +339,8 @@
 		showBenevoles();
 	}
 
-	function nbBenevoles() {
+	export function nbBenevoles() {
+		// calcul du nombre de bénévoles / soirées
 		presences = [];
 		presences[0] = 'Nb bénévoles';
 		for (var k = 1; k < calendriers[0].length; k++) {
@@ -311,46 +363,11 @@
 		console.log(presences);
 	}
 
-	export async function addCalendrier() {
-		var obj = new Object();
-		var obj2 = new Object();
-
-		obj.soiree = soiree.replaceAll('-', '');
-		obj.statut = '';
-		obj.actif = 'Oui';
-
-		// récupération des bénévoles actifs
-		const res = await fetch('/benevoles');
-		let benevoles = await res.json();
-		for (var i = 0; i < benevoles.benevoles.length; i++) {
-			obj.email = benevoles.benevoles[i].email;
-			obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
-			obj.b_id = benevoles.benevoles[i]._id;
-			for (var j = 0; j <= 2; j++) {
-				if (plageActive[j]) {
-					obj.plage = plage[j];
-					obj.lieu = lieu[j];
-					const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
-						method: 'POST',
-						body: JSON.stringify(obj)
-					});
-				}
-			}
-		}
-
-		// enregistrement du retour de soirée
-		obj2.soiree = soiree.replaceAll('-', '');
-		obj2.nbGare = 0;
-		obj2.nbPeri = 0;
-		obj2.Commentaires = '';
-		obj2.rs = '';
-		obj2.benevoles = '';
-
-		const retourSoiree = await fetch('/retourSoirees/addRetourSoirees', {
-			method: 'POST',
-			body: JSON.stringify(obj2)
-		});
-		statutEnregistrement = soiree + ' : enregistrée';
+	export async function benevolesSansReponse() {
+		const res = await fetch('/calendrierBenevoles/benevolesSansReponse');
+		const b = await res.json();
+		benevolesSansReponses = await b.benevoles;
+		console.log('retour ' + benevolesSansReponses[6]);
 	}
 </script>
 
@@ -495,10 +512,15 @@
 					class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
 					on:click={saveCalendrier}>Enregistrer le calendrier</button
 				>
+				<button
+					type="submit"
+					class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
+					on:click={benevolesSansReponse}>Bénévoles sans réponses</button
+				>
 			</div>
 		</div>
 
-		<table class="text-sm" id="tableCalendrier">
+		<table class="text-sm">
 			<thead class="">
 				<tr class="">
 					{#each soirees as cell}
@@ -561,67 +583,7 @@
 				{/each}
 			</tbody>
 		</table>
-		<!-- 		<div class="table text-center text-sm">
-			<div class="table-header-group">
-				{#each soirees as cell}
-					<div class=" table-cell text-center [width:2%] ">{cell}</div>
-				{/each}
-			</div>
-			<div class="table-header-group ">
-				{#each lieux as cell}
-					<div class=" table-cell  [width:2%]">
-						<div class="flex items-center justify-center">{@html cell}</div>
-					</div>
-				{/each}
-			</div>
-			<div class="table-header-group align-middle">
-				{#each presences as cell}
-					<div class=" table-cell text-center font-bold[width:2%] text-gray-500 align-middle">
-						{cell}
-					</div>
-				{/each}
-			</div>
-			{#each calendriers as row}
-				<div class="table-row-group align-middle ">
-					{#each row as cell}
-						{#if typeof cell._id != 'undefined'}
-							<div class=" table-cell text-center [width:2%] align-middle">
-								<button
-									class={cell.presence === 'Oui'
-										? 'bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded'
-										: cell.presence === 'RS'
-										? 'bg-pink-300 hover:bg-pink-400 text-gray-500 py-1 px-1 rounded'
-										: cell.presence === 'Dispo'
-										? 'bg-gray-200 hover:bg-gray-300 text-gray-600 py-1 px-1 rounded'
-										: cell.presence === 'Maraude'
-										? 'bg-yellow-400 hover:bg-yellow-600 text-gray-500 py-1 px-1 rounded'
-										: cell.presence === 'Vaisselle'
-										? 'bg-blue-300 hover:bg-blue-400 text-gray-500 py-1 px-1 rounded'
-										: cell.presence === 'Absent'
-										? 'bg-red-500 hover:bg-red-600 text-gray-200 py-1 px-1 rounded'
-										: 'text-gray-500 py-1 px-1 rounded'}
-									id={cell._id}
-									on:click={CalendrierChangeStatut(cell._id, cell.presence)}
-								>
-									{cell.presence.substring(0, 3)}
-								</button>
-							</div>
-						{:else}
-							<div class=" table-cell text-left [width:8%] align-middle py-1 px-1">
-								{cell.benevole}<br />
-								{#if cell.nbVaisselle !== ''}
-									<span class="text-xs italic text-gray-400">
-										nb Vais. : {cell.nbVaisselle} : {cell.lastVaisselle.substring(6, 8) +
-											'/' +
-											cell.lastVaisselle.substring(4, 6)}
-									</span>
-								{/if}
-							</div>
-						{/if}
-					{/each}
-				</div>
-			{/each}
-		</div> -->
+		<div style="display:none"><CalendrierExcel {soirees} {lieux} {calendriers} /></div>
 	</div>
 </div>
 <div style="display: {benevolesVisible};">
@@ -715,7 +677,7 @@
 	</div>
 </div>
 <div style="display: {soireeVisible};">
-	<div class="py-2 grid gap-1 w-full md:w-1/2">
+	<div class="py-2 grid gap-1 w-full">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer les soirées</p>
 		<RetourSoireeListe {retourSoirees} />
 	</div>

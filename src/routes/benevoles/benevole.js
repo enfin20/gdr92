@@ -1,7 +1,9 @@
 import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
+import { YYYYMMDD } from '$lib/date_functions';
 
 export async function get(request) {
+	// validation du login
 	try {
 		const email = request.query.get('email');
 		const pwd = request.query.get('pwd');
@@ -11,13 +13,14 @@ export async function get(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('Benevoles');
 		const benevole = await collection.findOne({ email: email });
+
 		if (rg === 'Oui') {
+			// pour les rg, il faut un mot de passe valide
 			if (benevole.pwd === pwd) {
 			} else {
 				benevole.rg = 'Non';
 			}
 		}
-		console.log('retour: ' + benevole.nom);
 
 		return {
 			status: 200,
@@ -61,14 +64,6 @@ export async function post(request) {
 export async function post(request) {
 	// intégration d'un nouveau bénévole
 	try {
-		let currentYear = new Date().getFullYear();
-		const currentMonth = new Date().getMonth() + 1;
-		const currentDay = new Date().getDate();
-		let normedMonth = '0';
-		if (currentMonth <= 9) {
-			normedMonth = normedMonth.concat(currentMonth);
-		}
-
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('Benevoles');
@@ -78,7 +73,7 @@ export async function post(request) {
 		//récupération des dates à venir
 		const coll2 = db.collection('CalendrierBenevoles');
 		const calendrier = await coll2
-			.find({ soiree: { $gt: currentYear.toString().concat(normedMonth).concat(currentDay) } })
+			.find({ soiree: { $gt: YYYYMMDD(0).date } })
 			.sort({ soiree: 1, plage: 1 })
 			.toArray();
 		const soirees = [

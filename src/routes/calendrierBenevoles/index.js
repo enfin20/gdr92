@@ -1,22 +1,24 @@
 import { connectToDatabase } from '$lib/db';
+import { YYYYMMDD } from '$lib/date_functions';
 import { ObjectId } from 'mongodb';
 import { each } from 'svelte/internal';
 
 export async function get(request) {
+	// retourne le tableau des présences pour un mois donné
+	// colonne: dates de soirées
+	// ligne : bénévoles
 	try {
-		let lastYear = new Date().getFullYear() - 1;
-		const currentMonth = new Date().getMonth() + 1;
-		const currentDay = new Date().getDate();
-		let normedMonth = '0';
-		if (currentMonth <= 9) {
-			normedMonth = normedMonth.concat(currentMonth);
-		}
+		// récupération du mois à requêter ($regex : YYYYMM)
+		const soiree = request.query.get('soiree');
 
+		//préparation du pipeline pour retrouver sur l'année en cours (getFullYear -1) le nombre de vaisselles et la date
+		const filter = YYYYMMDD(-1).date;
+		console.log('date : ' + filter);
 		const pipeline = [
 			{
 				$match: {
 					statut: 'Vaisselle',
-					soiree: { $gte: lastYear.toString().concat(normedMonth).concat(currentDay) }
+					soiree: { $gte: filter }
 				}
 			},
 			{
@@ -28,7 +30,6 @@ export async function get(request) {
 			}
 		];
 
-		const soiree = request.query.get('soiree');
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
@@ -36,16 +37,19 @@ export async function get(request) {
 			.find({ soiree: { $regex: soiree } })
 			.sort({ benevole: 1, soiree: 1, plage: 1 })
 			.toArray();
+		// récupération des soirées
 		const soirees = [...new Set(calendrier.map((x) => x.soiree + ' : ' + x.lieu))];
+		// récupération des bénévoles
 		const benevoles = [...new Set(calendrier.map((x) => x.benevole))];
-
-		var tableau = [];
-		tableau.push(soirees);
-
+		// récupération des vaisselles
 		const vaisselle = await collection.aggregate(pipeline).toArray();
 
+		// construction du tableau résultat
+		var tableau = [];
+		tableau.push(soirees);
 		for (var i = 0; i < benevoles.length; i++) {
 			var tab = [];
+			// pour chaque bénévole, on lui attache le nb de vaisselles et la date de la dernière
 			var ben = new Object();
 			ben.benevole = benevoles[i].substring(0, benevoles[i].indexOf(' ') + 2) + '.';
 			ben.nbVaisselle = '';
@@ -56,8 +60,10 @@ export async function get(request) {
 					ben.lastVaisselle = vaisselle[k].lastVaisselle;
 				}
 			}
+			// nenevole enregistré dans la première cellule de chaque ligne
 			tab.push(ben);
 
+			// pour chaque bénévole et chaque date, on retrouve son statut pour la soirée
 			for (var j = 0; j < soirees.length; j++) {
 				for (var k = 0; k < calendrier.length; k++) {
 					if (
@@ -76,9 +82,10 @@ export async function get(request) {
 					}
 				}
 			}
-
+			// les statuts sont ensuite mis dans le tableau final
 			tableau.push(tab);
 		}
+
 		return {
 			status: 200,
 			body: {
@@ -96,23 +103,21 @@ export async function get(request) {
 }
 
 export async function put(request) {
+	// Mise à jour des statuts des bénévoles à partir du tableau de présence (calendrier)
 	try {
-		console.log('Put calendrierBenevoles');
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = JSON.parse(request.body);
-		console.log('************');
+
 		console.log(calendrier);
 		for (var i = 0; i < calendrier.length; i++) {
-			//console.log(calendrier[i].soiree + ' ' + calendrier[i].plage);
-			console.log(calendrier[i]._id);
 			await collection.update(
 				{ _id: ObjectId(calendrier[i]._id) },
 				{ $set: { statut: calendrier[i].statut } }
 			);
 		}
-		console.log('************');
+
 		return {
 			status: 200,
 			body: {
@@ -132,12 +137,12 @@ export async function put(request) {
 export async function post(request) {}
 
 export async function del(request) {
+	// Suppression d'un mois du calendrier (YYYYMM)
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const soiree = JSON.parse(request.body);
-		console.log('soiree : ' + soiree);
 		await collection.deleteMany({ soiree: { $regex: soiree } });
 
 		return {

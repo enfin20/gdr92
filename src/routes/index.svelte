@@ -4,15 +4,17 @@
 <script>
 	import { respond } from '@sveltejs/kit/ssr';
 	import { text } from 'svelte/internal';
+	import { YYYY_MM_DD } from '$lib/date_functions';
 
-	let loggedBenevole = '';
 	let loginVisible = 'flex';
-	let statutSauvegarde =
-		' Même si tu ne viens pas du tout, enregistre-toi (ça évitera les relances)';
 	let calendrierVisible = 'none';
 	let menuVisible = 'none';
 	let retourVisible = 'none';
-	let statutVisible = 'none';
+
+	let loggedBenevole = '';
+	let statutSauvegarde =
+		' Même si tu ne viens pas du tout, enregistre-toi (ça évitera les relances)';
+
 	let soirees = [];
 	let maraude = '';
 	let prepa = '';
@@ -20,22 +22,17 @@
 	let retourSoirees = [];
 	let benevoles = [];
 	let rs = '';
-	let currentDate = new Date();
-	let soiree = currentDate
-		.getFullYear()
-		.toString()
-		.concat('-')
-		.concat(currentDate.getMonth() + 1)
-		.concat('-')
-		.concat(currentDate.getDate());
+	let soiree = YYYY_MM_DD().date;
 
 	import CalendrierForm from '/src/lib/components/calendrierForm.svelte';
 	import LoginForm from '/src/lib/components/loginForm.svelte';
 	import RetourSoireeForm from '/src/lib/components/retourSoireeForm.svelte';
 	import RetourSoireeListe from '/src/lib/components/retourSoireesListe.svelte';
+	import CalendrierComplet from '/src/lib/components/calendrierDisplay.svelte';
 	let email = '';
 
 	export async function getBenevole(event) {
+		// login et affichage du formulaire de saisie
 		email = event.detail.text;
 		const res = await fetch('/benevoles/benevole?email=' + email);
 		const benevole = await res.json();
@@ -58,6 +55,7 @@
 				rs = loggedBenevole;
 			}
 			console.log('maraude : ' + maraude + ' prepa : ' + prepa);
+
 			// pour charger le calendrier du bénévole
 			const res = await fetch('/calendrierBenevoles/calendrierBenevole?email=' + email);
 			const calendriers = await res.json();
@@ -73,8 +71,8 @@
 		}
 	}
 
-	//enregistrement du calendrier
 	export async function updateCalendrier() {
+		//enregistrement du calendrier
 		statutSauvegarde = '    ... en cours';
 		const res = await fetch('/calendrierBenevoles/calendrierBenevole', {
 			method: 'PUT',
@@ -82,14 +80,18 @@
 		});
 		statutSauvegarde = '    Calendrier enregistré';
 	}
+
 	export async function showSoiree() {
+		// affichage des soirées pour les rs
 		retourVisible = 'block';
 		calendrierVisible = 'none';
+
 		getBenevolesSoiree();
 		getRetourSoirees();
 	}
 
 	export async function getBenevolesSoiree() {
+		// affichage des bénévoles présents à la soirée
 		try {
 			const res = await fetch('/retourSoirees/retourSoiree?soiree=' + soiree);
 			const retour = await res.json();
@@ -98,7 +100,8 @@
 
 			for (var i = 0; i < ben.length; i++) {
 				var obj = new Object();
-				obj.benevole = ben[i];
+				obj.benevole = ben[i].prenom + ' ' + ben[i].nom;
+				obj.tel = ben[i].tel;
 				obj.statut = 'Oui';
 				benT.push(obj);
 			}
@@ -106,17 +109,20 @@
 
 			retourSoiree = await retour.retourSoiree[0];
 		} catch {
-			alert('Pb');
+			alert('Pb tres grave');
 		}
 	}
 
 	export async function getRetourSoirees() {
+		// affichage des précédentes soirées
 		statutSauvegarde = '';
 		const res = await fetch('./retourSoirees');
 		const soir = await res.json();
 		retourSoirees = await soir.retourSoirees;
 	}
+
 	export async function updateSoiree() {
+		// Mise à jour de la soirée
 		statutSauvegarde = '    ... en cours';
 		var retSoiree = new Object();
 		retSoiree.soiree = retourSoiree.soiree;

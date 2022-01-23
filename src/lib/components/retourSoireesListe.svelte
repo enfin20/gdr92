@@ -1,12 +1,13 @@
 <script>
 	export let retourSoirees;
-	const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+	import { date_dd_MM_YYYY } from '$lib/date_functions';
 </script>
 
-<div class="table text-center text-sm">
+<div class="table text-center text-sm ">
 	<div class="table-header-group font-bold">
-		<div class=" table-cell text-left w-1/3 align-middle py-1 px-1">Soirée</div>
-		<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">Responsable</div>
+		<div class=" table-cell text-left w-2/12 align-middle py-1 px-1">Soirée</div>
+		<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">Responsable</div>
 		<div class=" table-cell w-1/12 align-middle py-1 px-1">
 			<img
 				src="https://www.orientsport.fr/oflash/img/gare.png"
@@ -37,20 +38,14 @@
 				height="36px"
 			/>
 		</div>
-		<div class=" table-cell w-1/3  text-left align-middle py-1 px-1">Commentaires</div>
+		<div class=" table-cell w-6/12  text-left align-middle py-1 px-1">Commentaires</div>
 	</div>
 	{#each retourSoirees as cell}
 		<div class="table-row-group align-middle">
-			<div class=" table-cell text-left w-1/3 align-middle py-1 px-1">
-				{new Date(
-					cell.soiree.substring(0, 4) +
-						'-' +
-						cell.soiree.substring(4, 6) +
-						'-' +
-						cell.soiree.substring(6, 8)
-				).toLocaleDateString('fr-FR', dateOptions)}
+			<div class=" table-cell text-left w-2/12 align-middle py-1 px-1">
+				{date_dd_MM_YYYY(cell.soiree).date}
 			</div>
-			<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">
+			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
 				{cell.rs.substring(0, cell.rs.indexOf(' ') + 2) + '.'}
 			</div>
 			<div class=" table-cell w-1/12 align-middle py-1 px-1">
@@ -62,7 +57,7 @@
 			<div class=" table-cell w-1/12 align-middle py-1 px-1 font-bold">
 				{Number(cell.nbGare) + Number(cell.nbPeri)}
 			</div>
-			<div class=" table-cell w-1/3  text-left align-middle py-1 px-1">
+			<div class=" table-cell w-6/12  text-left align-middle py-1 px-1">
 				{cell.commentaires}
 			</div>
 		</div>
