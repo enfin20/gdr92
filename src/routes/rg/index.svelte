@@ -91,6 +91,7 @@
 		calendrierVisible = 'none';
 		soireeVisible = 'none';
 		delSoireesVisible = 'none';
+		soiree = MM_YYYY(1).date;
 	}
 
 	export async function ShowCalendrier() {
@@ -230,6 +231,13 @@
 			body: JSON.stringify(obj2)
 		});
 		statutEnregistrement = soiree + ' : enregistrée';
+	}
+
+	export async function inactivateCalendrier() {
+		const res = await fetch('/calendrierBenevoles/inactivate', {
+			method: 'PUT',
+			body: JSON.stringify(soiree)
+		});
 	}
 
 	function CalendrierChangeStatut(button_id) {
@@ -484,6 +492,24 @@
 				<p>{statutEnregistrement}</p>
 			</div>
 		</form>
+	</div>
+
+	<div class="py-2 grid gap-1">
+		<p class="text-2xl font-bold text-gray-800 md:text-xl">Désactiver une période</p>
+		<div class="">
+			<form on:submit|preventDefault={inactivateCalendrier}>
+				<input
+					type="text"
+					bind:value={soiree}
+					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+				/>
+				<button
+					type="submit"
+					class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
+					>Entrer</button
+				>
+			</form>
+		</div>
 	</div>
 </div>
 <div style="display: {calendrierVisible};">
