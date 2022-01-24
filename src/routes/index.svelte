@@ -143,17 +143,18 @@
 <svelte:head>
 	<title>Planning restos Colombes</title>
 </svelte:head>
-
-<a href="/rg">
-	<div class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
-		Planning {MM(new Date().getMonth()).mois}
-	</div>
-</a>
-<a href="/rg">
-	<div class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
-		Planning {MM(new Date().getMonth() + 1).mois}
-	</div>
-</a>
+<div style="display:none">
+	<a href="/rg">
+		<div class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
+			Planning {MM(new Date().getMonth()).mois}
+		</div>
+	</a>
+	<a href="/rg">
+		<div class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
+			Planning {MM(new Date().getMonth() + 1).mois}
+		</div>
+	</a>
+</div>
 <span style="display: {loginVisible};">
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login</h1>
