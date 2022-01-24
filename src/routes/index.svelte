@@ -146,12 +146,12 @@
 	<title>Planning restos Colombes</title>
 </svelte:head>
 <div class="flex py-2 w-full md:w-1/2">
-	<a href="/calendrierBenevoles?mois={YYYYMM(new Date().getMonth()).date}">
+	<a href="/calendrier?mois={YYYYMM(new Date().getMonth()).date}">
 		<div class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
 			Planning {MM(new Date().getMonth()).mois}
 		</div>
 	</a>
-	<a href="/calendrierBenevoles?mois={YYYYMM(new Date().getMonth() + 1).date}">
+	<a href="/calendrier?mois={YYYYMM(new Date().getMonth() + 1).date}">
 		<div class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
 			Planning {MM(new Date().getMonth() + 1).mois}
 		</div>
