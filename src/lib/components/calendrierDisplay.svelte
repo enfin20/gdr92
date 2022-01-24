@@ -1,5 +1,5 @@
 <script>
-	export let soirees;
+	export let dates;
 	export let lieux;
 	export let calendriers;
 </script>
@@ -8,7 +8,7 @@
 <table id="tableCalendrier" class="text-sm text-gray-500">
 	<thead>
 		<tr>
-			{#each soirees as cell}
+			{#each dates as cell}
 				<th>{cell}</th>
 			{/each}
 		</tr>

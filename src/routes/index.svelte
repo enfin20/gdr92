@@ -4,38 +4,44 @@
 <script>
 	import { respond } from '@sveltejs/kit/ssr';
 	import { text } from 'svelte/internal';
-	import { YYYY_MM_DD, MM, YYYYMM } from '$lib/date_functions';
+	import { YYYY_MM_DD, MM, YYYYMM, date_mm_YYYY, date_DD_MM } from '$lib/date_functions';
 
 	let loginVisible = 'flex';
 	let calendrierVisible = 'none';
 	let menuVisible = 'none';
 	let retourVisible = 'none';
+	let planningVisible = 'none';
 
 	let loggedBenevole = '';
 	let statutSauvegarde =
 		' Même si tu ne viens pas du tout, enregistre-toi (ça évitera les relances)';
 
 	let soirees = [];
+	let dates = [];
+	let calendriers = [];
+	let lieux = [];
+	let mois = '';
 	let maraude = '';
 	let prepa = '';
 	let retourSoiree = [];
 	let retourSoirees = [];
 	let benevoles = [];
 	let rs = '';
+	let chargement = '';
 	let soiree = YYYY_MM_DD().date;
 
 	import CalendrierForm from '/src/lib/components/calendrierForm.svelte';
 	import LoginForm from '/src/lib/components/loginForm.svelte';
 	import RetourSoireeForm from '/src/lib/components/retourSoireeForm.svelte';
 	import RetourSoireeListe from '/src/lib/components/retourSoireesListe.svelte';
-	import CalendrierComplet from '/src/lib/components/calendrierDisplay.svelte';
+	import CalendrierTableau from '/src/lib/components/calendrierDisplay.svelte';
 	let email = '';
 
 	export async function getBenevole(event) {
 		// login et affichage du formulaire de saisie
 		email = event.detail.text;
 		email = email.toLowerCase();
-		console.log('email ' + email);
+
 		const res = await fetch('/benevoles/benevole?email=' + email);
 		const benevole = await res.json();
 		try {
@@ -64,6 +70,7 @@
 			try {
 				loginVisible = 'none';
 				calendrierVisible = 'inline';
+				planningVisible = 'none';
 				soirees = calendriers.calendrier;
 			} catch {
 				console.log('il y a un probleme de connexion');
@@ -90,6 +97,20 @@
 
 		getBenevolesSoiree();
 		getRetourSoirees();
+	}
+
+	export async function showPlanningM() {
+		// affichage du planning pour le mois en cours
+		mois = YYYYMM(new Date().getMonth()).date;
+
+		getPlanning();
+	}
+
+	export async function showPlanningM2() {
+		// affichage du planning pour le mois suivant
+		mois = YYYYMM(new Date().getMonth() + 1).date;
+
+		getPlanning();
 	}
 
 	export async function getBenevolesSoiree() {
@@ -123,6 +144,38 @@
 		retourSoirees = await soir.retourSoirees;
 	}
 
+	export async function getPlanning() {
+		chargement = 'Chargement en cours ...';
+		dates = [];
+		calendriers = [];
+		lieux = [];
+		retourVisible = 'none';
+		calendrierVisible = 'none';
+		planningVisible = 'block';
+
+		// mise en forme du calendrier
+		const res = await fetch('./calendrierBenevoles?soiree=' + mois);
+		const cal = await res.json();
+
+		// remise au format des dates et des entêtes DD/MM
+		for (var i = cal.tableau[0].length; i > 0; i--) {
+			cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
+			lieux[i] =
+				'<img src="https://www.orientsport.fr/oflash/img/' +
+				cal.tableau[0][i - 1].substring(11) +
+				'.png" alt ="' +
+				cal.tableau[0][i - 1].substring(11) +
+				'" width="32px" height="32px"/>';
+		}
+		lieux[0] = '';
+		cal.tableau[0][0] = 'Calendrier ';
+		dates = await cal.tableau[0];
+		// suppression de l'entête
+		calendriers = await cal.tableau.slice(1);
+
+		chargement = '';
+	}
+
 	export async function updateSoiree() {
 		// Mise à jour de la soirée
 		statutSauvegarde = '    ... en cours';
@@ -146,16 +199,29 @@
 	<title>Planning restos Colombes</title>
 </svelte:head>
 <div class="flex py-2 w-full md:w-1/2">
-	<a href="/calendrier?mois={YYYYMM(new Date().getMonth()).date}">
-		<div class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
+	<div class="mr-3 inline-block text-gray-600">
+		<button
+			type="submit"
+			name="s"
+			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+			on:click={showPlanningM}
+		>
 			Planning {MM(new Date().getMonth()).mois}
-		</div>
-	</a>
-	<a href="/calendrier?mois={YYYYMM(new Date().getMonth() + 1).date}">
-		<div class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
+		</button>
+	</div>
+	<div class="mr-3 inline-block text-gray-600">
+		<button
+			type="submit"
+			name="s"
+			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+			on:click={showPlanningM2}
+		>
 			Planning {MM(new Date().getMonth() + 1).mois}
-		</div>
-	</a>
+		</button>
+	</div>
+	<div class="mr-3 inline-block text-gray-600">
+		{chargement}
+	</div>
 	<div class="mr-3 inline-block text-gray-600" style="display: {menuVisible};">
 		<input
 			id="soiree"
@@ -180,9 +246,8 @@
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login</h1>
 
 		<LoginForm {email} on:message={getBenevole} />
-	</div></span
->
-
+	</div>
+</span>
 <div style="display: {calendrierVisible};">
 	<div class="py-2 grid gap-1">
 		<form class="my-1" on:submit|preventDefault={updateCalendrier}>
@@ -278,5 +343,15 @@
 
 	<div class="py-2 grid gap-1 w-full">
 		<RetourSoireeListe {retourSoirees} />
+	</div>
+</div>
+<div style="display: {planningVisible};">
+	<div class="flex py-2 w-full">
+		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">
+			Planning de {date_mm_YYYY(mois).date}
+		</h1>
+	</div>
+	<div class="flex py-2 w-full">
+		<CalendrierTableau {dates} {lieux} {calendriers} />
 	</div>
 </div>
