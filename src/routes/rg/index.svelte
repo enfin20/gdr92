@@ -15,8 +15,6 @@
 	import LoginForm from '/src/lib/components/loginForm.svelte';
 	import RetourSoireeListe from '/src/lib/components/retourSoireesListe.svelte';
 
-	import CalendrierExcel from '/src/lib/components/calendrierDisplay.svelte';
-
 	let calendriers = [];
 	var presences = [];
 	let benevoles = [];
@@ -609,7 +607,6 @@
 				{/each}
 			</tbody>
 		</table>
-		<div style="display:none"><CalendrierExcel {soirees} {lieux} {calendriers} /></div>
 	</div>
 </div>
 <div style="display: {benevolesVisible};">
