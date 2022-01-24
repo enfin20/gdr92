@@ -4,7 +4,7 @@
 <script>
 	import { respond } from '@sveltejs/kit/ssr';
 	import { text } from 'svelte/internal';
-	import { YYYY_MM_DD, MM } from '$lib/date_functions';
+	import { YYYY_MM_DD, MM, YYYYMM } from '$lib/date_functions';
 
 	let loginVisible = 'flex';
 	let calendrierVisible = 'none';
@@ -143,17 +143,35 @@
 <svelte:head>
 	<title>Planning restos Colombes</title>
 </svelte:head>
-<div style="display:none">
-	<a href="/rg">
-		<div class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
+<div class="flex py-2 w-full md:w-1/2">
+	<a href="/calendrierBenevoles?mois={YYYYMM(new Date().getMonth()).date}">
+		<div class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
 			Planning {MM(new Date().getMonth()).mois}
 		</div>
 	</a>
-	<a href="/rg">
-		<div class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
+	<a href="/calendrierBenevoles?mois={YYYYMM(new Date().getMonth() + 1).date}">
+		<div class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
 			Planning {MM(new Date().getMonth() + 1).mois}
 		</div>
 	</a>
+	<div class="mr-3 inline-block text-gray-600" style="display: {menuVisible};">
+		<input
+			id="soiree"
+			type="date"
+			bind:value={soiree}
+			class="bg-gray-200 inline-block appearance-none border-2 border-gray-200 rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+		/>
+	</div>
+	<div class="mr-3 inline-block text-gray-600" style="display: {menuVisible};">
+		<button
+			type="submit"
+			name="s"
+			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+			on:click={showSoiree}
+		>
+			Retour soirée
+		</button>
+	</div>
 </div>
 <span style="display: {loginVisible};">
 	<div class="py-4 grid gap-1">
@@ -162,27 +180,7 @@
 		<LoginForm {email} on:message={getBenevole} />
 	</div></span
 >
-<div style="display: {menuVisible};">
-	<div class="w-1/2 md:w-1/6">
-		<input
-			id="soiree"
-			type="date"
-			bind:value={soiree}
-			class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
-		/>
-	</div>
-	<div class="md:w-1/12" />
-	<div class="w-1/2 md:w-1/3">
-		<button
-			type="submit"
-			name="s"
-			class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-2 px-4  text-gray-600"
-			on:click={showSoiree}
-		>
-			Retour soirée
-		</button>
-	</div>
-</div>
+
 <div style="display: {calendrierVisible};">
 	<div class="py-2 grid gap-1">
 		<form class="my-1" on:submit|preventDefault={updateCalendrier}>

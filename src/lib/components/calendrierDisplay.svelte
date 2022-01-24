@@ -18,9 +18,9 @@
 			{/each}
 		</tr>
 	</thead>
-	<tbody>
+	<tbody class="divide-y divide-gray-100">
 		{#each calendriers as row}
-			<tr class="items-center justify-center">
+			<tr class="hover:bg-slate-100 text-center">
 				{#each row as cell}
 					{#if typeof cell._id != 'undefined'}
 						<td

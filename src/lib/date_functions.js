@@ -122,6 +122,13 @@ export function date_dd_MM_YYYY(date) {
 		).toLocaleDateString('fr-FR', dateOptions)
 	};
 }
+export function date_mm_YYYY(date) {
+	// YYYYMM --> MM YYYY, décalage de - 1 dans le tableau
+	const mois = MM(Number(date.substring(4, 6)) - 1).mois;
+	return {
+		date: mois + ' ' + date.substring(0, 4)
+	};
+}
 
 export function date_YYYYMMDD(date) {
 	// DD/MM/YYYY --> YYYYMMDD

@@ -13,7 +13,8 @@ export async function get(request) {
 		const calendrier = await collection
 			.find({
 				email: email,
-				soiree: { $regex: YYYYMM(1).date }
+				soiree: { $regex: YYYYMM(1).date },
+				actif: { $ne: 'Non' }
 			})
 			.sort({ soiree: 1, plage: 1 })
 			.toArray();
