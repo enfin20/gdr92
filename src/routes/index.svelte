@@ -34,6 +34,8 @@
 	export async function getBenevole(event) {
 		// login et affichage du formulaire de saisie
 		email = event.detail.text;
+		email = email.toLowerCase();
+		console.log('email ' + email);
 		const res = await fetch('/benevoles/benevole?email=' + email);
 		const benevole = await res.json();
 		try {
