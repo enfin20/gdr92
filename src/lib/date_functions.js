@@ -34,6 +34,29 @@ export function YYYYMM(shift = 0) {
 	};
 }
 
+export function MM(date) {
+	// date = indice
+
+	const mois = [
+		'Janvier',
+		'Février',
+		'Mars',
+		'Avril',
+		'Mai',
+		'Juin',
+		'Juillet',
+		'Août',
+		'Septembre',
+		'Octobre',
+		'Novembre',
+		'Décembre'
+	];
+
+	return {
+		mois: mois[date]
+	};
+}
+
 export function MM_YYYY(shift = 0) {
 	// shift : 1 --> mois suivant
 	let currentYear = new Date().getFullYear();

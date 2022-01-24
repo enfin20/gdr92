@@ -4,7 +4,7 @@
 <script>
 	import { respond } from '@sveltejs/kit/ssr';
 	import { text } from 'svelte/internal';
-	import { YYYY_MM_DD } from '$lib/date_functions';
+	import { YYYY_MM_DD, MM } from '$lib/date_functions';
 
 	let loginVisible = 'flex';
 	let calendrierVisible = 'none';
@@ -144,6 +144,16 @@
 	<title>Planning restos Colombes</title>
 </svelte:head>
 
+<a href="/rg">
+	<div class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
+		Planning {MM(new Date().getMonth()).mois}
+	</div>
+</a>
+<a href="/rg">
+	<div class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600">
+		Planning {MM(new Date().getMonth() + 1).mois}
+	</div>
+</a>
 <span style="display: {loginVisible};">
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login</h1>
@@ -164,7 +174,7 @@
 	<div class="w-1/2 md:w-1/3">
 		<button
 			type="submit"
-			name="benevoles"
+			name="s"
 			class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-2 px-4  text-gray-600"
 			on:click={showSoiree}
 		>
@@ -196,17 +206,11 @@
 	</div>
 </div>
 <div style="display: {retourVisible};">
-	<div class="py-2 grid gap-1 w-full md:w-1/2">
-		<div class="md:flex md:items-center mb-2">
-			<div class="md:w-1/2">
-				<span class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-					Responsable soirée
-				</span>
-			</div>
-			<div class="md:w-1/2">
-				<span class="block text-gray-500 font-bold  mb-1 md:mb-0 pr-4">
-					{rs}
-				</span>
+	<div class="py-2 w-full md:w-1/2">
+		<div class="flex mb-2 text-gray-500 font-bold">
+			<div class="w-1/2">Responsable soirée</div>
+			<div class="w-1/2">
+				{rs}
 			</div>
 		</div>
 
@@ -214,13 +218,11 @@
 			<RetourSoireeForm {benevole} />
 		{/each}
 
-		<div class="md:flex md:items-center mb-2">
-			<div class="md:w-1/2">
-				<label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="gare">
-					Nombre Gare
-				</label>
+		<div class="py-2 flex w-full">
+			<div class=" w-1/2">
+				<label class="text-gray-500 font-bold" for="gare"> Nombre Gare </label>
 			</div>
-			<div class="md:w-1/2">
+			<div class="w-1/2">
 				<input
 					type="text"
 					bind:value={retourSoiree.nbGare}
@@ -230,13 +232,11 @@
 				/>
 			</div>
 		</div>
-		<div class="md:flex md:items-center mb-2">
-			<div class="md:w-1/2">
-				<label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="peri">
-					Nombre Gabriel Péri
-				</label>
+		<div class="py-2 flex w-full">
+			<div class="w-1/2">
+				<label class="block text-gray-500 font-bold" for="peri"> Nombre Gabriel Péri </label>
 			</div>
-			<div class="md:w-1/2">
+			<div class="w-1/2">
 				<input
 					type="text"
 					bind:value={retourSoiree.nbPeri}
@@ -246,16 +246,11 @@
 				/>
 			</div>
 		</div>
-		<div class="md:flex md:items-center mb-2">
-			<div class="md:w-1/2">
-				<label
-					class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-					for="commentaires"
-				>
-					Commentaires
-				</label>
+		<div class="py-2 flex w-full">
+			<div class="w-1/2">
+				<label class="block text-gray-500 font-bold" for="commentaires"> Commentaires </label>
 			</div>
-			<div class="md:w-1/2">
+			<div class="w-1/2">
 				<textarea
 					rows="10"
 					bind:value={retourSoiree.commentaires}
@@ -265,9 +260,9 @@
 			</div>
 		</div>
 		<form class="my-6" on:submit|preventDefault={updateSoiree}>
-			<div class="md:flex md:items-center">
-				<div class="md:w-1/2" />
-				<div class="md:w-1/2">
+			<div class="py-2 flex w-full">
+				<div class="w-1/2" />
+				<div class="w-1/2">
 					<button
 						type="submit"
 						class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
@@ -280,7 +275,7 @@
 		</form>
 	</div>
 
-	<div class="py-2 grid gap-1 w-full md:w-1/2">
+	<div class="py-2 grid gap-1 w-full">
 		<RetourSoireeListe {retourSoirees} />
 	</div>
 </div>

@@ -20,14 +20,13 @@
 	}
 </script>
 
-<div class="md:flex md:items-center mb-1">
-	<div class="md:w-1/3" />
-	<div class="md:w-1/2">
+<div class="flex  mb-1">
+	<div class="w-1/2">
 		<span class="block text-gray-500 md:text-left mb-1 md:mb-0 pr-4 text-sm">
 			{benevole.benevole}
 		</span>
 	</div>
-	<div class="md:w-1/6">
+	<div class="w-1/4">
 		<span class="block text-gray-500 md:text-left mb-1 md:mb-0 pr-4 text-sm">
 			<a href="tel:+{benevole.tel}"
 				><img
@@ -39,7 +38,7 @@
 			</a>
 		</span>
 	</div>
-	<div class="md:w-1/6">
+	<div class="w-1/4">
 		<button
 			class=" text-gray-600 font-bold py-1 px-2 rounded {buttonStatutBg} text-sm"
 			on:click={ChangeStatus}>{benevole.statut}</button
