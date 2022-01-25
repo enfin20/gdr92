@@ -1,5 +1,4 @@
 <script>
-	import Nav from '../lib/components/nav.svelte';
 </script>
 
 <div class="container my-5 max-w-7xl mx-auto">

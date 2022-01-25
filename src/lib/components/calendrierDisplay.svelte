@@ -5,7 +5,7 @@
 </script>
 
 <!-- table pour les impressions -->
-<table id="tableCalendrier" class="text-sm text-gray-500">
+<table id="tableCalendrier" class="text-sm text-gray-500 w-full">
 	<thead>
 		<tr>
 			{#each dates as cell}

@@ -701,7 +701,7 @@
 </div>
 <div style="display: {soireeVisible};">
 	<div class="py-2 grid gap-1 w-full">
-		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer les soirées</p>
+		<p class="text-2xl font-bold text-gray-800 md:text-xl">Soirées</p>
 		<RetourSoireeListe {retourSoirees} />
 	</div>
 </div>
