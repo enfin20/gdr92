@@ -85,7 +85,7 @@
 	export async function showDate() {
 		// ajout des nouvelles soirées
 		benevolesVisible = 'none';
-		dateVisible = 'flex';
+		dateVisible = 'block';
 		calendrierVisible = 'none';
 		soireeVisible = 'none';
 		delSoireesVisible = 'none';
@@ -431,8 +431,8 @@
 	</button>
 </div>
 <div style="display: {dateVisible};">
-	<div class="py-2 w-full">
-		<div class="block w-full">
+	<div class="py-2  ">
+		<div class=" w-full">
 			<p class="text-2xl font-bold text-gray-800 md:text-xl">Ajouter une soirée</p>
 		</div>
 		<form class="my-1" on:submit|preventDefault={addCalendrier}>
@@ -494,7 +494,7 @@
 		</form>
 	</div>
 
-	<div class="py-2 w-full">
+	<div class="py-2 block w-full">
 		<div class="block w-full">
 			<p class="text-2xl font-bold text-gray-800 md:text-xl">Désactiver une période</p>
 		</div>
