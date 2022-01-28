@@ -7,10 +7,10 @@
 	import { YYYY_MM_DD, MM, YYYYMM, date_mm_YYYY, date_DD_MM } from '$lib/date_functions';
 
 	let loginVisible = 'flex';
-	let calendrierVisible = 'none';
-	let menuVisible = 'none';
-	let retourVisible = 'none';
-	let planningVisible = 'none';
+	let calendrierVisible = 'hidden';
+	let menuVisible = 'hidden';
+	let retourVisible = 'hidden';
+	let planningVisible = 'hidden';
 
 	let loggedBenevole = '';
 	let statutSauvegarde =
@@ -57,20 +57,19 @@
 				prepa = benevole.benevole.prepa;
 			}
 			if (benevole.benevole.rs === undefined) {
-				menuVisible = 'Non';
+				menuVisible = 'hidden';
 			} else {
-				menuVisible = 'flex';
+				menuVisible = 'block md:inline-block  py-2 md:py-0';
 				rs = loggedBenevole;
 			}
-			console.log('maraude : ' + maraude + ' prepa : ' + prepa);
 
 			// pour charger le calendrier du bénévole
 			const res = await fetch('/calendrierBenevoles/calendrierBenevole?email=' + email);
 			const calendriers = await res.json();
 			try {
-				loginVisible = 'none';
+				loginVisible = 'hidden';
 				calendrierVisible = 'inline';
-				planningVisible = 'none';
+				planningVisible = 'hidden';
 				soirees = calendriers.calendrier;
 			} catch {
 				console.log('il y a un probleme de connexion');
@@ -90,13 +89,47 @@
 		statutSauvegarde = '    Calendrier enregistré';
 	}
 
-	export async function showSoiree() {
-		// affichage des soirées pour les rs
-		retourVisible = 'block';
-		calendrierVisible = 'none';
+	export function reload() {
+		loginVisible = 'flex';
+		calendrierVisible = 'hidden';
+		menuVisible = 'hidden';
+		retourVisible = 'hidden';
+		planningVisible = 'hidden';
 
-		getBenevolesSoiree();
-		getRetourSoirees();
+		loggedBenevole = '';
+		statutSauvegarde = ' Même si tu ne viens pas du tout, enregistre-toi (ça évitera les relances)';
+
+		soirees = [];
+		dates = [];
+		calendriers = [];
+		lieux = [];
+		mois = '';
+		maraude = '';
+		prepa = '';
+		retourSoiree = [];
+		retourSoirees = [];
+		benevoles = [];
+		rs = '';
+		chargement = '';
+		soiree = YYYY_MM_DD().date;
+	}
+
+	export async function showSoiree() {
+		chargement = 'Chargement en cours ...';
+		// vérification de l'existence de la soirée à la date saisie
+		const res = await fetch('./retourSoirees/isSoiree?soiree=' + soiree);
+		const soir = await res.json();
+
+		if (soir.retourSoirees.length === 1) {
+			// affichage des soirées pour les rs
+			retourVisible = 'block';
+			calendrierVisible = 'hidden';
+			getBenevolesSoiree();
+			getRetourSoirees();
+		} else {
+			alert('pas de soirée à cette date !');
+		}
+		chargement = '';
 	}
 
 	export async function showPlanningM() {
@@ -115,11 +148,15 @@
 
 	export async function getBenevolesSoiree() {
 		// affichage des bénévoles présents à la soirée
+		benevoles = [];
 		try {
 			const res = await fetch('/retourSoirees/retourSoiree?soiree=' + soiree);
 			const retour = await res.json();
 			const ben = await retour.benevoles;
 			const benT = [];
+			if (ben.length < 1) {
+				alert("il n'y a pas eu de soirée à cette date! il faut recharger la page");
+			}
 
 			for (var i = 0; i < ben.length; i++) {
 				var obj = new Object();
@@ -139,6 +176,7 @@
 	export async function getRetourSoirees() {
 		// affichage des précédentes soirées
 		statutSauvegarde = '';
+		retourSoirees = [];
 		const res = await fetch('./retourSoirees');
 		const soir = await res.json();
 		retourSoirees = await soir.retourSoirees;
@@ -149,8 +187,8 @@
 		dates = [];
 		calendriers = [];
 		lieux = [];
-		retourVisible = 'none';
-		calendrierVisible = 'none';
+		retourVisible = 'hidden';
+		calendrierVisible = 'hidden';
 		planningVisible = 'block';
 
 		// mise en forme du calendrier
@@ -198,11 +236,13 @@
 <svelte:head>
 	<title>Planning restos Colombes</title>
 </svelte:head>
-<div class="flex py-2 w-full md:w-1/2">
-	<div class="mr-3 inline-block text-gray-600 w-1/6">
-		<img src="https://www.orientsport.fr/oflash/img/logo.webp" alt="Restos du coeur" />
+<div class="block md:flex w-full">
+	<div class="mr-3 hidden md:inline-block text-gray-600 md:w-1/12">
+		<button type="submit" name="s2" on:click={reload}>
+			<img src="https://www.orientsport.fr/oflash/img/logo.webp" alt="Restos du coeur" /></button
+		>
 	</div>
-	<div class="mr-3 py-4 inline-block text-gray-600">
+	<div class="mr-3 md:py-4 inline-block text-gray-600">
 		<button
 			type="submit"
 			name="s"
@@ -212,7 +252,7 @@
 			Planning {MM(new Date().getMonth()).mois}
 		</button>
 	</div>
-	<div class="mr-3 py-4 inline-block text-gray-600">
+	<div class="mr-3 md:py-4 inline-block text-gray-600">
 		<button
 			type="submit"
 			name="s"
@@ -222,36 +262,38 @@
 			Planning {MM(new Date().getMonth() + 1).mois}
 		</button>
 	</div>
-	<div class="mr-3 inline-block text-gray-600">
+	<div class={menuVisible}>
+		<div class="mr-3 md:py-4 inline-block text-gray-600 ">
+			<input
+				id="soiree"
+				type="date"
+				bind:value={soiree}
+				class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+			/>
+		</div>
+		<div class="mr-3 md:py-4 inline-block text-gray-600 ">
+			<button
+				type="submit"
+				name="s"
+				class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+				on:click={showSoiree}
+			>
+				Retour soirée
+			</button>
+		</div>
+	</div>
+	<div class="mr-3 md:py-4 inline-block text-gray-600">
 		{chargement}
 	</div>
-	<div class="mr-3 inline-block text-gray-600" style="display: {menuVisible};">
-		<input
-			id="soiree"
-			type="date"
-			bind:value={soiree}
-			class="bg-gray-200 inline-block appearance-none border-2 border-gray-200 rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
-		/>
-	</div>
-	<div class="mr-3 inline-block text-gray-600" style="display: {menuVisible};">
-		<button
-			type="submit"
-			name="s"
-			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
-			on:click={showSoiree}
-		>
-			Retour soirée
-		</button>
-	</div>
 </div>
-<span style="display: {loginVisible};">
+<span class={loginVisible}>
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login</h1>
 
 		<LoginForm {email} on:message={getBenevole} />
 	</div>
 </span>
-<div style="display: {calendrierVisible};">
+<div class={calendrierVisible}>
 	<div class="py-2 grid gap-1">
 		<form class="my-1" on:submit|preventDefault={updateCalendrier}>
 			<span class="text-2xl my-2 font-bold text-gray-800 md:text-2xl">{loggedBenevole}</span>
@@ -274,7 +316,7 @@
 		</div>
 	</div>
 </div>
-<div style="display: {retourVisible};">
+<div class={retourVisible}>
 	<div class="py-2 w-full md:w-1/2">
 		<div class="flex mb-2 text-gray-500 font-bold">
 			<div class="w-1/2">Responsable soirée</div>
@@ -348,7 +390,7 @@
 		<RetourSoireeListe {retourSoirees} />
 	</div>
 </div>
-<div style="display: {planningVisible};">
+<div class={planningVisible}>
 	<div class="flex py-2 w-full">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">
 			Planning de {date_mm_YYYY(mois).date}
