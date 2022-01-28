@@ -2,7 +2,7 @@
 </script>
 
 <script>
-	import { MM_YYYY, date_YYYYMM, date_DD_MM } from '$lib/date_functions';
+	import { MM_YYYY, date_YYYYMM, date_DD_MM, MM, YYYYMM, date_YYYYMMDD } from '$lib/date_functions';
 	import { respond } from '@sveltejs/kit/ssr';
 	import {
 		claim_element,
@@ -16,22 +16,26 @@
 	import RetourSoireeListe from '/src/lib/components/retourSoireesListe.svelte';
 
 	let calendriers = [];
-	var presences = [];
+	var nbPresent = [];
+	var nbRS = [];
+	var nbVaisselle = [];
 	let benevoles = [];
 	let benevolesSansReponses = [];
 	let soiree = '';
+	let soiree2 = MM_YYYY(1).date;
 	let soirees = [];
 	let retourSoirees = [];
 	let lieux = [];
 
 	let loginVisible = 'flex';
 	const pwdVisible = 'flex';
-	let menuVisible = 'none';
-	let calendrierVisible = 'none';
-	let dateVisible = 'none';
-	let benevolesVisible = 'none';
-	let soireeVisible = 'none';
-	let delSoireesVisible = 'none';
+	let menuVisible = 'hidden';
+	let calendrierVisible = 'hidden';
+	let dateVisible = 'hidden';
+	let benevolesVisible = 'hidden';
+	let soireeVisible = 'hidden';
+	let delSoireesVisible = 'hidden';
+	let benevolesSansReponseVisible = 'hidden';
 
 	// nouvelle soirée
 	let plageActive = [true, true, true];
@@ -48,6 +52,15 @@
 	let loginStatus = '';
 	let email = '';
 
+	export function divHidden() {
+		calendrierVisible = 'hidden';
+		dateVisible = 'hidden';
+		benevolesVisible = 'hidden';
+		soireeVisible = 'hidden';
+		delSoireesVisible = 'hidden';
+		benevolesSansReponseVisible = 'hidden';
+	}
+
 	export async function getBenevole(event) {
 		// login du rg
 		email = event.detail.text;
@@ -57,12 +70,12 @@
 		try {
 			if (benevole.benevole.rg === 'Oui') {
 				menuVisible = 'flex';
-				loginVisible = 'none';
+				loginVisible = 'hidden';
 			} else {
 				loginStatus = 'Email ou mot de passe non valide !';
-				menuVisible = 'none';
-				calendrierVisible = 'none';
-				dateVisible = 'none';
+				menuVisible = 'hidden';
+				calendrierVisible = 'hidden';
+				dateVisible = 'hidden';
 			}
 		} catch {
 			alert('Email non valide');
@@ -71,11 +84,8 @@
 
 	export async function showBenevoles() {
 		// retrouve les bénévoles pour inert / update et delete
+		divHidden();
 		benevolesVisible = 'flex';
-		dateVisible = 'none';
-		calendrierVisible = 'none';
-		soireeVisible = 'none';
-		delSoireesVisible = 'none';
 
 		const res = await fetch('/benevoles');
 		const ben = await res.json();
@@ -84,34 +94,24 @@
 
 	export async function showDate() {
 		// ajout des nouvelles soirées
-		benevolesVisible = 'none';
+		divHidden();
 		dateVisible = 'block';
-		calendrierVisible = 'none';
-		soireeVisible = 'none';
-		delSoireesVisible = 'none';
 		soiree = MM_YYYY(1).date;
 	}
 
 	export async function ShowCalendrier() {
 		// affichage du calendrier complet
-		benevolesVisible = 'none';
-		dateVisible = 'none';
+		divHidden();
 		calendrierVisible = 'flex';
-		soireeVisible = 'none';
-		delSoireesVisible = 'none';
 
 		// initialisation de soirée au mois suivant
-		soiree = MM_YYYY(1).date;
-		getCalendrier();
+		showPlanningM2();
 	}
 
 	export async function showSoiree() {
 		// affichage des retours de soirée
-		benevolesVisible = 'none';
-		dateVisible = 'none';
-		calendrierVisible = 'none';
+		divHidden();
 		soireeVisible = 'flex';
-		delSoireesVisible = 'none';
 
 		const res = await fetch('./retourSoirees');
 		const soir = await res.json();
@@ -120,23 +120,31 @@
 
 	export async function showDelSoirees() {
 		// Pour supprimer un mois
-		benevolesVisible = 'none';
-		dateVisible = 'none';
-		calendrierVisible = 'none';
-		soireeVisible = 'none';
+		divHidden();
 		delSoireesVisible = 'flex';
 
 		// initialisation de soirée au mois suivant
 		soiree = MM_YYYY(1).date;
 	}
 
+	export async function showBenevolesSansReponse() {
+		// Pour supprimer un mois
+		divHidden();
+		benevolesSansReponseVisible = 'flex';
+
+		// presentation de la liste des benevoles n'ayant pas répondu
+
+		const res = await fetch('/calendrierBenevoles/benevolesSansReponse');
+		const b = await res.json();
+		benevolesSansReponses = await b.benevoles;
+	}
 	export async function getCalendrier() {
 		// mise en forme du calendrier
 		calendriers = [];
 		lieux = [];
 		soirees = [];
 
-		const res = await fetch('./calendrierBenevoles?soiree=' + date_YYYYMM(soiree).date);
+		const res = await fetch('./calendrierBenevoles?soiree=' + soiree);
 		const cal = await res.json();
 
 		// remise au format des dates et des entêtes DD/MM
@@ -345,35 +353,57 @@
 		showBenevoles();
 	}
 
+	export async function showPlanningM() {
+		// affichage du planning pour le mois en cours
+		soiree = YYYYMM(new Date().getMonth()).date;
+
+		getCalendrier();
+	}
+
+	export async function showPlanningM2() {
+		// affichage du planning pour le mois suivant
+		soiree = YYYYMM(new Date().getMonth() + 1).date;
+
+		getCalendrier();
+	}
+
+	export async function showPlanning() {
+		// affichage du planning pour le mois X
+		soiree = date_YYYYMM(soiree2).date;
+
+		getCalendrier();
+	}
+
 	export function nbBenevoles() {
 		// calcul du nombre de bénévoles / soirées
-		presences = [];
-		presences[0] = 'Nb bénévoles';
+		nbPresent = [];
+		nbPresent[0] = 'Nb bénévoles';
+		nbRS = [];
+		nbRS[0] = 'nb RS';
+		nbVaisselle = [];
+		nbVaisselle[0] = 'nb Vaisselle';
 		for (var k = 1; k < calendriers[0].length; k++) {
-			presences[k] = 0;
+			nbPresent[k] = 0;
+			nbRS[k] = 0;
+			nbVaisselle[k] = 0;
 		}
 
 		for (var i = 0; i < calendriers.length; i++) {
 			for (var j = 1; j < calendriers[i].length; j++) {
 				if (calendriers[i][j].presence === 'Oui') {
-					presences[j] = presences[j] + 1;
+					nbPresent[j] = nbPresent[j] + 1;
 				}
 				if (calendriers[i][j].presence === 'RS') {
-					presences[j] = presences[j] + 1;
+					nbPresent[j] = nbPresent[j] + 1;
+					nbRS[j] = nbRS[j] + 1;
 				}
 				if (calendriers[i][j].presence === 'Vaisselle') {
-					presences[j] = presences[j] + 1;
+					nbPresent[j] = nbPresent[j] + 1;
+					nbVaisselle[j] = nbVaisselle[j] + 1;
 				}
 			}
 		}
-		console.log(presences);
-	}
-
-	export async function benevolesSansReponse() {
-		const res = await fetch('/calendrierBenevoles/benevolesSansReponse');
-		const b = await res.json();
-		benevolesSansReponses = await b.benevoles;
-		console.log('retour ' + benevolesSansReponses[6]);
+		console.log(nbPresent);
 	}
 </script>
 
@@ -381,14 +411,14 @@
 	<title>Planning restos Colombes</title>
 </svelte:head>
 
-<span style="display: {loginVisible};">
+<span class={loginVisible}>
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login Responsable du groupe</h1>
 		<LoginForm {email} {pwdVisible} on:message={getBenevole} />
 		<div>{loginStatus}</div>
 	</div>
 </span>
-<div style="display: {menuVisible};">
+<div class={menuVisible}>
 	<button
 		type="submit"
 		name="benevoles"
@@ -415,6 +445,14 @@
 	</button>
 	<button
 		type="submit"
+		name="benevolesSansReponse"
+		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
+		on:click={showBenevolesSansReponse}
+	>
+		Bén. sans réponse
+	</button>
+	<button
+		type="submit"
 		name="soiree"
 		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
 		on:click={showSoiree}
@@ -430,7 +468,7 @@
 		Suppression
 	</button>
 </div>
-<div style="display: {dateVisible};">
+<div class={dateVisible}>
 	<div class="py-2  ">
 		<div class=" w-full">
 			<p class="text-2xl font-bold text-gray-800 md:text-xl">Ajouter une soirée</p>
@@ -516,22 +554,43 @@
 		</form>
 	</div>
 </div>
-<div style="display: {calendrierVisible};">
+<div class={calendrierVisible}>
 	<div class="py-2 grid gap-1 w-full">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer le calendrier</p>
 		<div class="md:flex md:items-center">
-			<div class="md:w-2/3">
-				<form on:submit|preventDefault={getCalendrier}>
+			<div class="mr-3 md:py-4 inline-block text-gray-600">
+				<button
+					type="submit"
+					name="s"
+					class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+					on:click={showPlanningM}
+				>
+					Planning {MM(new Date().getMonth()).mois}
+				</button>
+			</div>
+			<div class="mr-3 md:py-4 inline-block text-gray-600">
+				<button
+					type="submit"
+					name="s"
+					class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+					on:click={showPlanningM2}
+				>
+					Planning {MM(new Date().getMonth() + 1).mois}
+				</button>
+			</div>
+
+			<div class="mr-3 md:py-4 inline-block text-gray-600">
+				<form on:submit|preventDefault={showPlanning}>
 					<input
 						type="text"
-						bind:value={soiree}
-						class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+						bind:value={soiree2}
+						class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 					/>
 					<button
 						type="submit"
-						class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
-						>Entrer</button
-					>
+						class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+						>Entrer
+					</button>
 				</form>
 			</div>
 		</div>
@@ -541,11 +600,6 @@
 					type="submit"
 					class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
 					on:click={saveCalendrier}>Enregistrer le calendrier</button
-				>
-				<button
-					type="submit"
-					class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
-					on:click={benevolesSansReponse}>Bénévoles sans réponses</button
 				>
 			</div>
 		</div>
@@ -563,7 +617,21 @@
 					{/each}
 				</tr>
 				<tr class="">
-					{#each presences as cell}
+					{#each nbPresent as cell}
+						<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
+							{cell}
+						</th>
+					{/each}
+				</tr>
+				<tr class="">
+					{#each nbRS as cell}
+						<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
+							{cell}
+						</th>
+					{/each}
+				</tr>
+				<tr class="">
+					{#each nbVaisselle as cell}
 						<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
 							{cell}
 						</th>
@@ -615,7 +683,7 @@
 		</table>
 	</div>
 </div>
-<div style="display: {benevolesVisible};">
+<div class={benevolesVisible}>
 	<div class="py-2 grid gap-1">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer les bénévoles</p>
 		<div class="table text-center text-sm">
@@ -705,13 +773,13 @@
 		</div>
 	</div>
 </div>
-<div style="display: {soireeVisible};">
+<div class={soireeVisible}>
 	<div class="py-2 grid gap-1 w-full">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Soirées</p>
 		<RetourSoireeListe {retourSoirees} />
 	</div>
 </div>
-<div style="display: {delSoireesVisible};">
+<div class={delSoireesVisible}>
 	<div class="py-2 grid gap-1 w-full">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Supprimer des dates</p>
 		<div class="md:flex md:items-center">
@@ -730,5 +798,13 @@
 				</form>
 			</div>
 		</div>
+	</div>
+</div>
+<div class={benevolesSansReponseVisible}>
+	<div class="py-2 grid gap-1">
+		<p class="text-2xl font-bold text-gray-800 md:text-xl">Bénévoles sans réponse</p>
+		{#each benevolesSansReponses as b}
+			<p>{b}</p>
+		{/each}
 	</div>
 </div>

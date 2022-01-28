@@ -114,6 +114,16 @@ export function date_DD_MM(date) {
 	};
 }
 
+export function date_MM_YYYY(date) {
+	// YYYYMMDD --> MM/YYYY
+	const soireeY = date.substring(0, 4);
+	const soireeM = date.substring(4, 6);
+
+	return {
+		date: soireeM.concat('/').concat(soireeY)
+	};
+}
+
 export function date_dd_MM_YYYY(date) {
 	// YYYYMMDD --> format français
 	return {
