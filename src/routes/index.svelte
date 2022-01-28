@@ -199,7 +199,10 @@
 	<title>Planning restos Colombes</title>
 </svelte:head>
 <div class="flex py-2 w-full md:w-1/2">
-	<div class="mr-3 inline-block text-gray-600">
+	<div class="mr-3 inline-block text-gray-600 w-1/6">
+		<img src="https://www.orientsport.fr/oflash/img/logo.webp" alt="Restos du coeur" />
+	</div>
+	<div class="mr-3 py-4 inline-block text-gray-600">
 		<button
 			type="submit"
 			name="s"
@@ -209,7 +212,7 @@
 			Planning {MM(new Date().getMonth()).mois}
 		</button>
 	</div>
-	<div class="mr-3 inline-block text-gray-600">
+	<div class="mr-3 py-4 inline-block text-gray-600">
 		<button
 			type="submit"
 			name="s"
