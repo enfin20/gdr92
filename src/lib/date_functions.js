@@ -3,34 +3,34 @@ const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'num
 export function YYYYMMDD(shift = 0) {
 	// shift : 1 --> année suivante, -1 --> année précédente
 	let lastYear = new Date().getFullYear() + shift;
-	const currentMonth = new Date().getMonth() + 1;
-	const currentDay = new Date().getDate();
-	let normedMonth = '0';
+	let currentMonth = new Date().getMonth() + 1;
+	let currentDay = new Date().getDate();
 	if (currentMonth <= 9) {
-		normedMonth = normedMonth.concat(currentMonth);
+		currentMonth = '0'.concat(currentMonth);
 	}
-
+	if (currentDay <= 9) {
+		currentDay = '0'.concat(currentDay);
+	}
 	return {
-		date: lastYear.toString().concat(normedMonth).concat(currentDay)
+		date: lastYear.toString().concat(currentMonth).concat(currentDay)
 	};
 }
 
 export function YYYYMM(shift = 0) {
 	// shift : 1 --> mois suivant
 	let currentYear = new Date().getFullYear();
-	const currentMonth = new Date().getMonth() + 1 + shift;
-	let normedMonth = '0';
+	let currentMonth = new Date().getMonth() + 1 + shift;
 	if (currentMonth <= 9) {
-		normedMonth = normedMonth.concat(currentMonth);
+		currentMonth = '0'.concat(currentMonth);
 	}
 	// cas du mois de décembre
 	if (currentMonth > 12) {
-		normedMonth = '01';
+		currentMonth = '01';
 		currentYear = currentYear + 1;
 	}
 
 	return {
-		date: currentYear.toString().concat(normedMonth)
+		date: currentYear.toString().concat(currentMonth)
 	};
 }
 
@@ -60,39 +60,41 @@ export function MM(date) {
 export function MM_YYYY(shift = 0) {
 	// shift : 1 --> mois suivant
 	let currentYear = new Date().getFullYear();
-	const currentMonth = new Date().getMonth() + 1 + shift;
-	let normedMonth = '0';
+	let currentMonth = new Date().getMonth() + 1 + shift;
 	if (currentMonth <= 9) {
-		normedMonth = normedMonth.concat(currentMonth);
+		currentMonth = '0'.concat(currentMonth);
 	}
 	// cas du mois de décembre
 	if (currentMonth > 12) {
-		normedMonth = '01';
+		currentMonth = '01';
 		currentYear = currentYear + 1;
 	}
 
 	return {
-		date: normedMonth + '/' + currentYear.toString()
+		date: currentMonth + '/' + currentYear.toString()
 	};
 }
 
 export function YYYY_MM_DD(shift = 0) {
 	// shift : 1 --> mois suivant
 	let currentYear = new Date().getFullYear();
-	const currentMonth = new Date().getMonth() + 1 + shift;
-	const currentDay = new Date().getDate();
-	let normedMonth = '0';
+	let currentMonth = new Date().getMonth() + 1 + shift;
+	let currentDay = new Date().getDate();
+
 	if (currentMonth <= 9) {
-		normedMonth = normedMonth.concat(currentMonth);
+		currentMonth = '0'.concat(currentMonth);
 	}
 	// cas du mois de décembre
-	if (currentMonth > 12) {
-		normedMonth = '01';
+	else if (currentMonth > 12) {
+		currentMonth = '01';
 		currentYear = currentYear + 1;
+	}
+	if (currentDay <= 9) {
+		currentDay = '0'.concat(currentDay);
 	}
 
 	return {
-		date: currentYear.toString().concat('-').concat(normedMonth).concat('-').concat(currentDay)
+		date: currentYear.toString().concat('-').concat(currentMonth).concat('-').concat(currentDay)
 	};
 }
 

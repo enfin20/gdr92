@@ -355,14 +355,14 @@
 
 	export async function showPlanningM() {
 		// affichage du planning pour le mois en cours
-		soiree = YYYYMM(new Date().getMonth()).date;
+		soiree = YYYYMM().date;
 
 		getCalendrier();
 	}
 
 	export async function showPlanningM2() {
 		// affichage du planning pour le mois suivant
-		soiree = YYYYMM(new Date().getMonth() + 1).date;
+		soiree = YYYYMM(1).date;
 
 		getCalendrier();
 	}
@@ -709,7 +709,7 @@
 						class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 					/>
 				</div>
-				<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">
+				<div class=" table-cell text-left w-1/4 align-middle py-1 px-1">
 					<input
 						type="text"
 						bind:value={new_tel}

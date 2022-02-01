@@ -29,6 +29,7 @@
 	let rs = '';
 	let chargement = '';
 	let soiree = YYYY_MM_DD().date;
+	console.log('soirée ' + soiree);
 
 	import CalendrierForm from '/src/lib/components/calendrierForm.svelte';
 	import LoginForm from '/src/lib/components/loginForm.svelte';
@@ -134,14 +135,13 @@
 
 	export async function showPlanningM() {
 		// affichage du planning pour le mois en cours
-		mois = YYYYMM(new Date().getMonth()).date;
-
+		mois = YYYYMM().date;
 		getPlanning();
 	}
 
 	export async function showPlanningM2() {
 		// affichage du planning pour le mois suivant
-		mois = YYYYMM(new Date().getMonth() + 1).date;
+		mois = YYYYMM(1).date;
 
 		getPlanning();
 	}
