@@ -19,7 +19,6 @@
 	let soirees = [];
 	let dates = [];
 	let calendriers = [];
-	let lieux = [];
 	let mois = '';
 	let maraude = '';
 	let prepa = '';
@@ -103,7 +102,6 @@
 		soirees = [];
 		dates = [];
 		calendriers = [];
-		lieux = [];
 		mois = '';
 		maraude = '';
 		prepa = '';
@@ -186,7 +184,6 @@
 		chargement = 'Chargement en cours ...';
 		dates = [];
 		calendriers = [];
-		lieux = [];
 		retourVisible = 'hidden';
 		calendrierVisible = 'hidden';
 		planningVisible = 'block';
@@ -197,15 +194,14 @@
 
 		// remise au format des dates et des entêtes DD/MM
 		for (var i = cal.tableau[0].length; i > 0; i--) {
-			cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
-			lieux[i] =
-				'<img src="https://www.orientsport.fr/oflash/img/' +
+			cal.tableau[0][i] =
+				date_DD_MM(cal.tableau[0][i - 1]).date +
+				'<div class="flex items-center justify-center"><img src="https://www.orientsport.fr/oflash/img/' +
 				cal.tableau[0][i - 1].substring(11) +
 				'.png" alt ="' +
 				cal.tableau[0][i - 1].substring(11) +
-				'" width="32px" height="32px"/>';
+				'" width="32px" height="32px"/></div>';
 		}
-		lieux[0] = '';
 		cal.tableau[0][0] = 'Calendrier ';
 		dates = await cal.tableau[0];
 		// suppression de l'entête
@@ -397,6 +393,6 @@
 		</h1>
 	</div>
 	<div class="flex py-2 w-full">
-		<CalendrierTableau {dates} {lieux} {calendriers} />
+		<CalendrierTableau {dates} {calendriers} />
 	</div>
 </div>

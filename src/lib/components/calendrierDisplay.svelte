@@ -1,6 +1,5 @@
 <script>
 	export let dates;
-	export let lieux;
 	export let calendriers;
 </script>
 
@@ -11,12 +10,7 @@
 			<thead>
 				<tr>
 					{#each dates as cell}
-						<th class="sticky top-0 bg-white">{cell}</th>
-					{/each}
-				</tr>
-				<tr class="">
-					{#each lieux as cell}
-						<th> <div class="flex items-center justify-center">{@html cell}</div></th>
+						<th class="sticky top-0 bg-white">{@html cell} </th>
 					{/each}
 				</tr>
 			</thead>
