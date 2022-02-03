@@ -118,7 +118,6 @@
 		// vérification de l'existence de la soirée à la date saisie
 		const res = await fetch('./retourSoirees/isSoiree?soiree=' + soiree);
 		const soir = await res.json();
-
 		if (soir.retourSoirees.length === 1) {
 			// affichage des soirées pour les rs
 			retourVisible = 'block';

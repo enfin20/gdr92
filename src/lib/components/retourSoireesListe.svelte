@@ -9,7 +9,7 @@
 		<tr>
 			<th class="w-[15%]" />
 			<th class="w-[10%]" />
-			<th colspan="3" class="w-[10%]">
+			<th colspan="3" class="w-[15%]">
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/entrepot.png"
@@ -45,7 +45,7 @@
 					/>
 				</div>
 			</th>
-			<th class="w-1/2" />
+			<th class="w-[40%]" />
 		</tr>
 		<tr>
 			<th class="text-left font-bold w-[15%]">Soirée</th>
@@ -134,16 +134,16 @@
 					/>
 				</div>
 			</th>
-			<th class="text-left font-bold">Commentaires</th>
+			<th class="text-left font-bold w-[40%]">Commentaires</th>
 		</tr>
 	</thead>
 	<tbody class="divide-y divide-gray-100">
 		{#each retourSoirees as cell}
 			<tr class="align-middle divide-y divide-gray-100 hover:bg-slate-100 text-center">
-				<td class="text-left align-middle py-1 px-1">
+				<td class="text-left align-middle py-1 px-1 w-[15%]">
 					{date_dd_MM_YYYY(cell.soiree).date}
 				</td>
-				<td class="text-left align-middle py-1 px-1">
+				<td class="text-left align-middle py-1 px-1 w-[10%]">
 					{cell.rs.substring(0, cell.rs.indexOf(' ') + 2) + '.'}
 				</td>
 				<td class="align-middle py-1 px-1 w-[5%]">
@@ -167,7 +167,7 @@
 				<td class="align-middle py-1 px-1 w-[5%]">
 					{cell.gp_absent}
 				</td>
-				<td class=" text-left align-middle py-1 px-1">
+				<td class=" text-left align-middle py-1 px-1 w-[40%]">
 					{cell.commentaires}
 				</td>
 			</tr>

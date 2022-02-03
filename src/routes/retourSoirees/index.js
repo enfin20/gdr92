@@ -93,6 +93,9 @@ export async function get(request) {
 					}
 				}
 			}
+			if (retourSoirees[i].commentaires === undefined) {
+				retourSoirees[i].commentaires = '';
+			}
 			retourSoirees[i].gp_absent = 0;
 			retourSoirees[i].gare_absent = 0;
 			for (var k = 0; k < absents.length; k++) {
