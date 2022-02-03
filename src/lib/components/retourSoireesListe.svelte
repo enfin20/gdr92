@@ -4,7 +4,7 @@
 	import { date_dd_MM_YYYY } from '$lib/date_functions';
 </script>
 
-<table id="RetourSoirees" class="text-sm text-gray-500">
+<table id="RetourSoirees" class="text-sm text-gray-500 w-full">
 	<thead>
 		<tr>
 			<th class="w-[15%]" />
@@ -13,11 +13,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/entrepot.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="repas"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -25,11 +23,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/present.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="present"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -37,11 +33,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/absent.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="gare"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -54,11 +48,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/gare.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="gare"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -66,11 +58,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/gp.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="gp"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -78,11 +68,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/repas.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="total"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -90,11 +78,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/gare.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="gare"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -102,11 +88,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/gp.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="gp"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -114,11 +98,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/gare.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="gare"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
@@ -126,11 +108,9 @@
 				<div class="flex items-center justify-center">
 					<img
 						src="https://www.orientsport.fr/oflash/img/gp.png"
-						class=""
+						class="h-8 w-8 object-contain"
 						alt="gp"
 						style="display: inline"
-						width="36px"
-						height="36px"
 					/>
 				</div>
 			</th>
