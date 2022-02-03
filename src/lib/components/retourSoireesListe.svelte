@@ -4,7 +4,7 @@
 	import { date_dd_MM_YYYY } from '$lib/date_functions';
 </script>
 
-<table id="RetourSoirees" class="text-sm text-gray-500 w-full">
+<table id="RetourSoirees" class="text-sm text-gray-500 w-full md:w-1/2 ">
 	<thead>
 		<tr>
 			<th class="w-[15%]" />
@@ -39,7 +39,6 @@
 					/>
 				</div>
 			</th>
-			<th class="w-[40%]" />
 		</tr>
 		<tr>
 			<th class="text-left font-bold w-[15%]">Soirée</th>
@@ -114,16 +113,15 @@
 					/>
 				</div>
 			</th>
-			<th class="text-left font-bold w-[40%]">Commentaires</th>
 		</tr>
 	</thead>
-	<tbody class="divide-y divide-gray-100">
+	<tbody class="">
 		{#each retourSoirees as cell}
-			<tr class="align-middle divide-y divide-gray-100 hover:bg-slate-100 text-center">
-				<td class="text-left align-middle py-1 px-1 w-[15%]">
+			<tr class="align-middle text-center border-collapse border-t-[1px] border-slate-200">
+				<td rowspan="2" class="text-left align-middle py-1 px-1 w-[15%]">
 					{date_dd_MM_YYYY(cell.soiree).date}
 				</td>
-				<td class="text-left align-middle py-1 px-1 w-[10%]">
+				<td class="text-left align-middle py-1 px-1 w-[10%] font-bold">
 					{cell.rs.substring(0, cell.rs.indexOf(' ') + 2) + '.'}
 				</td>
 				<td class="align-middle py-1 px-1 w-[5%]">
@@ -147,10 +145,12 @@
 				<td class="align-middle py-1 px-1 w-[5%]">
 					{cell.gp_absent}
 				</td>
-				<td class=" text-left align-middle py-1 px-1 w-[40%]">
-					{cell.commentaires}
-				</td>
 			</tr>
+			<tr class="">
+				<td colspan="9" class="text-gray-700 text-left align-middle py-1 px-1 w-full">
+					{cell.commentaires}
+				</td></tr
+			>
 		{/each}
 	</tbody>
 </table>
