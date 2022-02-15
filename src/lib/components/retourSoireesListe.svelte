@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex flex-col h-screen">
-	<div class="flex-grow overflow-auto">
+	<div class="flex-grow overflow-y-auto">
 		<table id="RetourSoirees" class="text-sm text-gray-500 w-full md:w-1/2 relative">
 			<thead>
 				<tr>

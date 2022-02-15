@@ -1,6 +1,6 @@
 import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
-import { YYYYMMDD } from '$lib/date_functions';
+import { YYYYMM } from '$lib/date_functions';
 
 export async function get(request) {
 	// validation du login
@@ -73,7 +73,7 @@ export async function post(request) {
 		//récupération des dates à venir
 		const coll2 = db.collection('CalendrierBenevoles');
 		const calendrier = await coll2
-			.find({ soiree: { $gt: YYYYMMDD(0).date } })
+			.find({ soiree: { $gt: YYYYMM(0).date } })
 			.sort({ soiree: 1, plage: 1 })
 			.toArray();
 		const soirees = [
@@ -125,7 +125,9 @@ export async function put(request) {
 					prenom: benevole.prenom,
 					nom: benevole.nom,
 					email: benevole.email,
-					tel: benevole.tel
+					tel: benevole.tel,
+					maraude: benevole.maraude,
+					camion: benevole.camion
 				}
 			}
 		);
