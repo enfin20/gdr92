@@ -319,7 +319,7 @@
 		<div class="container mb-2 flex mx-auto w-full items-center justify-center">
 			<ul class="flex flex-col p-4 w-full">
 				{#each soirees as calendrier}
-					<CalendrierForm {calendrier} {maraude} {prepa} />
+					<CalendrierForm {calendrier} {prepa} />
 				{/each}
 			</ul>
 		</div>

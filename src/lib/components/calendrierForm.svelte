@@ -1,7 +1,6 @@
 <script>
 	import { date_dd_MM_YYYY } from '$lib/date_functions';
 	export let calendrier;
-	export let maraude;
 	export let prepa;
 	let soiree = '';
 	let rowbg = '';
@@ -18,7 +17,8 @@
 	if (calendrier.statut === 'Oui') {
 		buttonStatutBg = 'bg-green-400 hover:bg-green-600';
 	} else if (calendrier.statut === 'Maraude') {
-		buttonStatutBg = 'bg-amber-300 hover:bg-amber-600';
+		calendrier.statut = 'Non';
+		buttonStatutBg = 'bg-red-200 hover:bg-red-400';
 	} else {
 		calendrier.statut = 'Non';
 		buttonStatutBg = 'bg-red-200 hover:bg-red-400';
@@ -39,34 +39,12 @@
 	}
 
 	function ChangeStatus() {
-		if (maraude === 'Oui') {
-			// cas spécifique des bénévoles faisant la maraude
-			if (calendrier.lieu === 'Maraude') {
-				if (calendrier.statut === 'Non') {
-					calendrier.statut = 'Maraude';
-					buttonStatutBg = 'bg-amber-300 hover:bg-amber-600';
-				} else {
-					calendrier.statut = 'Non';
-					buttonStatutBg = 'bg-red-200 hover:bg-red-400';
-				}
-			} else {
-				if (calendrier.statut === 'Non') {
-					calendrier.statut = 'Oui';
-					buttonStatutBg = 'bg-green-400 hover:bg-green-600';
-				} else {
-					calendrier.statut = 'Non';
-					buttonStatutBg = 'bg-red-200 hover:bg-red-400';
-				}
-			}
+		if (calendrier.statut === 'Non') {
+			calendrier.statut = 'Oui';
+			buttonStatutBg = 'bg-green-400 hover:bg-green-600';
 		} else {
-			// cas standard
-			if (calendrier.statut === 'Non') {
-				calendrier.statut = 'Oui';
-				buttonStatutBg = 'bg-green-400 hover:bg-green-600';
-			} else {
-				calendrier.statut = 'Non';
-				buttonStatutBg = 'bg-red-200 hover:bg-red-400';
-			}
+			calendrier.statut = 'Non';
+			buttonStatutBg = 'bg-red-200 hover:bg-red-400';
 		}
 	}
 </script>

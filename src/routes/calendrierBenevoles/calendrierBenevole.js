@@ -60,6 +60,72 @@ export async function put(request) {
 			);
 		}
 
+		// récupère toutes les soirées de maraude, pour modifier le statut à 'Maraude' dans les autres lieux
+		let pipeline = [
+			{
+				$match: {
+					equipe: 'Maraude',
+					statut: 'Oui',
+					email: calendrier[0].email
+				}
+			},
+			{
+				$lookup: {
+					from: 'CalendrierBenevoles',
+					let: {
+						s: '$soiree',
+						e: '$email'
+					},
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$and: [
+										{
+											$eq: ['$soiree', '$$s']
+										},
+										{
+											$eq: ['$email', '$$e']
+										},
+										{
+											$ne: ['$equipe', 'Maraude']
+										},
+										{
+											$ne: ['$lieu', 'entrepot']
+										}
+									]
+								}
+							}
+						}
+					],
+					as: 'cb'
+				}
+			},
+			{
+				$unwind: {
+					path: '$cb',
+					preserveNullAndEmptyArrays: false
+				}
+			},
+			{
+				$addFields: {
+					cb_id: '$cb._id'
+				}
+			},
+			{
+				$project: {
+					_id: 0,
+					cb_id: 1
+				}
+			}
+		];
+		const soirees = await collection.aggregate(pipeline).toArray();
+		console.log('soirees maraude ' + soirees.length);
+		for (var j = 0; j < soirees.length; j++) {
+			console.log(j + ' ' + soirees[j].cb_id);
+			await collection.update({ _id: ObjectId(soirees[j].cb_id) }, { $set: { statut: 'Maraude' } });
+		}
+
 		return {
 			status: 200,
 			body: {
