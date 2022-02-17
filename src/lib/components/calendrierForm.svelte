@@ -41,15 +41,22 @@
 	function ChangeStatus() {
 		if (maraude === 'Oui') {
 			// cas spécifique des bénévoles faisant la maraude
-			if (calendrier.statut === 'Non') {
-				calendrier.statut = 'Oui';
-				buttonStatutBg = 'bg-green-400 hover:bg-green-600';
-			} else if (calendrier.statut === 'Oui') {
-				calendrier.statut = 'Maraude';
-				buttonStatutBg = 'bg-amber-300 hover:bg-amber-600';
+			if (calendrier.lieu === 'Maraude') {
+				if (calendrier.statut === 'Non') {
+					calendrier.statut = 'Maraude';
+					buttonStatutBg = 'bg-amber-300 hover:bg-amber-600';
+				} else {
+					calendrier.statut = 'Non';
+					buttonStatutBg = 'bg-red-200 hover:bg-red-400';
+				}
 			} else {
-				calendrier.statut = 'Non';
-				buttonStatutBg = 'bg-red-200 hover:bg-red-400';
+				if (calendrier.statut === 'Non') {
+					calendrier.statut = 'Oui';
+					buttonStatutBg = 'bg-green-400 hover:bg-green-600';
+				} else {
+					calendrier.statut = 'Non';
+					buttonStatutBg = 'bg-red-200 hover:bg-red-400';
+				}
 			}
 		} else {
 			// cas standard
