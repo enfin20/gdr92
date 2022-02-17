@@ -15,14 +15,14 @@ export async function get(request) {
 		if (maraude === 'Oui') {
 			equipeFilter.push('Maraude');
 		}
-		console.log('equipe ' + equipeFilter + ' date ' + YYYYMM(1).date);
+
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = await collection
 			.find({
 				email: email,
-				soiree: { $regex: YYYYMM(2).date },
+				soiree: { $regex: YYYYMM(1).date },
 				actif: { $ne: 'Non' },
 				equipe: { $in: equipeFilter }
 			})
