@@ -72,26 +72,55 @@ export async function post(request) {
 
 		//récupération des dates à venir
 		const coll2 = db.collection('CalendrierBenevoles');
-		const calendrier = await coll2
-			.find({ soiree: { $gt: YYYYMM(0).date } })
-			.sort({ soiree: 1, plage: 1 })
-			.toArray();
-		const soirees = [
-			...new Set(calendrier.map((x) => x.soiree + ' / ' + x.plage + ' : ' + x.lieu))
-		];
-		for (var i = 0; i < soirees.length; i++) {
-			var obj = new Object();
-			obj.soiree = soirees[i].substring(0, soirees[i].indexOf(' /'));
-			soirees[i] = soirees[i].substring(soirees[i].indexOf('/ ') + 2);
-			obj.plage = soirees[i].substring(0, soirees[i].indexOf(' :'));
-			soirees[i] = soirees[i].substring(soirees[i].indexOf(': ') + 2);
-			obj.lieu = soirees[i];
-			obj.benevole = benevole.prenom + ' ' + benevole.nom;
-			obj.email = benevole.email;
-			obj.b_id = b.insertedId.toString();
-			obj.statut = '';
+		// en fonction du profil du benevole
+		if (benevole.camion === 'Oui') {
+			let calendrier = await coll2
+				.find({ soiree: { $gt: YYYYMM(0).date }, equipe: 'Camion' })
+				.sort({ soiree: 1, plage: 1 })
+				.toArray();
+			let soirees = [
+				...new Set(calendrier.map((x) => x.soiree + ' / ' + x.plage + ' : ' + x.lieu))
+			];
+			for (var i = 0; i < soirees.length; i++) {
+				var obj = new Object();
+				obj.soiree = soirees[i].substring(0, soirees[i].indexOf(' /'));
+				soirees[i] = soirees[i].substring(soirees[i].indexOf('/ ') + 2);
+				obj.plage = soirees[i].substring(0, soirees[i].indexOf(' :'));
+				soirees[i] = soirees[i].substring(soirees[i].indexOf(': ') + 2);
+				obj.lieu = soirees[i];
+				obj.benevole = benevole.prenom + ' ' + benevole.nom;
+				obj.email = benevole.email;
+				obj.b_id = b.insertedId.toString();
+				obj.statut = '';
+				obj.type = 'Camion';
 
-			c = await coll2.insertOne(obj);
+				c = await coll2.insertOne(obj);
+			}
+		}
+
+		if (benevole.maraude === 'Oui') {
+			let calendrier = await coll2
+				.find({ soiree: { $gt: YYYYMM(0).date }, equipe: 'Maraude' })
+				.sort({ soiree: 1, plage: 1 })
+				.toArray();
+			let soirees = [
+				...new Set(calendrier.map((x) => x.soiree + ' / ' + x.plage + ' : ' + x.lieu))
+			];
+			for (var i = 0; i < soirees.length; i++) {
+				var obj = new Object();
+				obj.soiree = soirees[i].substring(0, soirees[i].indexOf(' /'));
+				soirees[i] = soirees[i].substring(soirees[i].indexOf('/ ') + 2);
+				obj.plage = soirees[i].substring(0, soirees[i].indexOf(' :'));
+				soirees[i] = soirees[i].substring(soirees[i].indexOf(': ') + 2);
+				obj.lieu = soirees[i];
+				obj.benevole = benevole.prenom + ' ' + benevole.nom;
+				obj.email = benevole.email;
+				obj.b_id = b.insertedId.toString();
+				obj.statut = '';
+				obj.type = 'Maraude';
+
+				c = await coll2.insertOne(obj);
+			}
 		}
 
 		return {

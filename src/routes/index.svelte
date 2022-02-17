@@ -21,6 +21,7 @@
 	let calendriers = [];
 	let mois = '';
 	let maraude = '';
+	let camion = '';
 	let prepa = '';
 	let retourSoiree = [];
 	let retourSoirees = [];
@@ -46,6 +47,11 @@
 		const benevole = await res.json();
 		try {
 			loggedBenevole = benevole.benevole.prenom + ' ' + benevole.benevole.nom;
+			if (benevole.benevole.camion === undefined) {
+				camion = 'Non';
+			} else {
+				camion = benevole.benevole.camion;
+			}
 			if (benevole.benevole.maraude === undefined) {
 				maraude = 'Non';
 			} else {
@@ -64,13 +70,21 @@
 			}
 
 			// pour charger le calendrier du bénévole
-			const res = await fetch('/calendrierBenevoles/calendrierBenevole?email=' + email);
+			const res = await fetch(
+				'/calendrierBenevoles/calendrierBenevole?email=' +
+					email +
+					'&maraude=' +
+					maraude +
+					'&camion=' +
+					camion
+			);
 			const calendriers = await res.json();
 			try {
 				loginVisible = 'hidden';
 				calendrierVisible = 'inline';
 				planningVisible = 'hidden';
 				soirees = calendriers.calendrier;
+				console.log('soirees ' + soirees.length);
 			} catch {
 				console.log('il y a un probleme de connexion');
 			}

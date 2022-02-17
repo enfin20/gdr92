@@ -38,9 +38,10 @@
 	let benevolesSansReponseVisible = 'hidden';
 
 	// nouvelle soirée
-	let plageActive = [true, true, true];
-	var plage = ['18h15-20h', '20h-21h30', '14h-18h'];
-	let lieu = ['gare', 'gp', 'entrepot'];
+	let plageActive = [true, true, true, true];
+	var plage = ['18h15-20h', '20h-21h30', '14h-18h', '20h-23h'];
+	let lieu = ['gare', 'gp', 'entrepot', 'maraude'];
+	let equipe = ['Camion', 'Camion', 'Camion', 'Maraude'];
 
 	// nouveau bénévole
 	let new_prenom = '';
@@ -215,14 +216,21 @@
 			obj.email = benevoles.benevoles[i].email;
 			obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
 			obj.b_id = benevoles.benevoles[i]._id;
-			for (var j = 0; j <= 2; j++) {
+			for (var j = 0; j <= 3; j++) {
 				if (plageActive[j]) {
-					obj.plage = plage[j];
-					obj.lieu = lieu[j];
-					const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
-						method: 'POST',
-						body: JSON.stringify(obj)
-					});
+					// planning uniquement pour les benevoles de la bonne équipe
+					if (
+						(benevoles.benevoles[i].camion === 'Oui' && equipe[j] === 'Camion') ||
+						(benevoles.benevoles[i].maraude === 'Oui' && equipe[j] === 'Maraude')
+					) {
+						obj.plage = plage[j];
+						obj.lieu = lieu[j];
+						obj.equipe = equipe[j];
+						const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
+							method: 'POST',
+							body: JSON.stringify(obj)
+						});
+					}
 				}
 			}
 		}
@@ -348,6 +356,9 @@
 		new_prenom = '';
 		new_nom = '';
 		new_email = '';
+		new_tel = '';
+		new_camion = '';
+		new_maraude = '';
 		showBenevoles();
 	}
 
@@ -524,6 +535,19 @@
 				<input
 					type="text"
 					bind:value={lieu[2]}
+					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+				/>
+			</div>
+			<div class="py-2 w-full">
+				<input type="checkbox" bind:checked={plageActive[3]} />
+				<input
+					type="text"
+					bind:value={plage[3]}
+					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+				/>
+				<input
+					type="text"
+					bind:value={lieu[3]}
 					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 				/>
 			</div>

@@ -6,19 +6,29 @@ export async function get(request) {
 	// récupération du mois suivant pour un bénévole (email)
 	try {
 		const email = request.query.get('email');
-
+		const maraude = request.query.get('maraude');
+		const camion = request.query.get('camion');
+		let equipeFilter = [];
+		if (camion === 'Oui') {
+			equipeFilter.push('Camion');
+		}
+		if (maraude === 'Oui') {
+			equipeFilter.push('Maraude');
+		}
+		console.log('equipe ' + equipeFilter + ' date ' + YYYYMM(1).date);
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = await collection
 			.find({
 				email: email,
-				soiree: { $regex: YYYYMM(1).date },
-				actif: { $ne: 'Non' }
+				soiree: { $regex: YYYYMM(2).date },
+				actif: { $ne: 'Non' },
+				equipe: { $in: equipeFilter }
 			})
 			.sort({ soiree: 1, plage: 1 })
 			.toArray();
-
+		console.log('calendrier ' + calendrier.length);
 		return {
 			status: 200,
 			body: {

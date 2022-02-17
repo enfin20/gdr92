@@ -13,7 +13,6 @@ export async function get(request) {
 
 		//préparation du pipeline pour retrouver sur l'année en cours (getFullYear -1) le nombre de vaisselles et la date
 		const filter = YYYYMMDD(-1).date;
-		console.log('date : ' + filter);
 		const pipeline = [
 			{
 				$match: {
@@ -34,7 +33,7 @@ export async function get(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = await collection
-			.find({ soiree: { $regex: soiree } })
+			.find({ soiree: { $regex: soiree }, equipe: 'Camion' })
 			.sort({ benevole: 1, soiree: 1, plage: 1 })
 			.toArray();
 		// récupération des soirées

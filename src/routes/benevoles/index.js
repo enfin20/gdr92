@@ -6,10 +6,7 @@ export async function get(request) {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('Benevoles');
-		const benevoles = await collection
-			.find({ camion: 'Oui' })
-			.sort({ prenom: 1, nom: 1 })
-			.toArray();
+		const benevoles = await collection.find().sort({ prenom: 1, nom: 1 }).toArray();
 
 		return {
 			status: 200,

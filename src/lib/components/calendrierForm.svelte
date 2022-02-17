@@ -28,6 +28,9 @@
 	} else if (soiree.substring(0, 3) === 'mer') {
 		rowbg = 'bg-gray-300';
 	}
+	if (calendrier.lieu === 'maraude') {
+		rowbg = 'bg-indigo-100';
+	}
 	if (calendrier.lieu === 'entrepot' && soiree.substring(0, 3) === 'lun') {
 		rowbg = 'bg-blue-100';
 	}
