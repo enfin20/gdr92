@@ -57,7 +57,9 @@ export async function get(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('RetourSoirees');
 		const coll2 = db.collection('CalendrierBenevoles');
-		const retourSoiree = await collection.find({ soiree: date_YYYYMMDD(soiree).date }).toArray();
+		const retourSoiree = await collection
+			.find({ soiree: date_YYYYMMDD(soiree).date, equipe: 'Camion' })
+			.toArray();
 		const benevoles = await coll2.aggregate(pipeline).toArray();
 		return {
 			status: 200,
@@ -89,7 +91,7 @@ export async function put(request) {
 		const coll2 = db.collection('CalendrierBenevoles');
 
 		await collection.updateOne(
-			{ soiree: retourSoiree.soiree },
+			{ soiree: retourSoiree.soiree, equipe: 'Camion' },
 			{
 				$set: {
 					rs: retourSoiree.rs,

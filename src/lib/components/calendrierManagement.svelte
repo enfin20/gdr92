@@ -1,0 +1,333 @@
+<script>
+	export let currentEquipe;
+
+	import { MM_YYYY, date_YYYYMM, date_DD_MM, MM, YYYYMM, date_YYYYMMDD } from '$lib/date_functions';
+
+	let calendriers = [];
+	let soiree2 = MM_YYYY(1).date;
+	let soirees = [];
+	let lieux = [];
+	var nbPresent = [];
+	var nbRS = [];
+	var nbVaisselle = [];
+	let soiree = '';
+
+	showPlanningM2();
+
+	function CalendrierChangeStatut(button_id) {
+		// changement du statut du bouton appelant
+
+		// pour éviter les boucles
+		let changed = false;
+
+		let row = -1;
+		let col = -1;
+		let presence = '';
+		for (var i = 0; i < calendriers.length; i++) {
+			for (var j = 0; j < calendriers[i].length; j++) {
+				if (calendriers[i][j]._id === button_id) {
+					row = i;
+					col = j;
+					presence = calendriers[i][j].presence;
+					// pour indiquer qu'il y a eu un changement de statut
+					calendriers[i][j].updated = 'Oui';
+				}
+			}
+		}
+		if (presence === '') {
+			changed = true;
+			calendriers[row][col].presence = 'Oui';
+		}
+		if (presence === 'Oui') {
+			changed = true;
+			calendriers[row][col].presence = 'Dispo';
+		}
+		if (presence === 'Dispo') {
+			if (!changed) {
+				calendriers[row][col].presence = 'RS';
+				changed = true;
+			}
+		}
+		if (currentEquipe === 'Camion') {
+			if (presence === 'RS') {
+				if (!changed) {
+					calendriers[row][col].presence = 'Vaisselle';
+					changed = true;
+				}
+			}
+			if (presence === 'Vaisselle') {
+				if (!changed) {
+					calendriers[row][col].presence = 'Maraude';
+					changed = true;
+				}
+			}
+			if (presence === 'Maraude') {
+				if (!changed) {
+					calendriers[row][col].presence = 'Absent';
+					changed = true;
+				}
+			}
+		} else {
+			if (presence === 'RS') {
+				if (!changed) {
+					calendriers[row][col].presence = 'Absent';
+					changed = true;
+				}
+			}
+		}
+
+		if (presence === 'Absent') {
+			if (!changed) {
+				calendriers[row][col].presence = 'Non';
+				changed = true;
+			}
+		}
+		if (presence === 'Non') {
+			if (!changed) {
+				calendriers[row][col].presence = 'Oui';
+				changed = true;
+			}
+		}
+
+		// remise à jour du nombre de bénévoles
+		nbBenevoles();
+	}
+
+	export async function saveCalendrier() {
+		// tableau cible des mises à jour
+		var calUpdated = [];
+
+		for (var i = 0; i < calendriers.length; i++) {
+			for (var j = 1; j < calendriers[i].length; j++) {
+				var obj = new Object();
+				obj._id = calendriers[i][j]._id;
+				obj.statut = calendriers[i][j].presence;
+				obj.updated = '';
+				if (calendriers[i][j].updated === 'Oui') {
+					// on n'intègre que les zones qui ont été mise à jour par CalendrierChangeStatut
+					calUpdated.push(obj);
+				}
+			}
+		}
+
+		const res = await fetch('/calendrierBenevoles', {
+			method: 'PUT',
+			body: JSON.stringify(calUpdated)
+		});
+	}
+
+	export async function showPlanningM() {
+		// affichage du planning pour le mois en cours
+		soiree = YYYYMM().date;
+
+		getCalendrier();
+	}
+
+	export async function showPlanningM2() {
+		// affichage du planning pour le mois suivant
+		soiree = YYYYMM(1).date;
+
+		getCalendrier();
+	}
+
+	export async function showPlanning() {
+		// affichage du planning pour le mois X
+		soiree = date_YYYYMM(soiree2).date;
+
+		getCalendrier();
+	}
+	export async function getCalendrier() {
+		// mise en forme du calendrier
+		calendriers = [];
+		lieux = [];
+		soirees = [];
+
+		try {
+			const res = await fetch(
+				'./calendrierBenevoles?soiree=' + soiree + '&equipe=' + currentEquipe
+			);
+			const cal = await res.json();
+
+			// remise au format des dates et des entêtes DD/MM
+			for (var i = cal.tableau[0].length; i > 0; i--) {
+				cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
+				lieux[i] =
+					'<img src="https://www.orientsport.fr/oflash/img/' +
+					cal.tableau[0][i - 1].substring(11) +
+					'.png" alt ="' +
+					cal.tableau[0][i - 1].substring(11) +
+					'" width="32px" height="32px"/>';
+			}
+			lieux[0] = '';
+			cal.tableau[0][0] = 'Calendrier ';
+			soirees = await cal.tableau[0];
+			// suppression de l'entête
+			calendriers = await cal.tableau.slice(1);
+
+			// calcul du nombre de bénévoles / soirées
+			nbBenevoles();
+		} catch {}
+	}
+	export function nbBenevoles() {
+		// calcul du nombre de bénévoles / soirées
+		nbPresent = [];
+		nbPresent[0] = 'Nb bénévoles';
+		nbRS = [];
+		nbRS[0] = 'nb RS';
+		nbVaisselle = [];
+		nbVaisselle[0] = 'nb Vaisselle';
+		for (var k = 1; k < calendriers[0].length; k++) {
+			nbPresent[k] = 0;
+			nbRS[k] = 0;
+			nbVaisselle[k] = 0;
+		}
+
+		for (var i = 0; i < calendriers.length; i++) {
+			for (var j = 1; j < calendriers[i].length; j++) {
+				if (calendriers[i][j].presence === 'Oui') {
+					nbPresent[j] = nbPresent[j] + 1;
+				}
+				if (calendriers[i][j].presence === 'RS') {
+					nbPresent[j] = nbPresent[j] + 1;
+					nbRS[j] = nbRS[j] + 1;
+				}
+				if (calendriers[i][j].presence === 'Vaisselle') {
+					nbPresent[j] = nbPresent[j] + 1;
+					nbVaisselle[j] = nbVaisselle[j] + 1;
+				}
+			}
+		}
+		console.log(nbPresent);
+	}
+</script>
+
+<div class="py-2 grid gap-1 w-full">
+	<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer le calendrier</p>
+	<div class="md:flex md:items-center">
+		<div class="mr-3 md:py-4 inline-block text-gray-600">
+			<button
+				type="submit"
+				name="s"
+				class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+				on:click={showPlanningM}
+			>
+				Planning {MM(new Date().getMonth()).mois}
+			</button>
+		</div>
+		<div class="mr-3 md:py-4 inline-block text-gray-600">
+			<button
+				type="submit"
+				name="s"
+				class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+				on:click={showPlanningM2}
+			>
+				Planning {MM(new Date().getMonth() + 1).mois}
+			</button>
+		</div>
+
+		<div class="mr-3 md:py-4 inline-block text-gray-600">
+			<form on:submit|preventDefault={showPlanning}>
+				<input
+					type="text"
+					bind:value={soiree2}
+					class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+				/>
+				<button type="submit" class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+					>Entrer
+				</button>
+			</form>
+		</div>
+	</div>
+	<div class="md:flex md:items-center">
+		<div class="md:w-2/3">
+			<button
+				type="submit"
+				class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
+				on:click={saveCalendrier}>Enregistrer le calendrier</button
+			>
+		</div>
+	</div>
+
+	<table class="text-sm">
+		<thead class="">
+			<tr class="">
+				{#each soirees as cell}
+					<th class="">{cell}</th>
+				{/each}
+			</tr>
+			<tr class="">
+				{#each lieux as cell}
+					<th> <div class="flex items-center justify-center">{@html cell}</div></th>
+				{/each}
+			</tr>
+			<tr class="">
+				{#each nbPresent as cell}
+					<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
+						{cell}
+					</th>
+				{/each}
+			</tr>
+			<tr class="">
+				{#each nbRS as cell}
+					<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
+						{cell}
+					</th>
+				{/each}
+			</tr>
+			{#if currentEquipe === 'Camion'}
+				<tr class="">
+					{#each nbVaisselle as cell}
+						<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
+							{cell}
+						</th>
+					{/each}
+				</tr>
+			{/if}
+		</thead>
+		<tbody class="divide-y divide-gray-100">
+			{#each calendriers as row}
+				<tr class="hover:bg-slate-100">
+					{#each row as cell}
+						{#if typeof cell._id != 'undefined'}
+							<td class="text-center align-middle">
+								<button
+									class={cell.presence === 'Oui'
+										? 'bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded'
+										: cell.presence === 'RS'
+										? 'bg-pink-300 hover:bg-pink-400 text-gray-500 py-1 px-1 rounded'
+										: cell.presence === 'Dispo'
+										? 'bg-gray-200 hover:bg-gray-300 text-gray-600 py-1 px-1 rounded'
+										: cell.presence === 'Maraude'
+										? 'bg-yellow-400 hover:bg-yellow-600 text-gray-500 py-1 px-1 rounded'
+										: cell.presence === 'Vaisselle'
+										? 'bg-blue-300 hover:bg-blue-400 text-gray-500 py-1 px-1 rounded'
+										: cell.presence === 'Absent'
+										? 'bg-red-500 hover:bg-red-600 text-gray-200 py-1 px-1 rounded'
+										: 'text-gray-500 py-1 px-1 rounded'}
+									id={cell._id}
+									on:click={CalendrierChangeStatut(cell._id, cell.presence)}
+								>
+									{cell.presence.substring(0, 3)}
+								</button>
+							</td>
+						{:else}
+							<td>
+								{cell.benevole}
+								{#if currentEquipe === 'Camion'}
+									<br />
+									{#if cell.nbVaisselle !== ''}
+										<span class="text-xs italic text-gray-400">
+											nb Vais. : {cell.nbVaisselle} : {cell.lastVaisselle.substring(6, 8) +
+												'/' +
+												cell.lastVaisselle.substring(4, 6)}
+										</span>
+									{/if}
+								{/if}
+							</td>
+						{/if}
+					{/each}
+				</tr>
+			{/each}
+		</tbody>
+	</table>
+</div>

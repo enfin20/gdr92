@@ -8,6 +8,7 @@ export async function get(request) {
 		const email = request.query.get('email');
 		const pwd = request.query.get('pwd');
 		const rg = request.query.get('rg');
+		const rm = request.query.get('rm');
 
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
@@ -21,7 +22,13 @@ export async function get(request) {
 				benevole.rg = 'Non';
 			}
 		}
-
+		if (rm === 'Oui') {
+			// pour les rg, il faut un mot de passe valide
+			if (benevole.pwd === pwd) {
+			} else {
+				benevole.rm = 'Non';
+			}
+		}
 		return {
 			status: 200,
 			body: {
@@ -81,6 +88,7 @@ export async function post(request) {
 			let soirees = [
 				...new Set(calendrier.map((x) => x.soiree + ' / ' + x.plage + ' : ' + x.lieu))
 			];
+
 			for (var i = 0; i < soirees.length; i++) {
 				var obj = new Object();
 				obj.soiree = soirees[i].substring(0, soirees[i].indexOf(' /'));
@@ -92,7 +100,7 @@ export async function post(request) {
 				obj.email = benevole.email;
 				obj.b_id = b.insertedId.toString();
 				obj.statut = '';
-				obj.type = 'Camion';
+				obj.equipe = 'Camion';
 
 				c = await coll2.insertOne(obj);
 			}
@@ -117,7 +125,7 @@ export async function post(request) {
 				obj.email = benevole.email;
 				obj.b_id = b.insertedId.toString();
 				obj.statut = '';
-				obj.type = 'Maraude';
+				obj.equipe = 'Maraude';
 
 				c = await coll2.insertOne(obj);
 			}

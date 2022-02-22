@@ -10,7 +10,9 @@ export async function get(request) {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('RetourSoirees');
-		const retourSoirees = await collection.find({ soiree: date_YYYYMMDD(soiree).date }).toArray();
+		const retourSoirees = await collection
+			.find({ soiree: date_YYYYMMDD(soiree).date, equipe: 'Camion' })
+			.toArray();
 		return {
 			status: 200,
 			body: {

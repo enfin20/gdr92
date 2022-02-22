@@ -64,9 +64,12 @@ export async function put(request) {
 		let pipeline = [
 			{
 				$match: {
-					equipe: 'Maraude',
-					statut: 'Oui',
-					email: calendrier[0].email
+					equipe: 'Camion',
+					statut: 'Non',
+					email: calendrier[0].email,
+					lieu: {
+						$in: ['gp', 'gare']
+					}
 				}
 			},
 			{
@@ -88,10 +91,10 @@ export async function put(request) {
 											$eq: ['$email', '$$e']
 										},
 										{
-											$ne: ['$equipe', 'Maraude']
+											$eq: ['$statut', 'Oui']
 										},
 										{
-											$ne: ['$lieu', 'entrepot']
+											$eq: ['$equipe', 'Maraude']
 										}
 									]
 								}
@@ -108,22 +111,16 @@ export async function put(request) {
 				}
 			},
 			{
-				$addFields: {
-					cb_id: '$cb._id'
-				}
-			},
-			{
 				$project: {
-					_id: 0,
-					cb_id: 1
+					_id: 1
 				}
 			}
 		];
 		const soirees = await collection.aggregate(pipeline).toArray();
 		console.log('soirees maraude ' + soirees.length);
 		for (var j = 0; j < soirees.length; j++) {
-			console.log(j + ' ' + soirees[j].cb_id);
-			await collection.update({ _id: ObjectId(soirees[j].cb_id) }, { $set: { statut: 'Maraude' } });
+			console.log(j + ' ' + soirees[j]._id);
+			await collection.update({ _id: ObjectId(soirees[j]._id) }, { $set: { statut: 'Maraude' } });
 		}
 
 		return {

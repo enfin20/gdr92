@@ -14,7 +14,7 @@ export async function put(request) {
 		console.log('soiree ' + soiree);
 
 		await collection.update(
-			{ soiree: { $regex: date_YYYYMM(soiree).date } },
+			{ soiree: { $regex: date_YYYYMM(soiree).date }, equipe: 'Camion' },
 			{ $set: { actif: 'Non' } }
 		);
 

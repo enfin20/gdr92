@@ -28,6 +28,7 @@
 	let benevoles = [];
 	let rs = '';
 	let chargement = '';
+	let equipe = '';
 	let soiree = YYYY_MM_DD().date;
 	console.log('soirée ' + soiree);
 
@@ -144,16 +145,30 @@
 		chargement = '';
 	}
 
-	export async function showPlanningM() {
+	export async function showCamionPlanningM() {
 		// affichage du planning pour le mois en cours
 		mois = YYYYMM().date;
+		equipe = 'Camion';
 		getPlanning();
 	}
 
-	export async function showPlanningM2() {
+	export async function showCamionPlanningM2() {
 		// affichage du planning pour le mois suivant
 		mois = YYYYMM(1).date;
+		equipe = 'Camion';
+		getPlanning();
+	}
+	export async function showMaraudePlanningM() {
+		// affichage du planning pour le mois en cours
+		mois = YYYYMM().date;
+		equipe = 'Maraude';
+		getPlanning();
+	}
 
+	export async function showMaraudePlanningM2() {
+		// affichage du planning pour le mois suivant
+		mois = YYYYMM(1).date;
+		equipe = 'Maraude';
 		getPlanning();
 	}
 
@@ -202,7 +217,7 @@
 		planningVisible = 'block';
 
 		// mise en forme du calendrier
-		const res = await fetch('./calendrierBenevoles?soiree=' + mois);
+		const res = await fetch('./calendrierBenevoles?soiree=' + mois + '&equipe=' + equipe);
 		const cal = await res.json();
 
 		// remise au format des dates et des entêtes DD/MM
@@ -251,14 +266,14 @@
 			<img src="https://www.orientsport.fr/oflash/img/logo.webp" alt="Restos du coeur" /></button
 		>
 	</div>
-	<div class="mr-3 md:py-4 inline-block text-gray-600">
+	<div class="mr-3 md:py-4 inline-block text-gray-600 ">
 		<button
 			type="submit"
 			name="s"
 			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
-			on:click={showPlanningM}
+			on:click={showCamionPlanningM}
 		>
-			Planning {MM(new Date().getMonth()).mois}
+			Camion {MM(new Date().getMonth()).mois}
 		</button>
 	</div>
 	<div class="mr-3 md:py-4 inline-block text-gray-600">
@@ -266,9 +281,29 @@
 			type="submit"
 			name="s"
 			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
-			on:click={showPlanningM2}
+			on:click={showCamionPlanningM2}
 		>
-			Planning {MM(new Date().getMonth() + 1).mois}
+			Camion {MM(new Date().getMonth() + 1).mois}
+		</button>
+	</div>
+	<div class="mr-3 md:py-4 inline-block text-gray-600 hidden">
+		<button
+			type="submit"
+			name="s"
+			class="bg-purple-300 hover:bg-purple-400 rounded py-1 px-3 text-gray-600"
+			on:click={showMaraudePlanningM}
+		>
+			Maraude {MM(new Date().getMonth()).mois}
+		</button>
+	</div>
+	<div class="mr-3 md:py-4 inline-block text-gray-600 hidden">
+		<button
+			type="submit"
+			name="s"
+			class="bg-purple-300 hover:bg-purple-400 rounded py-1 px-3 text-gray-600"
+			on:click={showMaraudePlanningM2}
+		>
+			Maraude {MM(new Date().getMonth() + 1).mois}
 		</button>
 	</div>
 	<div class={menuVisible}>
@@ -402,7 +437,7 @@
 <div class={planningVisible}>
 	<div class="flex py-2 w-full">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">
-			Planning de {date_mm_YYYY(mois).date}
+			Planning {equipe} de {date_mm_YYYY(mois).date}
 		</h1>
 	</div>
 	<div class="flex py-2 w-full">

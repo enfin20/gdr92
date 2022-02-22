@@ -70,7 +70,7 @@ export async function get(request) {
 		const collection = db.collection('RetourSoirees');
 		const coll2 = db.collection('CalendrierBenevoles');
 		const retourSoirees = await collection
-			.find({ soiree: { $lte: YYYYMMDD(0).date } })
+			.find({ soiree: { $lte: YYYYMMDD(0).date } }, { equipe: 'Camion' })
 			.sort({ soiree: -1 })
 			.toArray();
 
