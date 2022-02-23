@@ -49,12 +49,12 @@
 		try {
 			loggedBenevole = benevole.benevole.prenom + ' ' + benevole.benevole.nom;
 			if (benevole.benevole.camion === undefined) {
-				camion = 'Non';
+				camion = 'N';
 			} else {
 				camion = benevole.benevole.camion;
 			}
 			if (benevole.benevole.maraude === undefined) {
-				maraude = 'Non';
+				maraude = 'N';
 			} else {
 				maraude = benevole.benevole.maraude;
 			}

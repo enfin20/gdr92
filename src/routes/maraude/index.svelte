@@ -189,8 +189,8 @@
 				if (plageActive[j]) {
 					// planning uniquement pour les benevoles de la bonne équipe
 					if (
-						(benevoles.benevoles[i].camion === 'Oui' && equipe[j] === 'Camion') ||
-						(benevoles.benevoles[i].maraude === 'Oui' && equipe[j] === 'Maraude')
+						(benevoles.benevoles[i].camion === 'O' && equipe[j] === 'Camion') ||
+						(benevoles.benevoles[i].maraude === 'O' && equipe[j] === 'Maraude')
 					) {
 						obj.plage = plage[j];
 						obj.lieu = lieu[j];

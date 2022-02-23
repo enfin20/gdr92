@@ -8,6 +8,9 @@
 	let new_tel = '';
 	let new_maraude = '';
 	let new_camion = '';
+	let new_sexe = '';
+	let new_chauffeur = '';
+	let new_rsm = '';
 
 	import { createEventDispatcher } from 'svelte';
 
@@ -17,7 +20,18 @@
 		dispatch('showBenevoles');
 	}
 
-	export async function updateBenevole(b_id, prenom, nom, email, tel, maraude, camion) {
+	export async function updateBenevole(
+		b_id,
+		prenom,
+		nom,
+		email,
+		tel,
+		camion,
+		maraude,
+		sexe,
+		chauffeur,
+		rsm
+	) {
 		// Mise à jour du bénévole
 		var obj = new Object();
 		obj._id = b_id;
@@ -25,21 +39,38 @@
 		obj.nom = nom.toUpperCase();
 		obj.email = email;
 		obj.tel = tel;
-		obj.maraude = maraude;
-		obj.camion = camion;
+		obj.maraude = maraude.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.camion = camion.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.sexe = sexe;
+		obj.chauffeur = chauffeur.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.rsm = rsm.substring(0, 1) === 'O' ? 'O' : 'N';
 		const res = await fetch('/benevoles/benevole', {
 			method: 'PUT',
 			body: JSON.stringify(obj)
 		});
 	}
 
-	export async function insertBenevole(prenom, nom, email, tel, maraude, camion) {
+	export async function insertBenevole(
+		prenom,
+		nom,
+		email,
+		tel,
+		camion,
+		maraude,
+		sexe,
+		chauffeur,
+		rsm
+	) {
 		var obj = new Object();
 		obj.prenom = prenom;
 		obj.nom = nom.toUpperCase();
 		obj.email = email;
 		obj.tel = tel;
-		obj.maraude = maraude;
+		obj.maraude = maraude.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.camion = camion.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.sexe = sexe;
+		obj.chauffeur = chauffeur.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.rsm = rsm.substring(0, 1) === 'O' ? 'O' : 'N';
 
 		const res = await fetch('/benevoles/benevole', {
 			method: 'POST',
@@ -51,6 +82,9 @@
 		new_tel = '';
 		new_camion = '';
 		new_maraude = '';
+		new_sexe = '';
+		new_chauffeur = '';
+		new_rsm = '';
 		showBenevoles();
 	}
 
@@ -71,8 +105,11 @@
 			<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">Nom</div>
 			<div class=" table-cell text-left w-1/4 align-middle py-1 px-1">Email</div>
 			<div class=" table-cell text-left w-1/6 align-middle py-1 px-1">Tél</div>
-			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">Maraude</div>
 			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">Camion</div>
+			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">Maraude</div>
+			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">H/F</div>
+			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">Chauffeur</div>
+			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">Resp Mar</div>
 			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1" />
 			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1" />
 		</div>
@@ -108,6 +145,13 @@
 			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
 				<input
 					type="text"
+					bind:value={new_camion}
+					class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+				/>
+			</div>
+			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+				<input
+					type="text"
 					bind:value={new_maraude}
 					class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 				/>
@@ -115,7 +159,21 @@
 			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
 				<input
 					type="text"
-					bind:value={new_camion}
+					bind:value={new_sexe}
+					class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+				/>
+			</div>
+			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+				<input
+					type="text"
+					bind:value={new_chauffeur}
+					class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+				/>
+			</div>
+			<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+				<input
+					type="text"
+					bind:value={new_rsm}
 					class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 				/>
 			</div>
@@ -127,8 +185,11 @@
 						new_nom,
 						new_email,
 						new_tel,
+						new_camion,
 						new_maraude,
-						new_camion
+						new_sexe,
+						new_chauffeur,
+						new_rsm
 					)}>Insérer</button
 				>
 			</div>
@@ -167,6 +228,13 @@
 				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
 					<input
 						type="text"
+						bind:value={b.camion}
+						class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+					/>
+				</div>
+				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+					<input
+						type="text"
 						bind:value={b.maraude}
 						class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 					/>
@@ -174,7 +242,21 @@
 				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
 					<input
 						type="text"
-						bind:value={b.camion}
+						bind:value={b.sexe}
+						class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+					/>
+				</div>
+				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+					<input
+						type="text"
+						bind:value={b.chauffeur}
+						class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+					/>
+				</div>
+				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">
+					<input
+						type="text"
+						bind:value={b.rsm}
 						class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 					/>
 				</div>
@@ -182,8 +264,18 @@
 					<button
 						class="bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded"
 						id={b._id}
-						on:click={updateBenevole(b._id, b.prenom, b.nom, b.email, b.tel, b.maraude, b.camion)}
-						>Modifier</button
+						on:click={updateBenevole(
+							b._id,
+							b.prenom,
+							b.nom,
+							b.email,
+							b.tel,
+							b.camion,
+							b.maraude,
+							b.sexe,
+							b.chauffeur,
+							b.rsm
+						)}>Modifier</button
 					>
 				</div>
 				<div class=" table-cell text-left w-1/12 align-middle py-1 px-1">

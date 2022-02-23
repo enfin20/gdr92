@@ -106,7 +106,7 @@ export async function post(request) {
 			}
 		}
 
-		if (benevole.maraude === 'Oui') {
+		if (benevole.maraude === 'O') {
 			let calendrier = await coll2
 				.find({ soiree: { $gt: YYYYMM(0).date }, equipe: 'Maraude' })
 				.sort({ soiree: 1, plage: 1 })
@@ -163,8 +163,11 @@ export async function put(request) {
 					nom: benevole.nom,
 					email: benevole.email,
 					tel: benevole.tel,
+					camion: benevole.camion,
 					maraude: benevole.maraude,
-					camion: benevole.camion
+					sexe: benevole.sexe,
+					chauffeur: benevole.chauffeur,
+					rsm: benevole.rsm
 				}
 			}
 		);
