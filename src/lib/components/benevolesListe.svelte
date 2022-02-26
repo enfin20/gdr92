@@ -11,7 +11,7 @@
 	let new_prepa = false;
 	let new_rs = false;
 	let new_rg = false;
-	let new_sexe = '';
+	let new_homme = false;
 	let new_chauffeur = false;
 	let new_rsm = false;
 	let new_rm = false;
@@ -35,7 +35,7 @@
 		rs,
 		rg,
 		maraude,
-		sexe,
+		homme,
 		chauffeur,
 		rsm,
 		rm
@@ -47,42 +47,42 @@
 		obj.nom = nom.toUpperCase();
 		obj.email = email;
 		obj.tel = tel;
-		obj.camion = camion.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.camion = camion;
 		try {
-			obj.prepa = prepa.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.prepa = prepa;
 		} catch {
-			obj.prepa = 'N';
+			obj.prepa = false;
 		}
 		try {
-			obj.rs = rs.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.rs = rs;
 		} catch {
-			obj.rs = 'N';
+			obj.rs = false;
 		}
 		try {
-			obj.rg = rg.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.rg = rg;
 		} catch {
-			obj.rg = 'N';
+			obj.rg = false;
 		}
-		obj.maraude = maraude.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.maraude = maraude;
 		try {
-			obj.sexe = sexe;
+			obj.homme = homme;
 		} catch {
-			obj.sexe = '';
-		}
-		try {
-			obj.chauffeur = chauffeur.substring(0, 1) === 'O' ? 'O' : 'N';
-		} catch {
-			obj.chauffeur = 'N';
+			obj.homme = false;
 		}
 		try {
-			obj.rsm = rsm.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.chauffeur = chauffeur;
 		} catch {
-			obj.rsm = 'N';
+			obj.chauffeur = false;
 		}
 		try {
-			obj.rm = rm.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.rsm = rsm;
 		} catch {
-			obj.rm = 'N';
+			obj.rsm = false;
+		}
+		try {
+			obj.rm = rm;
+		} catch {
+			obj.rm = false;
 		}
 		const res = await fetch('/benevoles/benevole', {
 			method: 'PUT',
@@ -100,7 +100,7 @@
 		rs,
 		rg,
 		maraude,
-		sexe,
+		homme,
 		chauffeur,
 		rsm,
 		rm
@@ -110,44 +110,43 @@
 		obj.nom = nom.toUpperCase();
 		obj.email = email;
 		obj.tel = tel;
-		obj.camion = camion.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.camion = camion;
 		try {
-			obj.prepa = prepa.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.prepa = prepa;
 		} catch {
-			obj.prepa = 'N';
+			obj.prepa = false;
 		}
 		try {
-			obj.rs = rs.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.rs = rs;
 		} catch {
-			obj.rs = 'N';
+			obj.rs = false;
 		}
 		try {
-			obj.rg = rg.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.rg = rg;
 		} catch {
-			obj.rg = 'N';
+			obj.rg = false;
 		}
-		obj.maraude = maraude.substring(0, 1) === 'O' ? 'O' : 'N';
+		obj.maraude = maraude;
 		try {
-			obj.sexe = sexe;
+			obj.homme = homme;
 		} catch {
-			obj.sexe = '';
-		}
-		try {
-			obj.chauffeur = chauffeur.substring(0, 1) === 'O' ? 'O' : 'N';
-		} catch {
-			obj.chauffeur = 'N';
+			obj.homme = false;
 		}
 		try {
-			obj.rsm = rsm.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.chauffeur = chauffeur;
 		} catch {
-			obj.rsm = 'N';
+			obj.chauffeur = false;
 		}
 		try {
-			obj.rm = rm.substring(0, 1) === 'O' ? 'O' : 'N';
+			obj.rsm = rsm;
 		} catch {
-			obj.rm = 'N';
+			obj.rsm = false;
 		}
-
+		try {
+			obj.rm = rm;
+		} catch {
+			obj.rm = false;
+		}
 		const res = await fetch('/benevoles/benevole', {
 			method: 'POST',
 			body: JSON.stringify(obj)
@@ -156,22 +155,14 @@
 		new_nom = '';
 		new_email = '';
 		new_tel = '';
-		new_camion = '';
-		new_rs = '';
-		new_rg = '';
-		new_maraude = '';
-		new_sexe = '';
-		new_chauffeur = '';
-		new_rsm = '';
-		new_rm = '';
-		showBenevoles();
-	}
-
-	export async function deleteBenevole(b_id) {
-		const res = await fetch('/benevoles/benevole', {
-			method: 'DELETE',
-			body: JSON.stringify(b_id)
-		});
+		new_camion = false;
+		new_rs = false;
+		new_rg = false;
+		new_maraude = false;
+		new_homme = false;
+		new_chauffeur = false;
+		new_rsm = false;
+		new_rm = false;
 		showBenevoles();
 	}
 </script>
@@ -185,22 +176,21 @@
 				<thead>
 					<tr>
 						<th colspan="2" class="w-[20%] sticky top-0 bg-white">Prénom</th>
-						<th colspan="3" class="w-[20%] sticky top-0 bg-white">Nom</th>
-						<th colspan="3" class="w-[20%] sticky top-0 bg-white">Email</th>
+						<th colspan="3" class="w-[25%] sticky top-0 bg-white">Nom</th>
+						<th colspan="3" class="w-[25%] sticky top-0 bg-white">Email</th>
 						<th colspan="2" class="w-[20%] sticky top-0 bg-white">Tél</th>
-						<th colspan="2" class="w-[20%] sticky top-0 bg-white" />
 					</tr>
 					<tr>
-						<th class="w-[10%] sticky top-0 bg-green-100">Camion</th>
-						<th class="w-[10%] sticky top-0 bg-green-100">Prepa</th>
-						<th class="w-[10%] sticky top-0 bg-green-100">RS</th>
-						<th class="w-[10%] sticky top-0 bg-green-100">RG</th>
-						<th class="w-[10%] sticky top-0 bg-purple-100">Maraude</th>
-						<th class="w-[10%] sticky top-0 bg-purple-100">H/F</th>
-						<th class="w-[10%] sticky top-0 bg-purple-100">Conduc.</th>
-						<th class="w-[10%] sticky top-0 bg-purple-100">RS Mar</th>
-						<th class="w-[10%] sticky top-0 bg-purple-100">RG Mar</th>
-						<th colspan="2" class="w-[10%] sticky top-0 bg-white" />
+						<th class="w-[10%] sticky top-0 bg-blue-100">Camion</th>
+						<th class="w-[10%] sticky top-0 bg-blue-100">Prepa</th>
+						<th class="w-[10%] sticky top-0 bg-blue-100">RS</th>
+						<th class="w-[10%] sticky top-0 bg-blue-100">RG</th>
+						<th class="w-[10%] sticky top-0 bg-amber-200">Maraude</th>
+						<th class="w-[10%] sticky top-0 bg-amber-200">Homme</th>
+						<th class="w-[10%] sticky top-0 bg-amber-200">Conduc.</th>
+						<th class="w-[10%] sticky top-0 bg-amber-200">RS Mar</th>
+						<th class="w-[10%] sticky top-0 bg-amber-200">RG Mar</th>
+						<th class="w-[10%] sticky top-0 bg-white" />
 					</tr>
 				</thead>
 				<tbody class="">
@@ -232,73 +222,73 @@
 								bind:value={new_tel}
 								class=" appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 							/>
-						</td> <td colspan="2" class="text-left align-middle py-1 px-1 w-[10%]" />
+						</td>
 					</tr>
 					<tr class="align-middle text-center border-collapse border-slate-200">
-						<td class="align-middle py-1 px-1 w-[10%] bg-green-100">
+						<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 							<input
 								type="checkbox"
 								bind:value={new_camion}
-								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-green-300 checked:border-green-300 focus:outline-none float-center cursor-pointer"
+								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 							/>
 						</td>
-						<td class=" align-middle py-1 px-1 w-[10%] bg-green-100">
+						<td class=" align-middle py-1 px-1 w-[10%] bg-blue-100">
 							<input
 								type="checkbox"
 								bind:value={new_prepa}
-								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-green-300 checked:border-green-300 focus:outline-none float-center cursor-pointer"
+								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
-						<td class="align-middle py-1 px-1 w-[10%] bg-green-100">
+						<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 							<input
 								type="checkbox"
 								bind:value={new_rs}
-								class="appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-green-300 checked:border-green-300 float-center cursor-pointer"
+								class="appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 float-center cursor-pointer"
 							/></td
 						>
-						<td class="align-middle py-1 px-1 w-[10%] bg-green-100">
+						<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 							<input
 								type="checkbox"
 								bind:value={new_rg}
-								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-green-300 checked:border-green-300 focus:outline-none float-center cursor-pointer"
+								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
-						<td class="align-middle py-1 px-1 w-[10%] bg-purple-100">
+						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
 								bind:value={new_maraude}
-								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-pink-300 checked:border-pink-300 focus:outline-none float-center cursor-pointer"
+								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
-						<td class="align-middle py-1 px-1 w-[10%] bg-purple-100">
+						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
-								bind:value={new_sexe}
-								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-pink-300 checked:border-pink-300 focus:outline-none float-center cursor-pointer"
+								bind:value={new_homme}
+								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
-						<td class="align-middle py-1 px-1 w-[10%] bg-purple-100">
+						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
 								bind:value={new_chauffeur}
-								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-pink-300 checked:border-pink-300 focus:outline-none float-center cursor-pointer"
+								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
-						<td class="align-middle py-1 px-1 w-[10%] bg-purple-100">
+						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
 								bind:value={new_rsm}
-								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-pink-300 checked:border-pink-300 focus:outline-none float-center cursor-pointer"
+								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
-						<td class="align-middle py-1 px-1 w-[10%] bg-purple-100">
+						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
 								bind:value={new_rm}
-								class=" h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-pink-300 checked:border-pink-300 focus:outline-none float-center cursor-pointer"
+								class=" h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/>
 						</td>
-						<td class="text-left align-middle py-1 px-1 w-[5%]">
+						<td class="align-middle py-1 px-1 w-[10%]">
 							<button
 								class="bg-green-600 hover:bg-green-800 text-white py-1 px-1 rounded"
 								on:click={insertBenevole(
@@ -311,13 +301,14 @@
 									new_rs,
 									new_rg,
 									new_maraude,
-									new_sexe,
+									new_homme,
 									new_chauffeur,
 									new_rsm,
 									new_rm
-								)}>Insérer</button
-							></td
-						>
+								)}
+								>Insérer
+							</button>
+						</td>
 					</tr>
 					{#each benevoles as b}
 						<tr class="align-middle text-center border-collapse border-t-[1px] border-slate-200">
@@ -349,73 +340,72 @@
 									class="appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 								/>
 							</td>
-							<td colspan="2" class="text-left align-middle py-1 px-1 w-[10%]" />
 						</tr>
 						<tr class="align-middle text-center border-collapse border-slate-200">
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 								<input
-									type="text"
-									bind:value={b.camion}
-									class="appearance-none border-2 bg-green-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.camion}
+									class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 								<input
-									type="text"
-									bind:value={b.prepa}
-									class="appearance-none border-2 bg-green-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.prepa}
+									class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 								<input
-									type="text"
-									bind:value={b.rs}
-									class="appearance-none border-2 bg-green-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.rs}
+									class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 								<input
-									type="text"
-									bind:value={b.rg}
-									class="appearance-none border-2 bg-green-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.rg}
+									class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 								<input
-									type="text"
-									bind:value={b.maraude}
-									class="appearance-none border-2 bg-purple-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.maraude}
+									class=" h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 								<input
-									type="text"
-									bind:value={b.sexe}
-									class="appearance-none border-2 bg-purple-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.homme}
+									class=" h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 								<input
-									type="text"
-									bind:value={b.chauffeur}
-									class="appearance-none border-2 bg-purple-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.chauffeur}
+									class=" h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 								<input
-									type="text"
-									bind:value={b.rsm}
-									class="appearance-none border-2 bg-purple-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.rsm}
+									class=" h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[10%]">
+							<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 								<input
-									type="text"
-									bind:value={b.rm}
-									class="appearance-none border-2 bg-purple-100 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+									type="checkbox"
+									bind:checked={b.rm}
+									class=" h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 								/>
 							</td>
-							<td class="text-left align-middle py-1 px-1 w-[5%]">
+							<td class="align-middle py-1 px-1 w-[10%]">
 								<button
 									class="bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded"
 									id={b._id}
@@ -430,7 +420,7 @@
 										b.rs,
 										b.rm,
 										b.maraude,
-										b.sexe,
+										b.homme,
 										b.chauffeur,
 										b.rsm,
 										b.rm
