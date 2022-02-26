@@ -15,18 +15,21 @@ export async function get(request) {
 		const collection = db.collection('Benevoles');
 		const benevole = await collection.findOne({ email: email });
 
-		if (rg === 'Oui') {
+		if (rg) {
 			// pour les rg, il faut un mot de passe valide
 			if (benevole.pwd === pwd) {
+				benevole.rg = true;
 			} else {
-				benevole.rg = 'Non';
+				benevole.rg = false;
 			}
 		}
-		if (rm === 'Oui') {
+
+		if (rm) {
 			// pour les rg, il faut un mot de passe valide
 			if (benevole.pwd === pwd) {
+				benevole.rm = true;
 			} else {
-				benevole.rm = 'Non';
+				benevole.rm = false;
 			}
 		}
 		return {
@@ -36,10 +39,11 @@ export async function get(request) {
 			}
 		};
 	} catch (err) {
+		console.log(err.message);
 		return {
 			status: 500,
 			body: {
-				erreur: err
+				erreur: err.message
 			}
 		};
 	}
@@ -80,7 +84,7 @@ export async function post(request) {
 		//récupération des dates à venir
 		const coll2 = db.collection('CalendrierBenevoles');
 		// en fonction du profil du benevole
-		if (benevole.camion === 'Oui') {
+		if (benevole.camion) {
 			let calendrier = await coll2
 				.find({ soiree: { $gt: YYYYMM(0).date }, equipe: 'Camion' })
 				.sort({ soiree: 1, plage: 1 })
@@ -106,7 +110,7 @@ export async function post(request) {
 			}
 		}
 
-		if (benevole.maraude === 'O') {
+		if (benevole.maraude) {
 			let calendrier = await coll2
 				.find({ soiree: { $gt: YYYYMM(0).date }, equipe: 'Maraude' })
 				.sort({ soiree: 1, plage: 1 })
@@ -164,10 +168,14 @@ export async function put(request) {
 					email: benevole.email,
 					tel: benevole.tel,
 					camion: benevole.camion,
+					prepa: benevole.prepa,
+					rs: benevole.rs,
+					rg: benevole.rg,
 					maraude: benevole.maraude,
 					sexe: benevole.sexe,
 					chauffeur: benevole.chauffeur,
-					rsm: benevole.rsm
+					rsm: benevole.rsm,
+					rm: benevole.rm
 				}
 			}
 		);

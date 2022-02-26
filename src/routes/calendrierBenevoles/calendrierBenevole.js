@@ -9,10 +9,10 @@ export async function get(request) {
 		const maraude = request.query.get('maraude');
 		const camion = request.query.get('camion');
 		let equipeFilter = [];
-		if (camion.substring(0, 1) === 'O') {
+		if (camion) {
 			equipeFilter.push('Camion');
 		}
-		if (maraude.substring(0, 1) === 'O') {
+		if (maraude) {
 			equipeFilter.push('Maraude');
 		}
 

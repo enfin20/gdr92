@@ -20,8 +20,8 @@
 	let dates = [];
 	let calendriers = [];
 	let mois = '';
-	let maraude = '';
-	let camion = '';
+	let maraude = false;
+	let camion = false;
 	let prepa = '';
 	let retourSoiree = [];
 	let retourSoirees = [];
@@ -46,20 +46,22 @@
 
 		const res = await fetch('/benevoles/benevole?email=' + email);
 		const benevole = await res.json();
+
 		try {
+			console.log('benevole.benevole.prepa ' + benevole.benevole.prepa);
 			loggedBenevole = benevole.benevole.prenom + ' ' + benevole.benevole.nom;
 			if (benevole.benevole.camion === undefined) {
-				camion = 'N';
+				camion = false;
 			} else {
 				camion = benevole.benevole.camion;
 			}
 			if (benevole.benevole.maraude === undefined) {
-				maraude = 'N';
+				maraude = false;
 			} else {
 				maraude = benevole.benevole.maraude;
 			}
 			if (benevole.benevole.prepa === undefined) {
-				prepa = 'Non';
+				prepa = false;
 			} else {
 				prepa = benevole.benevole.prepa;
 			}
@@ -118,8 +120,8 @@
 		dates = [];
 		calendriers = [];
 		mois = '';
-		maraude = '';
-		prepa = '';
+		maraude = false;
+		prepa = false;
 		retourSoiree = [];
 		retourSoirees = [];
 		benevoles = [];

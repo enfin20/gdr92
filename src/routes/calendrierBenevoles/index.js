@@ -41,6 +41,7 @@ export async function get(request) {
 		const soirees = [...new Set(calendrier.map((x) => x.soiree + ' : ' + x.lieu))];
 		// récupération des bénévoles
 		const benevoles = [...new Set(calendrier.map((x) => x.benevole))];
+
 		// récupération des vaisselles
 		const vaisselle = await collection.aggregate(pipeline).toArray();
 
@@ -72,7 +73,7 @@ export async function get(request) {
 					) {
 						var obj = new Object();
 						obj._id = calendrier[k]._id;
-						if (calendrier[k].rs === 'Oui') {
+						if (calendrier[k].rs) {
 							obj.presence = 'RS';
 						} else {
 							obj.presence = calendrier[k].statut;
@@ -96,7 +97,7 @@ export async function get(request) {
 		return {
 			status: 500,
 			body: {
-				erreur: err
+				erreur: err.message
 			}
 		};
 	}

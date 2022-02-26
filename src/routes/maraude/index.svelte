@@ -56,10 +56,10 @@
 		// login du rm
 		email = event.detail.text;
 		let pwd = event.detail.pwd;
-		const res = await fetch('./benevoles/benevole?email=' + email + '&rm=Oui&pwd=' + pwd);
+		const res = await fetch('./benevoles/benevole?email=' + email + '&rm=true&pwd=' + pwd);
 		const benevole = await res.json();
 		try {
-			if (benevole.benevole.rm === 'Oui') {
+			if (benevole.benevole.rm) {
 				menuVisible = 'flex';
 				loginVisible = 'hidden';
 			} else {
@@ -189,8 +189,8 @@
 				if (plageActive[j]) {
 					// planning uniquement pour les benevoles de la bonne équipe
 					if (
-						(benevoles.benevoles[i].camion === 'O' && equipe[j] === 'Camion') ||
-						(benevoles.benevoles[i].maraude === 'O' && equipe[j] === 'Maraude')
+						(benevoles.benevoles[i].camion && equipe[j] === 'Camion') ||
+						(benevoles.benevoles[i].maraude && equipe[j] === 'Maraude')
 					) {
 						obj.plage = plage[j];
 						obj.lieu = lieu[j];

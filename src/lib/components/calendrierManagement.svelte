@@ -12,7 +12,7 @@
 	var nbVaisselle = [];
 	let soiree = '';
 
-	showPlanningM2();
+	//	showPlanningM2();
 
 	function CalendrierChangeStatut(button_id) {
 		// changement du statut du bouton appelant

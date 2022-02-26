@@ -11,7 +11,7 @@
 	soiree = date_dd_MM_YYYY(calendrier.soiree).date;
 
 	//initialisation de l'affichage
-	if (calendrier.lieu === 'entrepot' && prepa !== 'Oui') {
+	if (calendrier.lieu === 'entrepot' && !prepa) {
 		displayPrepa = 'none';
 	}
 	if (calendrier.statut === 'Oui') {
