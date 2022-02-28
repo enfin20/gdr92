@@ -1,5 +1,5 @@
 import { connectToDatabase } from '$lib/db';
-import { YYYYMMDD } from '$lib/date_functions';
+import { YYYYMMDD, date_DD_MM } from '$lib/date_functions';
 import { ObjectId } from 'mongodb';
 import { each } from 'svelte/internal';
 
@@ -91,7 +91,7 @@ export async function get(request) {
 						} else {
 							obj.presence = calendrier[k].statut;
 						}
-
+						obj.soiree = date_DD_MM(calendrier[k].soiree).date + ' ' + calendrier[k].lieu;
 						tab.push(obj);
 					}
 				}

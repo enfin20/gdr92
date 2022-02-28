@@ -154,6 +154,7 @@
 
 		getCalendrier();
 	}
+
 	export async function getCalendrier() {
 		// mise en forme du calendrier
 		calendriers = [];
@@ -196,6 +197,7 @@
 			erreurMessage = 'Erreur compile (contacte Olivier):  ' + error;
 		}
 	}
+
 	export function nbBenevoles() {
 		// calcul du nombre de bénévoles / soirées
 		nbPresent = [];
@@ -355,25 +357,36 @@
 					{#each row as cell}
 						{#if typeof cell._id != 'undefined'}
 							<td class="text-center align-middle">
-								<button
-									class={cell.presence === 'Oui'
-										? 'bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded'
-										: cell.presence === 'RS'
-										? 'bg-pink-300 hover:bg-pink-400 text-gray-500 py-1 px-1 rounded'
-										: cell.presence === 'Dispo'
-										? 'bg-gray-200 hover:bg-gray-300 text-gray-600 py-1 px-1 rounded'
-										: cell.presence === 'Maraude'
-										? 'bg-yellow-400 hover:bg-yellow-600 text-gray-500 py-1 px-1 rounded'
-										: cell.presence === 'Vaisselle'
-										? 'bg-blue-300 hover:bg-blue-400 text-gray-500 py-1 px-1 rounded'
-										: cell.presence === 'Absent'
-										? 'bg-red-500 hover:bg-red-600 text-gray-200 py-1 px-1 rounded'
-										: 'text-gray-500 py-1 px-1 rounded'}
-									id={cell._id}
-									on:click={CalendrierChangeStatut(cell._id, cell.presence)}
-								>
-									{cell.presence.substring(0, 3)}
-								</button>
+								<div class="relative flex flex-col items-center group">
+									<button
+										class={cell.presence === 'Oui'
+											? 'bg-green-400 hover:bg-green-600 text-gray-500 py-1 px-1 rounded'
+											: cell.presence === 'RS'
+											? 'bg-pink-300 hover:bg-pink-400 text-gray-500 py-1 px-1 rounded'
+											: cell.presence === 'Dispo'
+											? 'bg-gray-200 hover:bg-gray-300 text-gray-600 py-1 px-1 rounded'
+											: cell.presence === 'Maraude'
+											? 'bg-yellow-400 hover:bg-yellow-600 text-gray-500 py-1 px-1 rounded'
+											: cell.presence === 'Vaisselle'
+											? 'bg-blue-300 hover:bg-blue-400 text-gray-500 py-1 px-1 rounded'
+											: cell.presence === 'Absent'
+											? 'bg-red-500 hover:bg-red-600 text-gray-200 py-1 px-1 rounded'
+											: 'text-gray-500 py-1 px-1 rounded'}
+										id={cell._id}
+										on:click={CalendrierChangeStatut(cell._id, cell.presence)}
+									>
+										{cell.presence.substring(0, 3)}
+									</button>
+									<span
+										class="absolute bottom-0 flex-col items-center hidden mb-6 group-hover:flex"
+									>
+										<span
+											class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-600 shadow-lg"
+											>{cell.soiree}</span
+										>
+										<div class="w-3 h-3 -mt-2 rotate-45 bg-gray-600" />
+									</span>
+								</div>
 							</td>
 						{:else}
 							<td>
