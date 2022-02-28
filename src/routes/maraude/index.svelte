@@ -16,7 +16,6 @@
 	import BenevolesListe from '/src/lib/components/benevolesListe.svelte';
 	import CalendrierManagement from '/src/lib/components/calendrierManagement.svelte';
 
-	let calendriers = [];
 	let benevoles = [];
 	let benevolesSansReponses = [];
 	let soiree = '';
@@ -40,9 +39,9 @@
 	let inactivateMaraude = false;
 
 	let statutEnregistrement = '';
-	let loginStatus = '';
 	let email = '';
 	let erreurMessageRG = '';
+	let benevoleRole = 'rm';
 
 	export function divHidden() {
 		calendrierVisible = 'hidden';
@@ -56,32 +55,15 @@
 	export async function getBenevole(event) {
 		// login du rgm
 		email = event.detail.text;
-		let pwd = event.detail.pwd;
+		erreurMessageRG = event.detail.erreurMessage;
 
-		const res = await fetch('/benevoles/benevole?email=' + email + '&rm=true&pwd=' + pwd);
-		const benevole = await res.json();
-		if (res.status === 500) {
-			// si erreur personnalisée alors on enlève les premières lettres
-			if (benevole.erreur.substring(0, 1) === 'X') {
-				erreurMessageRG = benevole.erreur.substring(2, 50);
-			} else {
-				erreurMessageRG = 'Erreur (contacte Olivier): ' + benevole.erreur;
-			}
+		if (erreurMessageRG === '') {
+			menuVisible = 'flex';
+			loginVisible = 'hidden';
 		} else {
-			erreurMessageRG = '';
-			try {
-				if (benevole.benevole.rm) {
-					menuVisible = 'flex';
-					loginVisible = 'hidden';
-				} else {
-					erreurMessageRG = 'Mot de passe non valide !';
-					menuVisible = 'hidden';
-					calendrierVisible = 'hidden';
-					dateVisible = 'hidden';
-				}
-			} catch (err) {
-				erreurMessageRG = 'Erreur compile (contacte Olivier): ' + err.message;
-			}
+			menuVisible = 'hidden';
+			calendrierVisible = 'hidden';
+			dateVisible = 'hidden';
 		}
 	}
 
@@ -200,8 +182,7 @@
 <span class={loginVisible}>
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login Responsable maraude</h1>
-		<LoginForm {email} {pwdVisible} on:message={getBenevole} />
-		<div>{loginStatus}</div>
+		<LoginForm {email} {pwdVisible} {benevoleRole} on:message={getBenevole} />
 	</div>
 </span>
 <div class={menuVisible}>

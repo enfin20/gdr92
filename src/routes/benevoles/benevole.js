@@ -42,7 +42,6 @@ export async function get(request) {
 			}
 		};
 	} catch (err) {
-		console.log(err.message);
 		// pour gérer les messages personnalisés, on ajoute X
 		if (err.message === "Cannot read properties of null (reading 'pwd')") {
 			message = 'X Mot de passe vide';

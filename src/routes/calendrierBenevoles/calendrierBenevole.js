@@ -21,7 +21,7 @@ export async function get(request) {
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = await collection
 			.find({
-				soiree: { $regex: YYYYMM(1).date },
+				soiree: { $regex: YYYYMM(2).date },
 				email: email,
 				actif: { $ne: 'Non' },
 				equipe: { $in: equipeFilter }
@@ -36,6 +36,7 @@ export async function get(request) {
 			}
 		};
 	} catch (err) {
+		console.log('err ' + err.message);
 		return {
 			status: 500,
 			body: {

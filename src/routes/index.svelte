@@ -41,69 +41,55 @@
 
 	export async function getBenevole(event) {
 		// login et affichage du formulaire de saisie
-		email = event.detail.text;
+		email = event.detail.email;
 		email = email.toLowerCase();
-
-		try {
-			var res = await fetch('/benevoles/benevole?email=' + email);
-			const benevole = await res.json();
-			if (res.status === 500) {
-				erreurMessage = 'Erreur (contacte Olivier): ' + benevole.erreur;
-			}
-			// pas d'erreurs
-			else {
-				try {
-					loggedBenevole = benevole.benevole.prenom + ' ' + benevole.benevole.nom;
-					if (benevole.benevole.camion === undefined) {
-						camion = false;
-					} else {
-						camion = benevole.benevole.camion;
-					}
-					if (benevole.benevole.maraude === undefined) {
-						maraude = false;
-					} else {
-						maraude = benevole.benevole.maraude;
-					}
-					if (benevole.benevole.prepa === undefined) {
-						prepa = false;
-					} else {
-						prepa = benevole.benevole.prepa;
-					}
-					if (benevole.benevole.rs === undefined) {
-						menuVisible = 'hidden';
-					} else {
-						menuVisible = 'block md:inline-block  py-2 md:py-0';
-						rs = loggedBenevole;
-					}
-
-					// pour charger le calendrier du bénévole
-					res = await fetch(
-						'/calendrierBenevoles/calendrierBenevole?email=' +
-							email +
-							'&maraude=' +
-							maraude +
-							'&camion=' +
-							camion
-					);
-					const calendriers = await res.json();
-					if (res.status === 500) {
-						erreurMessage = 'Erreur (contacte Olivier): ' + calendriers.erreur;
-					} else {
-						try {
-							loginVisible = 'hidden';
-							calendrierVisible = 'inline';
-							planningVisible = 'hidden';
-							soirees = calendriers.calendrier;
-						} catch (error) {
-							erreurMessage = 'Erreur 2 (contacte Olivier):  ' + error;
-						}
-					}
-				} catch {
-					erreurMessage = 'Email non valide !';
+		erreurMessage = event.detail.erreurMessage;
+		if (erreurMessage === '') {
+			try {
+				var benevole = event.detail.benevole;
+				loggedBenevole = benevole.benevole.prenom + ' ' + benevole.benevole.nom;
+				if (benevole.benevole.camion === undefined) {
+					camion = false;
+				} else {
+					camion = benevole.benevole.camion;
 				}
+				if (benevole.benevole.maraude === undefined) {
+					maraude = false;
+				} else {
+					maraude = benevole.benevole.maraude;
+				}
+				if (benevole.benevole.prepa === undefined) {
+					prepa = false;
+				} else {
+					prepa = benevole.benevole.prepa;
+				}
+				if (benevole.benevole.rs === undefined) {
+					menuVisible = 'hidden';
+				} else {
+					menuVisible = 'block md:inline-block py-2 md:py-0';
+					rs = loggedBenevole;
+				}
+				// pour charger le calendrier du bénévole
+				const res = await fetch(
+					'/calendrierBenevoles/calendrierBenevole?email=' +
+						email +
+						'&maraude=' +
+						maraude +
+						'&camion=' +
+						camion
+				);
+				const cs = await res.json();
+				if (res.status === 500) {
+					erreurMessage = 'Erreur (contacte Olivier): ' + cs.erreur;
+				} else {
+					loginVisible = 'hidden';
+					calendrierVisible = 'inline';
+					planningVisible = 'hidden';
+					soirees = cs.calendrier;
+				}
+			} catch (err) {
+				erreurMessage = err.message;
 			}
-		} catch (error) {
-			erreurMessage = 'Erreur compile (contacte Olivier):  ' + error;
 		}
 	}
 

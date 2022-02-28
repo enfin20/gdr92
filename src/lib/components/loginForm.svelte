@@ -1,15 +1,57 @@
 <script>
 	export let email;
-	export let pwd;
+	let pwd = '';
+	export let benevoleRole = '';
 	export let pwdVisible = 'none';
+
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-	function getBenevole() {
+	export async function getBenevole() {
+		let erreurMessage = '';
+		let req = '/benevoles/benevole?email=' + email;
+		if (benevoleRole === 'rg') {
+			req = req + '&rg=true&pwd=' + pwd;
+		}
+		if (benevoleRole === 'rm') {
+			req = req + '&rm=true&pwd=' + pwd;
+		}
+
+		const res = await fetch(req);
+		const benevole = await res.json();
+		if (res.status === 500) {
+			// si erreur personnalisée alors on enlève les premières lettres
+			if (benevole.erreur.substring(0, 1) === 'X') {
+				erreurMessage = benevole.erreur.substring(2, 50);
+			} else {
+				erreurMessage = 'Erreur (contacte Olivier): ' + benevole.erreur;
+			}
+		} else {
+			if (benevoleRole === 'rg') {
+				console.log('Ok');
+				try {
+					if (!benevole.benevole.rg) {
+						erreurMessage = 'Mot de passe non valide !';
+					}
+				} catch (err) {
+					erreurMessage = 'Erreur compile (contacte Olivier): ' + err.message;
+				}
+			}
+			if (benevoleRole === 'rm') {
+				try {
+					if (!benevole.benevole.rm) {
+						erreurMessage = 'Mot de passe non valide !';
+					}
+				} catch (err) {
+					erreurMessage = 'Erreur compile (contacte Olivier): ' + err.message;
+				}
+			}
+		}
 		dispatch('message', {
-			text: email,
-			pwd: pwd
+			email: email,
+			benevole: benevole,
+			erreurMessage: erreurMessage
 		});
 	}
 </script>
