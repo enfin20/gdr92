@@ -72,13 +72,11 @@ export async function get(request) {
 		return {
 			status: 500,
 			body: {
-				erreur: err
+				erreur: err.message
 			}
 		};
 	}
 }
-
-export async function post(request) {}
 
 export async function put(request) {
 	// MAJ du retour de soirée et des bénévoles absents
@@ -126,10 +124,8 @@ export async function put(request) {
 		return {
 			status: 500,
 			body: {
-				error: 'Server error'
+				erreur: err.message
 			}
 		};
 	}
 }
-
-export async function del(request) {}

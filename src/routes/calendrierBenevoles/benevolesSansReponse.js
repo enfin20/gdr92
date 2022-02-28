@@ -9,9 +9,10 @@ export async function get(request) {
 		const pipeline = [
 			{
 				$match: {
-					soiree: {
-						$gte: YYYYMM(1).date.concat('00')
-					},
+					$and: [
+						{ soiree: { $gte: YYYYMM(1).date.concat('00') } },
+						{ soiree: { $lte: YYYYMM(2).date.concat('00') } }
+					],
 					statut: '',
 					equipe: equipe
 				}
@@ -44,14 +45,8 @@ export async function get(request) {
 		return {
 			status: 500,
 			body: {
-				erreur: err
+				erreur: err.message
 			}
 		};
 	}
 }
-
-export async function put(request) {}
-
-export async function post(request) {}
-
-export async function del(request) {}

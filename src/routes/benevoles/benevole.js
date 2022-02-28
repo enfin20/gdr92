@@ -9,12 +9,15 @@ export async function get(request) {
 		const pwd = request.query.get('pwd');
 		const rg = request.query.get('rg');
 		const rm = request.query.get('rm');
+		let message = '';
 
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('Benevoles');
 		const benevole = await collection.findOne({ email: email });
 
+		// pour générer une erreur si benevole pas trouvé
+		let prenom = benevole.prenom;
 		if (rg) {
 			// pour les rg, il faut un mot de passe valide
 			if (benevole.pwd === pwd) {
@@ -40,10 +43,18 @@ export async function get(request) {
 		};
 	} catch (err) {
 		console.log(err.message);
+		// pour gérer les messages personnalisés, on ajoute X
+		if (err.message === "Cannot read properties of null (reading 'pwd')") {
+			message = 'X Mot de passe vide';
+		} else if (err.message === "Cannot read properties of null (reading 'prenom')") {
+			message = 'X Email non valide';
+		} else {
+			message = err.message;
+		}
 		return {
 			status: 500,
 			body: {
-				erreur: err.message
+				erreur: message
 			}
 		};
 	}
@@ -145,7 +156,7 @@ export async function post(request) {
 		return {
 			status: 500,
 			body: {
-				error: 'Server error'
+				erreur: err.message
 			}
 		};
 	}
@@ -193,7 +204,7 @@ export async function put(request) {
 		return {
 			status: 500,
 			body: {
-				error: 'Server error'
+				erreur: err.message
 			}
 		};
 	}
@@ -219,7 +230,7 @@ export async function del(request) {
 		return {
 			status: 500,
 			body: {
-				error: 'Server error'
+				erreur: err.message
 			}
 		};
 	}

@@ -31,8 +31,8 @@
 	let dateVisible = 'hidden';
 	let benevolesVisible = 'hidden';
 	let soireeVisible = 'hidden';
-	let delSoireesVisible = 'hidden';
 	let benevolesSansReponseVisible = 'hidden';
+	let erreurMessageRG = '';
 
 	// nouvelle soirée
 	let plageActive = [true, true, true, false];
@@ -53,40 +53,56 @@
 		dateVisible = 'hidden';
 		benevolesVisible = 'hidden';
 		soireeVisible = 'hidden';
-		delSoireesVisible = 'hidden';
 		benevolesSansReponseVisible = 'hidden';
+		erreurMessageRG = '';
+		statutEnregistrement = '';
 	}
 
 	export async function getBenevole(event) {
 		// login du rg
 		email = event.detail.text;
 		let pwd = event.detail.pwd;
+
 		const res = await fetch('/benevoles/benevole?email=' + email + '&rg=true&pwd=' + pwd);
 		const benevole = await res.json();
-
-		try {
-			if (benevole.benevole.rg) {
-				menuVisible = 'flex';
-				loginVisible = 'hidden';
+		if (res.status === 500) {
+			// si erreur personnalisée alors on enlève les premières lettres
+			if (benevole.erreur.substring(0, 1) === 'X') {
+				erreurMessageRG = benevole.erreur.substring(2, 50);
 			} else {
-				loginStatus = 'Email ou mot de passe non valide !';
-				menuVisible = 'hidden';
-				calendrierVisible = 'hidden';
-				dateVisible = 'hidden';
+				erreurMessageRG = 'Erreur (contacte Olivier): ' + benevole.erreur;
 			}
-		} catch {
-			alert('Email non valide');
+		} else {
+			erreurMessageRG = '';
+			try {
+				if (benevole.benevole.rg) {
+					menuVisible = 'flex';
+					loginVisible = 'hidden';
+				} else {
+					erreurMessageRG = 'Mot de passe non valide !';
+					menuVisible = 'hidden';
+					calendrierVisible = 'hidden';
+					dateVisible = 'hidden';
+				}
+			} catch (err) {
+				erreurMessageRG = 'Erreur compile (contacte Olivier): ' + err.message;
+			}
 		}
 	}
 
 	export async function showBenevoles() {
 		// retrouve les bénévoles pour inert / update et delete
 		divHidden();
-		benevolesVisible = 'flex';
 
 		const res = await fetch('/benevoles');
 		const ben = await res.json();
-		benevoles = await ben.benevoles;
+
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + ben.erreur;
+		} else {
+			benevoles = await ben.benevoles;
+			benevolesVisible = 'flex';
+		}
 	}
 
 	export async function showDate() {
@@ -104,133 +120,133 @@
 
 	export async function showSoiree() {
 		// affichage des retours de soirée
-		divHidden();
-		soireeVisible = 'flex';
 
 		const res = await fetch('./retourSoirees');
 		const soir = await res.json();
-		retourSoirees = await soir.retourSoirees;
-	}
 
-	export async function showDelSoirees() {
-		// Pour supprimer un mois
-		divHidden();
-		delSoireesVisible = 'flex';
-
-		// initialisation de soirée au mois suivant
-		soiree = MM_YYYY(1).date;
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + soir.erreur;
+		} else {
+			divHidden();
+			soireeVisible = 'flex';
+			retourSoirees = await soir.retourSoirees;
+		}
 	}
 
 	export async function showBenevolesSansReponse() {
-		// Pour supprimer un mois
 		divHidden();
-		benevolesSansReponseVisible = 'flex';
 
 		// presentation de la liste des benevoles n'ayant pas répondu
-
 		const res = await fetch('/calendrierBenevoles/benevolesSansReponse?equipe=Camion');
 		const b = await res.json();
-		benevolesSansReponses = await b.benevoles;
-	}
-
-	export async function deleteCalendrier() {
-		// suppression d'un mois YYYYMM
-		const soireeNormed = soiree.substring(3, 8).toString().concat(soiree.substring(0, 2));
-		const res = await fetch('/calendrierBenevoles', {
-			method: 'DELETE',
-			body: JSON.stringify(soireeNormed)
-		});
-	}
-
-	export async function saveCalendrier() {
-		// tableau cible des mises à jour
-		var calUpdated = [];
-
-		for (var i = 0; i < calendriers.length; i++) {
-			for (var j = 1; j < calendriers[i].length; j++) {
-				var obj = new Object();
-				obj._id = calendriers[i][j]._id;
-				obj.statut = calendriers[i][j].presence;
-				obj.updated = '';
-				if (calendriers[i][j].updated === 'Oui') {
-					// on n'intègre que les zones qui ont été mise à jour par CalendrierChangeStatut
-					calUpdated.push(obj);
-				}
-			}
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + b.erreur;
+		} else {
+			benevolesSansReponseVisible = 'flex';
+			benevolesSansReponses = await b.benevoles;
 		}
-
-		const res = await fetch('/calendrierBenevoles', {
-			method: 'PUT',
-			body: JSON.stringify(calUpdated)
-		});
 	}
 
 	export async function addCalendrier() {
 		var obj = new Object();
 		var obj2 = new Object();
 		let isCamion = '';
-
+		statutEnregistrement = '.... en cours';
 		obj.soiree = soiree.replaceAll('-', '');
 		obj.statut = '';
 
 		// récupération des bénévoles
-		const res = await fetch('/benevoles');
+		let res = await fetch('/benevoles');
 		let benevoles = await res.json();
-		for (var i = 0; i < benevoles.benevoles.length; i++) {
-			obj.email = benevoles.benevoles[i].email;
-			obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
-			obj.b_id = benevoles.benevoles[i]._id;
-			for (var j = 0; j <= 3; j++) {
-				if (plageActive[j]) {
-					if (equipe[j] === 'Camion') {
-						isCamion = 'Oui';
-					}
-					// planning uniquement pour les benevoles de la bonne équipe
-					if (
-						(benevoles.benevoles[i].camion && equipe[j] === 'Camion') ||
-						(benevoles.benevoles[i].maraude && equipe[j] === 'Maraude')
-					) {
-						obj.plage = plage[j];
-						obj.lieu = lieu[j];
-						obj.equipe = equipe[j];
-						const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
-							method: 'POST',
-							body: JSON.stringify(obj)
-						});
+
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + benevoles.erreur;
+		} else {
+			for (var i = 0; i < benevoles.benevoles.length; i++) {
+				obj.email = benevoles.benevoles[i].email;
+				obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
+				obj.b_id = benevoles.benevoles[i]._id;
+				for (var j = 0; j <= 3; j++) {
+					if (plageActive[j]) {
+						if (equipe[j] === 'Camion') {
+							isCamion = 'Oui';
+						}
+						// planning uniquement pour les benevoles de la bonne équipe
+						if (
+							(benevoles.benevoles[i].camion && equipe[j] === 'Camion') ||
+							(benevoles.benevoles[i].maraude && equipe[j] === 'Maraude')
+						) {
+							obj.plage = plage[j];
+							obj.lieu = lieu[j];
+							obj.equipe = equipe[j];
+							let res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
+								method: 'POST',
+								body: JSON.stringify(obj)
+							});
+
+							let ret = await res.json();
+							if (res.status === 500) {
+								erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
+								isCamion = 'Non';
+								statutEnregistrement = '';
+								i = 10000;
+							}
+						}
 					}
 				}
 			}
-		}
 
-		// enregistrement du retour de soirée
-		if (isCamion === 'Oui') {
-			obj2.soiree = soiree.replaceAll('-', '');
-			obj2.nbGare = 0;
-			obj2.nbPeri = 0;
-			obj2.Commentaires = '';
-			obj2.rs = '';
-			obj2.equipe = 'Camion';
-			const retourSoiree = await fetch('/retourSoirees', {
-				method: 'POST',
-				body: JSON.stringify(obj2)
-			});
+			// enregistrement du retour de soirée
+			if (isCamion === 'Oui') {
+				obj2.soiree = soiree.replaceAll('-', '');
+				obj2.nbGare = 0;
+				obj2.nbPeri = 0;
+				obj2.Commentaires = '';
+				obj2.rs = '';
+				obj2.equipe = 'Camion';
+				const retourSoiree = await fetch('/retourSoirees', {
+					method: 'POST',
+					body: JSON.stringify(obj2)
+				});
+				let ret = await retourSoiree.json();
+				if (retourSoiree.status === 500) {
+					erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
+					statutEnregistrement = '';
+				} else {
+					statutEnregistrement = soiree + ' : enregistrée';
+				}
+			}
 		}
-
-		statutEnregistrement = soiree + ' : enregistrée';
 	}
 
 	export async function inactivateCalendrier() {
 		if (inactivateCamion) {
+			statutEnregistrement = '... en cours';
 			const res = await fetch('/calendrierBenevoles/inactivateCamion', {
 				method: 'PUT',
 				body: JSON.stringify(soiree)
 			});
+			let ret = await res.json();
+			if (res.status === 500) {
+				erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
+				statutEnregistrement = '';
+			} else {
+				statutEnregistrement = 'Calendrier inactivé';
+			}
 		}
 		if (inactivateMaraude) {
+			statutEnregistrement = '... en cours';
 			const res = await fetch('/calendrierBenevoles/inactivateMaraude', {
 				method: 'PUT',
 				body: JSON.stringify(soiree)
 			});
+			let ret = await res.json();
+			if (res.status === 500) {
+				erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
+				statutEnregistrement = '';
+			} else {
+				statutEnregistrement = 'Calendrier inactivé';
+			}
 		}
 	}
 </script>
@@ -238,7 +254,7 @@
 <svelte:head>
 	<title>Planning restos Colombes</title>
 </svelte:head>
-
+<p class="text-center text-xl font-bold text-white bg-red-600">{erreurMessageRG}</p>
 <span class={loginVisible}>
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login Responsable du groupe</h1>
@@ -286,14 +302,6 @@
 		on:click={showSoiree}
 	>
 		Soirées
-	</button>
-	<button
-		type="submit"
-		name="delSoirees"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showDelSoirees}
-	>
-		Suppression
 	</button>
 </div>
 <div class={dateVisible}>
@@ -402,7 +410,7 @@
 	</div>
 </div>
 <div class={calendrierVisible}>
-	<CalendrierManagement {currentEquipe} />
+	<CalendrierManagement {currentEquipe} {statutEnregistrement} />
 </div>
 <div class={benevolesVisible}>
 	<BenevolesListe {benevoles} on:showBenevoles={showBenevoles} />
@@ -411,27 +419,6 @@
 	<div class="py-2 grid gap-1 w-full flex-grow">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Soirées</p>
 		<RetourSoireeListe {retourSoirees} />
-	</div>
-</div>
-<div class={delSoireesVisible}>
-	<div class="py-2 grid gap-1 w-full">
-		<p class="text-2xl font-bold text-gray-800 md:text-xl">Supprimer des dates</p>
-		<div class="md:flex md:items-center">
-			<div class="md:w-2/3">
-				<form on:submit|preventDefault={deleteCalendrier}>
-					<input
-						type="text"
-						bind:value={soiree}
-						class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
-					/>
-					<button
-						type="submit"
-						class="shadow bg-red-400 hover:bg-red-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
-						>Supprimer</button
-					>
-				</form>
-			</div>
-		</div>
 	</div>
 </div>
 <div class={benevolesSansReponseVisible}>

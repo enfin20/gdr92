@@ -21,8 +21,8 @@ export async function get(request) {
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = await collection
 			.find({
-				email: email,
 				soiree: { $regex: YYYYMM(1).date },
+				email: email,
 				actif: { $ne: 'Non' },
 				equipe: { $in: equipeFilter }
 			})
@@ -39,7 +39,7 @@ export async function get(request) {
 		return {
 			status: 500,
 			body: {
-				erreur: err
+				erreur: err.message
 			}
 		};
 	}
@@ -119,7 +119,6 @@ export async function put(request) {
 		const soirees = await collection.aggregate(pipeline).toArray();
 		console.log('soirees maraude ' + soirees.length);
 		for (var j = 0; j < soirees.length; j++) {
-			console.log(j + ' ' + soirees[j]._id);
 			await collection.update({ _id: ObjectId(soirees[j]._id) }, { $set: { statut: 'Maraude' } });
 		}
 
@@ -133,12 +132,8 @@ export async function put(request) {
 		return {
 			status: 500,
 			body: {
-				error: 'Server error'
+				erreur: err.message
 			}
 		};
 	}
 }
-
-export async function post(request) {}
-
-export async function del(request) {}

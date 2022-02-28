@@ -121,7 +121,7 @@ export async function get(request) {
 		return {
 			status: 500,
 			body: {
-				erreur: err
+				erreur: err.message
 			}
 		};
 	}
@@ -145,12 +145,8 @@ export async function post(request) {
 		return {
 			status: 500,
 			body: {
-				error: 'Server error'
+				erreur: err.message
 			}
 		};
 	}
 }
-
-export async function put(request) {}
-
-export async function del(request) {}

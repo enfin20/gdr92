@@ -1,5 +1,6 @@
 <script>
 	export let currentEquipe;
+	export let statutEnregistrement;
 
 	import { MM_YYYY, date_YYYYMM, date_DD_MM, MM, YYYYMM, date_YYYYMMDD } from '$lib/date_functions';
 
@@ -9,8 +10,13 @@
 	let lieux = [];
 	var nbPresent = [];
 	var nbRS = [];
+	// special Camion
 	var nbVaisselle = [];
+	// special Maraude
+	var nbHomme = [];
+	var nbChauffeur = [];
 	let soiree = '';
+	let erreurMessage = '';
 
 	//	showPlanningM2();
 
@@ -48,6 +54,7 @@
 				changed = true;
 			}
 		}
+		// special Camion
 		if (currentEquipe === 'Camion') {
 			if (presence === 'RS') {
 				if (!changed) {
@@ -67,7 +74,9 @@
 					changed = true;
 				}
 			}
-		} else {
+		}
+		// special Maraude
+		else {
 			if (presence === 'RS') {
 				if (!changed) {
 					calendriers[row][col].presence = 'Absent';
@@ -96,7 +105,7 @@
 	export async function saveCalendrier() {
 		// tableau cible des mises à jour
 		var calUpdated = [];
-
+		statutEnregistrement = '... en cours';
 		for (var i = 0; i < calendriers.length; i++) {
 			for (var j = 1; j < calendriers[i].length; j++) {
 				var obj = new Object();
@@ -114,6 +123,15 @@
 			method: 'PUT',
 			body: JSON.stringify(calUpdated)
 		});
+		//gestion des erreurs
+		const ret = await res.json();
+		if (res.status === 500) {
+			erreurMessage = 'Erreur (contacte Olivier): ' + ret.erreur;
+			statutEnregistrement = '';
+		} else {
+			console.log('oui 3');
+			statutEnregistrement = '    Calendrier enregistré';
+		}
 	}
 
 	export async function showPlanningM() {
@@ -141,32 +159,42 @@
 		calendriers = [];
 		lieux = [];
 		soirees = [];
+		erreurMessage = '';
+		statutEnregistrement = '';
 
 		try {
 			const res = await fetch(
 				'./calendrierBenevoles?soiree=' + soiree + '&equipe=' + currentEquipe
 			);
 			const cal = await res.json();
-
-			// remise au format des dates et des entêtes DD/MM
-			for (var i = cal.tableau[0].length; i > 0; i--) {
-				cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
-				lieux[i] =
-					'<img src="https://www.orientsport.fr/oflash/img/' +
-					cal.tableau[0][i - 1].substring(11) +
-					'.png" alt ="' +
-					cal.tableau[0][i - 1].substring(11) +
-					'" width="32px" height="32px"/>';
+			// gestion des erreurs
+			if (res.status === 500) {
+				erreurMessage = 'Erreur (contacte Olivier): ' + cal.erreur;
 			}
-			lieux[0] = '';
-			cal.tableau[0][0] = 'Calendrier ';
-			soirees = await cal.tableau[0];
-			// suppression de l'entête
-			calendriers = await cal.tableau.slice(1);
+			// pas d'erreurs
+			else {
+				// remise au format des dates et des entêtes DD/MM
+				for (var i = cal.tableau[0].length; i > 0; i--) {
+					cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
+					lieux[i] =
+						'<img src="https://www.orientsport.fr/oflash/img/' +
+						cal.tableau[0][i - 1].substring(11) +
+						'.png" alt ="' +
+						cal.tableau[0][i - 1].substring(11) +
+						'" width="32px" height="32px"/>';
+				}
+				lieux[0] = '';
+				cal.tableau[0][0] = 'Calendrier ';
+				soirees = await cal.tableau[0];
+				// suppression de l'entête
+				calendriers = await cal.tableau.slice(1);
 
-			// calcul du nombre de bénévoles / soirées
-			nbBenevoles();
-		} catch {}
+				// calcul du nombre de bénévoles / soirées
+				nbBenevoles();
+			}
+		} catch (error) {
+			erreurMessage = 'Erreur compile (contacte Olivier):  ' + error;
+		}
 	}
 	export function nbBenevoles() {
 		// calcul du nombre de bénévoles / soirées
@@ -176,20 +204,40 @@
 		nbRS[0] = 'nb RS';
 		nbVaisselle = [];
 		nbVaisselle[0] = 'nb Vaisselle';
+		nbHomme = [];
+		nbHomme[0] = 'nb Hommes';
+		nbChauffeur = [];
+		nbChauffeur[0] = 'nb Chauffeur';
 		for (var k = 1; k < calendriers[0].length; k++) {
 			nbPresent[k] = 0;
 			nbRS[k] = 0;
 			nbVaisselle[k] = 0;
+			nbChauffeur[k] = 0;
+			nbHomme[k] = 0;
 		}
 
 		for (var i = 0; i < calendriers.length; i++) {
 			for (var j = 1; j < calendriers[i].length; j++) {
 				if (calendriers[i][j].presence === 'Oui') {
 					nbPresent[j] = nbPresent[j] + 1;
+					// special Maraude
+					if (calendriers[i][0].homme) {
+						nbHomme[j] = nbHomme[j] + 1;
+					}
+					if (calendriers[i][0].chauffeur) {
+						nbChauffeur[j] = nbChauffeur[j] + 1;
+					}
 				}
 				if (calendriers[i][j].presence === 'RS') {
 					nbPresent[j] = nbPresent[j] + 1;
 					nbRS[j] = nbRS[j] + 1;
+					// special Maraude
+					if (calendriers[i][0].homme) {
+						nbHomme[j] = nbHomme[j] + 1;
+					}
+					if (calendriers[i][0].chauffeur) {
+						nbChauffeur[j] = nbChauffeur[j] + 1;
+					}
 				}
 				if (calendriers[i][j].presence === 'Vaisselle') {
 					nbPresent[j] = nbPresent[j] + 1;
@@ -197,11 +245,11 @@
 				}
 			}
 		}
-		console.log(nbPresent);
 	}
 </script>
 
 <div class="py-2 grid gap-1 w-full">
+	<p class="text-xl font-bold text-white bg-red-600">{erreurMessage}</p>
 	<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer le calendrier</p>
 	<div class="md:flex md:items-center">
 		<div class="mr-3 md:py-4 inline-block text-gray-600">
@@ -245,6 +293,7 @@
 				class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
 				on:click={saveCalendrier}>Enregistrer le calendrier</button
 			>
+			{statutEnregistrement}
 		</div>
 	</div>
 
@@ -277,6 +326,22 @@
 			{#if currentEquipe === 'Camion'}
 				<tr class="">
 					{#each nbVaisselle as cell}
+						<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
+							{cell}
+						</th>
+					{/each}
+				</tr>
+			{/if}
+			{#if currentEquipe === 'Maraude'}
+				<tr class="">
+					{#each nbHomme as cell}
+						<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
+							{cell}
+						</th>
+					{/each}
+				</tr>
+				<tr class="">
+					{#each nbChauffeur as cell}
 						<th class="text-center font-bold[width:2%] text-gray-500 align-middle">
 							{cell}
 						</th>

@@ -33,6 +33,7 @@ export async function get(request) {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
+
 		const calendrier = await collection
 			.find({ soiree: { $regex: soiree }, equipe: equipe })
 			.sort({ benevole: 1, soiree: 1, plage: 1 })
@@ -45,6 +46,9 @@ export async function get(request) {
 		// récupération des vaisselles
 		const vaisselle = await collection.aggregate(pipeline).toArray();
 
+		const coll2 = db.collection('Benevoles');
+		const benColl = await coll2.find().toArray();
+
 		// construction du tableau résultat
 		var tableau = [];
 		tableau.push(soirees);
@@ -56,12 +60,21 @@ export async function get(request) {
 			ben.nbVaisselle = '';
 			ben.lastVaisselle = '';
 			for (var k = 0; k < vaisselle.length; k++) {
+				// special Camion
 				if (benevoles[i] === vaisselle[k]._id) {
 					ben.nbVaisselle = vaisselle[k].nbVaisselle;
 					ben.lastVaisselle = vaisselle[k].lastVaisselle;
 				}
+
+				// special Maraude
+				for (var l = 0; l < benColl.length; l++) {
+					if (benevoles[i] === benColl[l].prenom + ' ' + benColl[l].nom) {
+						ben.homme = benColl[l].homme;
+						ben.chauffeur = benColl[l].chauffeur;
+					}
+				}
 			}
-			// nenevole enregistré dans la première cellule de chaque ligne
+			// benevole enregistré dans la première cellule de chaque ligne
 			tab.push(ben);
 
 			// pour chaque bénévole et chaque date, on retrouve son statut pour la soirée
@@ -111,7 +124,6 @@ export async function put(request) {
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = JSON.parse(request.body);
 
-		console.log(calendrier);
 		for (var i = 0; i < calendrier.length; i++) {
 			await collection.update(
 				{ _id: ObjectId(calendrier[i]._id) },
@@ -129,12 +141,8 @@ export async function put(request) {
 		return {
 			status: 500,
 			body: {
-				error: 'Server error'
+				erreur: err.message
 			}
 		};
 	}
 }
-
-export async function post(request) {}
-
-export async function del(request) {}

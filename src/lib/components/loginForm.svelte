@@ -7,7 +7,6 @@
 	const dispatch = createEventDispatcher();
 
 	function getBenevole() {
-		console.log('email : ' + email + ' pwd : ' + pwd);
 		dispatch('message', {
 			text: email,
 			pwd: pwd

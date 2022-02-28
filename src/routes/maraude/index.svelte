@@ -28,7 +28,6 @@
 	let calendrierVisible = 'hidden';
 	let dateVisible = 'hidden';
 	let benevolesSansReponseVisible = 'hidden';
-	let delSoireesVisible = 'hidden';
 	let benevolesVisible = 'hidden';
 
 	// nouvelle soirée
@@ -43,44 +42,62 @@
 	let statutEnregistrement = '';
 	let loginStatus = '';
 	let email = '';
+	let erreurMessageRG = '';
 
 	export function divHidden() {
 		calendrierVisible = 'hidden';
 		dateVisible = 'hidden';
-		delSoireesVisible = 'hidden';
 		benevolesSansReponseVisible = 'hidden';
 		benevolesVisible = 'hidden';
+		erreurMessageRG = '';
+		statutEnregistrement = '';
 	}
 
 	export async function getBenevole(event) {
-		// login du rm
+		// login du rgm
 		email = event.detail.text;
 		let pwd = event.detail.pwd;
-		const res = await fetch('./benevoles/benevole?email=' + email + '&rm=true&pwd=' + pwd);
+
+		const res = await fetch('/benevoles/benevole?email=' + email + '&rm=true&pwd=' + pwd);
 		const benevole = await res.json();
-		try {
-			if (benevole.benevole.rm) {
-				menuVisible = 'flex';
-				loginVisible = 'hidden';
+		if (res.status === 500) {
+			// si erreur personnalisée alors on enlève les premières lettres
+			if (benevole.erreur.substring(0, 1) === 'X') {
+				erreurMessageRG = benevole.erreur.substring(2, 50);
 			} else {
-				loginStatus = 'Email ou mot de passe non valide !';
-				menuVisible = 'hidden';
-				calendrierVisible = 'hidden';
-				dateVisible = 'hidden';
+				erreurMessageRG = 'Erreur (contacte Olivier): ' + benevole.erreur;
 			}
-		} catch {
-			alert('Email non valide');
+		} else {
+			erreurMessageRG = '';
+			try {
+				if (benevole.benevole.rm) {
+					menuVisible = 'flex';
+					loginVisible = 'hidden';
+				} else {
+					erreurMessageRG = 'Mot de passe non valide !';
+					menuVisible = 'hidden';
+					calendrierVisible = 'hidden';
+					dateVisible = 'hidden';
+				}
+			} catch (err) {
+				erreurMessageRG = 'Erreur compile (contacte Olivier): ' + err.message;
+			}
 		}
 	}
 
 	export async function showBenevoles() {
 		// retrouve les bénévoles pour inert / update et delete
 		divHidden();
-		benevolesVisible = 'flex';
 
 		const res = await fetch('/benevoles');
 		const ben = await res.json();
-		benevoles = await ben.benevoles;
+
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + ben.erreur;
+		} else {
+			benevoles = await ben.benevoles;
+			benevolesVisible = 'flex';
+		}
 	}
 
 	export async function showDate() {
@@ -96,122 +113,82 @@
 		calendrierVisible = 'flex';
 	}
 
-	export async function showDelSoirees() {
-		// Pour supprimer un mois
-		divHidden();
-		delSoireesVisible = 'flex';
-
-		// initialisation de soirée au mois suivant
-		soiree = MM_YYYY(1).date;
-	}
-
 	export async function showBenevolesSansReponse() {
-		// Pour supprimer un mois
 		divHidden();
-		benevolesSansReponseVisible = 'flex';
 
 		// presentation de la liste des benevoles n'ayant pas répondu
-
 		const res = await fetch('/calendrierBenevoles/benevolesSansReponse?equipe=Maraude');
 		const b = await res.json();
-		benevolesSansReponses = await b.benevoles;
-	}
-	export async function getCalendrier() {
-		// mise en forme du calendrier
-		calendriers = [];
-		soirees = [];
-
-		const res = await fetch('./calendrierBenevoles?soiree=' + soiree + '&equipe=Maraude');
-		const cal = await res.json();
-
-		// remise au format des dates et des entêtes DD/MM
-		for (var i = cal.tableau[0].length; i > 0; i--) {
-			cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + b.erreur;
+		} else {
+			benevolesSansReponseVisible = 'flex';
+			benevolesSansReponses = await b.benevoles;
 		}
-
-		cal.tableau[0][0] = 'Calendrier ';
-		soirees = await cal.tableau[0];
-		// suppression de l'entête
-		calendriers = await cal.tableau.slice(1);
-
-		// calcul du nombre de bénévoles / soirées
-		nbBenevoles();
-	}
-
-	export async function deleteCalendrier() {
-		// suppression d'un mois YYYYMM
-		const soireeNormed = soiree.substring(3, 8).toString().concat(soiree.substring(0, 2));
-		const res = await fetch('/calendrierBenevoles/deleteMaraude', {
-			method: 'DELETE',
-			body: JSON.stringify(soireeNormed)
-		});
-	}
-
-	export async function saveCalendrier() {
-		// tableau cible des mises à jour
-		var calUpdated = [];
-
-		for (var i = 0; i < calendriers.length; i++) {
-			for (var j = 1; j < calendriers[i].length; j++) {
-				var obj = new Object();
-				obj._id = calendriers[i][j]._id;
-				obj.statut = calendriers[i][j].presence;
-				obj.updated = '';
-				if (calendriers[i][j].updated === 'Oui') {
-					// on n'intègre que les zones qui ont été mise à jour par CalendrierChangeStatut
-					calUpdated.push(obj);
-				}
-			}
-		}
-
-		const res = await fetch('/calendrierBenevoles', {
-			method: 'PUT',
-			body: JSON.stringify(calUpdated)
-		});
 	}
 
 	export async function addCalendrier() {
 		var obj = new Object();
 		var obj2 = new Object();
-		let isCamion = '';
-
+		let isMaraude = '';
+		statutEnregistrement = '.... en cours';
 		obj.soiree = soiree.replaceAll('-', '');
 		obj.statut = '';
 
 		// récupération des bénévoles
 		const res = await fetch('/benevoles');
 		let benevoles = await res.json();
-		for (var i = 0; i < benevoles.benevoles.length; i++) {
-			obj.email = benevoles.benevoles[i].email;
-			obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
-			obj.b_id = benevoles.benevoles[i]._id;
-			for (var j = 0; j <= 0; j++) {
-				if (plageActive[j]) {
-					// planning uniquement pour les benevoles de la bonne équipe
-					if (
-						(benevoles.benevoles[i].camion && equipe[j] === 'Camion') ||
-						(benevoles.benevoles[i].maraude && equipe[j] === 'Maraude')
-					) {
-						obj.plage = plage[j];
-						obj.lieu = lieu[j];
-						obj.equipe = equipe[j];
-						const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
-							method: 'POST',
-							body: JSON.stringify(obj)
-						});
+
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + benevoles.erreur;
+		} else {
+			for (var i = 0; i < benevoles.benevoles.length; i++) {
+				obj.email = benevoles.benevoles[i].email;
+				obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
+				obj.b_id = benevoles.benevoles[i]._id;
+				for (var j = 0; j <= 0; j++) {
+					if (plageActive[j]) {
+						// planning uniquement pour les benevoles de la bonne équipe
+						if (
+							(benevoles.benevoles[i].camion && equipe[j] === 'Camion') ||
+							(benevoles.benevoles[i].maraude && equipe[j] === 'Maraude')
+						) {
+							obj.plage = plage[j];
+							obj.lieu = lieu[j];
+							obj.equipe = equipe[j];
+							const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
+								method: 'POST',
+								body: JSON.stringify(obj)
+							});
+							let ret = await res.json();
+							if (res.status === 500) {
+								erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
+								isCamion = 'Non';
+								statutEnregistrement = '';
+								i = 10000;
+							}
+						}
 					}
 				}
 			}
+			statutEnregistrement = soiree + ' : enregistrée';
 		}
-		statutEnregistrement = soiree + ' : enregistrée';
 	}
 
 	export async function inactivateCalendrier() {
 		if (inactivateMaraude) {
+			statutEnregistrement = '... en cours';
 			const res = await fetch('/calendrierBenevoles/inactivateMaraude', {
 				method: 'PUT',
 				body: JSON.stringify(soiree)
 			});
+			let ret = await res.json();
+			if (res.status === 500) {
+				erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
+				statutEnregistrement = '';
+			} else {
+				statutEnregistrement = 'Calendrier inactivé';
+			}
 		}
 	}
 </script>
@@ -219,7 +196,7 @@
 <svelte:head>
 	<title>Planning restos Colombes</title>
 </svelte:head>
-
+<p class="text-center text-xl font-bold text-white bg-red-600">{erreurMessageRG}</p>
 <span class={loginVisible}>
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login Responsable maraude</h1>
@@ -259,14 +236,6 @@
 		on:click={showBenevolesSansReponse}
 	>
 		Bén. sans réponse
-	</button>
-	<button
-		type="submit"
-		name="delSoirees"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showDelSoirees}
-	>
-		Suppression
 	</button>
 </div>
 <div class={dateVisible}>
@@ -337,27 +306,6 @@
 </div>
 <div class={benevolesVisible}>
 	<BenevolesListe {benevoles} on:showBenevoles={showBenevoles} />
-</div>
-<div class={delSoireesVisible}>
-	<div class="py-2 grid gap-1 w-full">
-		<p class="text-2xl font-bold text-gray-800 md:text-xl">Supprimer des dates</p>
-		<div class="md:flex md:items-center">
-			<div class="md:w-2/3">
-				<form on:submit|preventDefault={deleteCalendrier}>
-					<input
-						type="text"
-						bind:value={soiree}
-						class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-1/4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
-					/>
-					<button
-						type="submit"
-						class="shadow bg-red-400 hover:bg-red-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
-						>Supprimer</button
-					>
-				</form>
-			</div>
-		</div>
-	</div>
 </div>
 <div class={benevolesSansReponseVisible}>
 	<div class="py-2 grid gap-1">

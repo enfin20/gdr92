@@ -11,6 +11,7 @@
 	let menuVisible = 'hidden';
 	let retourVisible = 'hidden';
 	let planningVisible = 'hidden';
+	let erreurMessage = '';
 
 	let loggedBenevole = '';
 	let statutSauvegarde =
@@ -30,7 +31,6 @@
 	let chargement = '';
 	let equipe = '';
 	let soiree = YYYY_MM_DD().date;
-	console.log('soirée ' + soiree);
 
 	import CalendrierForm from '/src/lib/components/calendrierForm.svelte';
 	import LoginForm from '/src/lib/components/loginForm.svelte';
@@ -44,55 +44,66 @@
 		email = event.detail.text;
 		email = email.toLowerCase();
 
-		const res = await fetch('/benevoles/benevole?email=' + email);
-		const benevole = await res.json();
-
 		try {
-			console.log('benevole.benevole.prepa ' + benevole.benevole.prepa);
-			loggedBenevole = benevole.benevole.prenom + ' ' + benevole.benevole.nom;
-			if (benevole.benevole.camion === undefined) {
-				camion = false;
-			} else {
-				camion = benevole.benevole.camion;
+			var res = await fetch('/benevoles/benevole?email=' + email);
+			const benevole = await res.json();
+			if (res.status === 500) {
+				erreurMessage = 'Erreur (contacte Olivier): ' + benevole.erreur;
 			}
-			if (benevole.benevole.maraude === undefined) {
-				maraude = false;
-			} else {
-				maraude = benevole.benevole.maraude;
-			}
-			if (benevole.benevole.prepa === undefined) {
-				prepa = false;
-			} else {
-				prepa = benevole.benevole.prepa;
-			}
-			if (benevole.benevole.rs === undefined) {
-				menuVisible = 'hidden';
-			} else {
-				menuVisible = 'block md:inline-block  py-2 md:py-0';
-				rs = loggedBenevole;
-			}
+			// pas d'erreurs
+			else {
+				try {
+					loggedBenevole = benevole.benevole.prenom + ' ' + benevole.benevole.nom;
+					if (benevole.benevole.camion === undefined) {
+						camion = false;
+					} else {
+						camion = benevole.benevole.camion;
+					}
+					if (benevole.benevole.maraude === undefined) {
+						maraude = false;
+					} else {
+						maraude = benevole.benevole.maraude;
+					}
+					if (benevole.benevole.prepa === undefined) {
+						prepa = false;
+					} else {
+						prepa = benevole.benevole.prepa;
+					}
+					if (benevole.benevole.rs === undefined) {
+						menuVisible = 'hidden';
+					} else {
+						menuVisible = 'block md:inline-block  py-2 md:py-0';
+						rs = loggedBenevole;
+					}
 
-			// pour charger le calendrier du bénévole
-			const res = await fetch(
-				'/calendrierBenevoles/calendrierBenevole?email=' +
-					email +
-					'&maraude=' +
-					maraude +
-					'&camion=' +
-					camion
-			);
-			const calendriers = await res.json();
-			try {
-				loginVisible = 'hidden';
-				calendrierVisible = 'inline';
-				planningVisible = 'hidden';
-				soirees = calendriers.calendrier;
-				console.log('soirees ' + soirees.length);
-			} catch {
-				console.log('il y a un probleme de connexion');
+					// pour charger le calendrier du bénévole
+					res = await fetch(
+						'/calendrierBenevoles/calendrierBenevole?email=' +
+							email +
+							'&maraude=' +
+							maraude +
+							'&camion=' +
+							camion
+					);
+					const calendriers = await res.json();
+					if (res.status === 500) {
+						erreurMessage = 'Erreur (contacte Olivier): ' + calendriers.erreur;
+					} else {
+						try {
+							loginVisible = 'hidden';
+							calendrierVisible = 'inline';
+							planningVisible = 'hidden';
+							soirees = calendriers.calendrier;
+						} catch (error) {
+							erreurMessage = 'Erreur 2 (contacte Olivier):  ' + error;
+						}
+					}
+				} catch {
+					erreurMessage = 'Email non valide !';
+				}
 			}
-		} catch {
-			alert('Email non valide');
+		} catch (error) {
+			erreurMessage = 'Erreur compile (contacte Olivier):  ' + error;
 		}
 	}
 
@@ -103,7 +114,15 @@
 			method: 'PUT',
 			body: JSON.stringify(soirees)
 		});
-		statutSauvegarde = '    Calendrier enregistré';
+
+		// gestion des erreurs
+		const ret = await res.json();
+		if (res.status === 500) {
+			erreurMessage = 'Erreur (contacte Olivier): ' + ret.erreur;
+			statutSauvegarde = '';
+		} else {
+			statutSauvegarde = '    Calendrier enregistré';
+		}
 	}
 
 	export function reload() {
@@ -135,16 +154,23 @@
 		// vérification de l'existence de la soirée à la date saisie
 		const res = await fetch('./retourSoirees/isSoiree?soiree=' + soiree);
 		const soir = await res.json();
-		if (soir.retourSoirees.length === 1) {
-			// affichage des soirées pour les rs
-			retourVisible = 'block';
-			calendrierVisible = 'hidden';
-			getBenevolesSoiree();
-			getRetourSoirees();
+
+		if (res.status === 500) {
+			erreurMessage = 'Erreur (contacte Olivier): ' + soir.erreur;
+			chargement = '';
 		} else {
-			alert('pas de soirée à cette date !');
+			statutSauvegarde = '    Calendrier enregistré';
+			if (soir.retourSoirees.length === 1) {
+				// affichage des soirées pour les rs
+				retourVisible = 'block';
+				calendrierVisible = 'hidden';
+				getBenevolesSoiree();
+				getRetourSoirees();
+			} else {
+				erreurMessage = 'Pas de soirée à cette date !';
+			}
+			chargement = '';
 		}
-		chargement = '';
 	}
 
 	export async function showCamionPlanningM() {
@@ -181,23 +207,28 @@
 			const res = await fetch('/retourSoirees/retourSoiree?soiree=' + soiree);
 			const retour = await res.json();
 			const ben = await retour.benevoles;
-			const benT = [];
-			if (ben.length < 1) {
-				alert("il n'y a pas eu de soirée à cette date! il faut recharger la page");
-			}
+			//gestion des erreurs
+			if (res.status === 500) {
+				erreurMessage = 'Erreur (contacte Olivier): ' + retour.erreur;
+			} else {
+				const benT = [];
+				if (ben.length < 1) {
+					erreurMessage = "il n'y a pas eu de soirée à cette date! il faut recharger la page";
+				}
 
-			for (var i = 0; i < ben.length; i++) {
-				var obj = new Object();
-				obj.benevole = ben[i].prenom + ' ' + ben[i].nom;
-				obj.tel = ben[i].tel;
-				obj.statut = 'Oui';
-				benT.push(obj);
-			}
-			benevoles = await benT;
+				for (var i = 0; i < ben.length; i++) {
+					var obj = new Object();
+					obj.benevole = ben[i].prenom + ' ' + ben[i].nom;
+					obj.tel = ben[i].tel;
+					obj.statut = 'Oui';
+					benT.push(obj);
+				}
+				benevoles = await benT;
 
-			retourSoiree = await retour.retourSoiree[0];
-		} catch {
-			alert('Pb tres grave');
+				retourSoiree = await retour.retourSoiree[0];
+			}
+		} catch (err) {
+			erreurMessage = 'Erreur compile (contacte Olivier): ' + err.message;
 		}
 	}
 
@@ -207,7 +238,11 @@
 		retourSoirees = [];
 		const res = await fetch('./retourSoirees');
 		const soir = await res.json();
-		retourSoirees = await soir.retourSoirees;
+		if (res.status === 500) {
+			erreurMessage = 'Erreur (contacte Olivier): ' + soir.erreur;
+		} else {
+			retourSoirees = await soir.retourSoirees;
+		}
 	}
 
 	export async function getPlanning() {
@@ -222,21 +257,25 @@
 		const res = await fetch('./calendrierBenevoles?soiree=' + mois + '&equipe=' + equipe);
 		const cal = await res.json();
 
-		// remise au format des dates et des entêtes DD/MM
-		for (var i = cal.tableau[0].length; i > 0; i--) {
-			cal.tableau[0][i] =
-				date_DD_MM(cal.tableau[0][i - 1]).date +
-				'<div class="flex items-center justify-center"><img src="https://www.orientsport.fr/oflash/img/' +
-				cal.tableau[0][i - 1].substring(11) +
-				'.png" alt ="' +
-				cal.tableau[0][i - 1].substring(11) +
-				'" width="32px" height="32px"/></div>';
+		//gestion des erreurs
+		if (res.status === 500) {
+			erreurMessage = 'Erreur (contacte Olivier): ' + cal.erreur;
+		} else {
+			// remise au format des dates et des entêtes DD/MM
+			for (var i = cal.tableau[0].length; i > 0; i--) {
+				cal.tableau[0][i] =
+					date_DD_MM(cal.tableau[0][i - 1]).date +
+					'<div class="flex items-center justify-center"><img src="https://www.orientsport.fr/oflash/img/' +
+					cal.tableau[0][i - 1].substring(11) +
+					'.png" alt ="' +
+					cal.tableau[0][i - 1].substring(11) +
+					'" width="32px" height="32px"/></div>';
+			}
+			cal.tableau[0][0] = 'Calendrier ';
+			dates = await cal.tableau[0];
+			// suppression de l'entête
+			calendriers = await cal.tableau.slice(1);
 		}
-		cal.tableau[0][0] = 'Calendrier ';
-		dates = await cal.tableau[0];
-		// suppression de l'entête
-		calendriers = await cal.tableau.slice(1);
-
 		chargement = '';
 	}
 
@@ -250,18 +289,26 @@
 		retSoiree.nbPeri = retourSoiree.nbPeri;
 		retSoiree.commentaires = retourSoiree.commentaires;
 		retSoiree.benevoles = benevoles;
-		console.log(' ret ' + retSoiree);
 		const res = await fetch('/retourSoirees/retourSoiree', {
 			method: 'PUT',
 			body: JSON.stringify(retSoiree)
 		});
-		statutSauvegarde = '    Soirée enregistrée';
+
+		// gestion des erreurs
+		const ret = await res.json();
+		if (res.status === 500) {
+			erreurMessage = 'Erreur (contacte Olivier): ' + ret.erreur;
+			statutSauvegarde = '';
+		} else {
+			statutSauvegarde = '    Soirée enregistrée';
+		}
 	}
 </script>
 
 <svelte:head>
 	<title>Planning restos Colombes</title>
 </svelte:head>
+<p class="text-center text-xl font-bold text-white bg-red-600">{erreurMessage}</p>
 <div class="block md:flex w-full">
 	<div class="mr-3 hidden md:inline-block text-gray-600 md:w-1/12">
 		<button type="submit" name="s2" on:click={reload}>

@@ -2,8 +2,6 @@ import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
 import { date_YYYYMM } from '$lib/date_functions';
 
-export async function get(request) {}
-
 export async function put(request) {
 	// désactivation d'un mois
 	try {
@@ -28,12 +26,8 @@ export async function put(request) {
 		return {
 			status: 500,
 			body: {
-				error: 'Server error'
+				erreur: err.message
 			}
 		};
 	}
 }
-
-export async function post(request) {}
-
-export async function del(request) {}
