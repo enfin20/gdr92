@@ -1,4 +1,6 @@
 <script>
+	import { clear_loops } from 'svelte/internal';
+
 	export let currentEquipe;
 	export let statutEnregistrement;
 
@@ -18,7 +20,20 @@
 	let soiree = '';
 	let erreurMessage = '';
 
-	//	showPlanningM2();
+	showPlanningM2();
+
+	function selectCol(col) {
+		for (var i = 0; i < calendriers.length; i++) {
+			for (var j = 0; j < calendriers[i].length; j++) {
+				console.log('col ' + calendriers[i].length);
+				if (j === col) {
+					calendriers[i][j].background = 'bg-slate-200';
+				} else {
+					calendriers[i][j].background = '';
+				}
+			}
+		}
+	}
 
 	function CalendrierChangeStatut(button_id) {
 		// changement du statut du bouton appelant
@@ -182,7 +197,7 @@
 						cal.tableau[0][i - 1].substring(11) +
 						'.png" alt ="' +
 						cal.tableau[0][i - 1].substring(11) +
-						'" width="32px" height="32px"/>';
+						'" width="32px" height="32px" />';
 				}
 				lieux[0] = '';
 				cal.tableau[0][0] = 'Calendrier ';
@@ -307,8 +322,12 @@
 				{/each}
 			</tr>
 			<tr class="">
-				{#each lieux as cell}
-					<th> <div class="flex items-center justify-center">{@html cell}</div></th>
+				{#each lieux as cell, index}
+					<th>
+						<div class="flex items-center justify-center">
+							<button on:click={() => selectCol(index)}>{@html cell}</button>
+						</div></th
+					>
 				{/each}
 			</tr>
 			<tr class="">
@@ -356,7 +375,7 @@
 				<tr class="hover:bg-slate-100">
 					{#each row as cell}
 						{#if typeof cell._id != 'undefined'}
-							<td class="text-center align-middle">
+							<td class="text-center align-middle {cell.background}">
 								<div class="relative flex flex-col items-center group">
 									<button
 										class={cell.presence === 'Oui'

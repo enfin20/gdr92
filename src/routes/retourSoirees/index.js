@@ -5,17 +5,19 @@ import { YYYYMMDD } from '$lib/date_functions';
 export async function get(request) {
 	// récupération des données des anciennes soirees
 	try {
+		const equipe = request.query.get('equipe');
 		// pour compter le nombre de présents par lieu
 		const pipeline_presents = [
 			{
 				$match: {
+					soiree: { $lte: YYYYMMDD(0).date },
 					statut: {
 						$in: ['Oui', 'RS', 'Vaisselle']
 					},
 					lieu: {
 						$in: ['gp', 'gare']
 					},
-					soiree: { $lte: YYYYMMDD(0).date }
+					equipe: equipe
 				}
 			},
 			{
@@ -40,11 +42,12 @@ export async function get(request) {
 		const pipeline_absents = [
 			{
 				$match: {
+					soiree: { $lte: YYYYMMDD(0).date },
 					statut: 'Absent',
 					lieu: {
 						$in: ['gp', 'gare']
 					},
-					soiree: { $lte: YYYYMMDD(0).date }
+					equipe: equipe
 				}
 			},
 			{
@@ -70,7 +73,7 @@ export async function get(request) {
 		const collection = db.collection('RetourSoirees');
 		const coll2 = db.collection('CalendrierBenevoles');
 		const retourSoirees = await collection
-			.find({ soiree: { $lte: YYYYMMDD(0).date } }, { equipe: 'Camion' })
+			.find({ soiree: { $lte: YYYYMMDD(0).date } }, { equipe: equipe })
 			.sort({ soiree: -1 })
 			.toArray();
 
@@ -110,7 +113,6 @@ export async function get(request) {
 			}
 		}
 
-		console.log('soiree present : ' + retourSoirees[0].gp_present);
 		return {
 			status: 200,
 			body: {

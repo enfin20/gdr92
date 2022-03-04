@@ -222,7 +222,7 @@
 		// affichage des précédentes soirées
 		statutSauvegarde = '';
 		retourSoirees = [];
-		const res = await fetch('./retourSoirees');
+		const res = await fetch('./retourSoirees?equipe=' + equipe);
 		const soir = await res.json();
 		if (res.status === 500) {
 			erreurMessage = 'Erreur (contacte Olivier): ' + soir.erreur;

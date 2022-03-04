@@ -103,7 +103,7 @@
 	export async function showSoiree() {
 		// affichage des retours de soirée
 
-		const res = await fetch('./retourSoirees');
+		const res = await fetch('./retourSoirees?equipe=Camion');
 		const soir = await res.json();
 
 		if (res.status === 500) {
