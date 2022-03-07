@@ -29,7 +29,7 @@
 	let benevoles = [];
 	let rs = '';
 	let chargement = '';
-	let equipe = '';
+	let equipe = 'Camion';
 	let soiree = YYYY_MM_DD().date;
 
 	import CalendrierForm from '/src/lib/components/calendrierForm.svelte';
