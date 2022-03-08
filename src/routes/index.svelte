@@ -29,7 +29,7 @@
 	let benevoles = [];
 	let rs = '';
 	let chargement = '';
-	let equipe = 'Camion';
+	let equipe = '';
 	let soiree = YYYY_MM_DD().date;
 
 	import CalendrierForm from '/src/lib/components/calendrierForm.svelte';
@@ -68,6 +68,7 @@
 				} else {
 					menuVisible = 'block md:inline-block py-2 md:py-0';
 					rs = loggedBenevole;
+					equipe = 'Camion';
 				}
 				// pour charger le calendrier du bénévole
 				const res = await fetch(
