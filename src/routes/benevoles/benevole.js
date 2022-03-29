@@ -182,7 +182,7 @@ export async function put(request) {
 					rs: benevole.rs,
 					rg: benevole.rg,
 					maraude: benevole.maraude,
-					sexe: benevole.sexe,
+					homme: benevole.homme,
 					chauffeur: benevole.chauffeur,
 					rsm: benevole.rsm,
 					rm: benevole.rm

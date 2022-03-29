@@ -63,7 +63,7 @@
 				} else {
 					prepa = benevole.benevole.prepa;
 				}
-				if (benevole.benevole.rs === undefined) {
+				if (benevole.benevole.rs === undefined || !benevole.benevole.rs) {
 					menuVisible = 'hidden';
 				} else {
 					menuVisible = 'block md:inline-block py-2 md:py-0';

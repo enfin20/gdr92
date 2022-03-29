@@ -110,9 +110,15 @@
 		obj.nom = nom.toUpperCase();
 		obj.email = email;
 		obj.tel = tel;
-		obj.camion = camion;
+		console.log('prépa ' + prepa);
 		try {
-			obj.prepa = prepa;
+			obj.camion = camion;
+		} catch {
+			obj.camion = false;
+		}
+
+		try {
+			obj.prepa = new_prepa;
 		} catch {
 			obj.prepa = false;
 		}
@@ -126,7 +132,12 @@
 		} catch {
 			obj.rg = false;
 		}
-		obj.maraude = maraude;
+		try {
+			obj.maraude = maraude;
+		} catch {
+			obj.maraude = false;
+		}
+
 		try {
 			obj.homme = homme;
 		} catch {
