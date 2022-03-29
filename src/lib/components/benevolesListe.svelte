@@ -47,43 +47,16 @@
 		obj.nom = nom.toUpperCase();
 		obj.email = email;
 		obj.tel = tel;
-		obj.camion = camion;
-		try {
-			obj.prepa = prepa;
-		} catch {
-			obj.prepa = false;
-		}
-		try {
-			obj.rs = rs;
-		} catch {
-			obj.rs = false;
-		}
-		try {
-			obj.rg = rg;
-		} catch {
-			obj.rg = false;
-		}
-		obj.maraude = maraude;
-		try {
-			obj.homme = homme;
-		} catch {
-			obj.homme = false;
-		}
-		try {
-			obj.chauffeur = chauffeur;
-		} catch {
-			obj.chauffeur = false;
-		}
-		try {
-			obj.rsm = rsm;
-		} catch {
-			obj.rsm = false;
-		}
-		try {
-			obj.rm = rm;
-		} catch {
-			obj.rm = false;
-		}
+		obj.camion = camion ? true : false;
+		obj.prepa = prepa ? true : false;
+		obj.rs = rs ? true : false;
+		obj.rg = rg ? true : false;
+		obj.maraude = maraude ? true : false;
+		obj.homme = homme ? true : false;
+		obj.chauffeur = chauffeur ? true : false;
+		obj.rsm = rsm ? true : false;
+		obj.rm = rm ? true : false;
+
 		const res = await fetch('/benevoles/benevole', {
 			method: 'PUT',
 			body: JSON.stringify(obj)
@@ -110,54 +83,16 @@
 		obj.nom = nom.toUpperCase();
 		obj.email = email;
 		obj.tel = tel;
-		console.log('prépa ' + prepa);
-		try {
-			obj.camion = camion;
-		} catch {
-			obj.camion = false;
-		}
+		obj.camion = camion ? true : false;
+		obj.prepa = prepa ? true : false;
+		obj.rs = rs ? true : false;
+		obj.rg = rg ? true : false;
+		obj.maraude = maraude ? true : false;
+		obj.homme = homme ? true : false;
+		obj.chauffeur = chauffeur ? true : false;
+		obj.rsm = rsm ? true : false;
+		obj.rm = rm ? true : false;
 
-		try {
-			obj.prepa = new_prepa;
-		} catch {
-			obj.prepa = false;
-		}
-		try {
-			obj.rs = rs;
-		} catch {
-			obj.rs = false;
-		}
-		try {
-			obj.rg = rg;
-		} catch {
-			obj.rg = false;
-		}
-		try {
-			obj.maraude = maraude;
-		} catch {
-			obj.maraude = false;
-		}
-
-		try {
-			obj.homme = homme;
-		} catch {
-			obj.homme = false;
-		}
-		try {
-			obj.chauffeur = chauffeur;
-		} catch {
-			obj.chauffeur = false;
-		}
-		try {
-			obj.rsm = rsm;
-		} catch {
-			obj.rsm = false;
-		}
-		try {
-			obj.rm = rm;
-		} catch {
-			obj.rm = false;
-		}
 		const res = await fetch('/benevoles/benevole', {
 			method: 'POST',
 			body: JSON.stringify(obj)

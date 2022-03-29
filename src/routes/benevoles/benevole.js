@@ -89,6 +89,9 @@ export async function post(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('Benevoles');
 		const benevole = JSON.parse(request.body);
+		// insertion du bénévole
+		console.log('Camion ' + benevole.camion);
+
 		b = await collection.insertOne(benevole);
 
 		//récupération des dates à venir
