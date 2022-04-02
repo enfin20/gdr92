@@ -31,6 +31,7 @@
 	let benevolesVisible = 'hidden';
 	let soireeVisible = 'hidden';
 	let benevolesSansReponseVisible = 'hidden';
+	let benevolesAbsentsVisible = 'hidden';
 	let erreurMessageRG = '';
 
 	// nouvelle soirée
@@ -53,6 +54,7 @@
 		benevolesVisible = 'hidden';
 		soireeVisible = 'hidden';
 		benevolesSansReponseVisible = 'hidden';
+		benevolesAbsentsVisible = 'hidden';
 		erreurMessageRG = '';
 		statutEnregistrement = '';
 	}
@@ -126,6 +128,21 @@
 		} else {
 			benevolesSansReponseVisible = 'flex';
 			benevolesSansReponses = await b.benevoles;
+		}
+	}
+
+	export async function showBenevolesAbsents() {
+		divHidden();
+
+		// presentation de la liste des benevoles n'ayant pas répondu
+		const res = await fetch('/benevoles/benevolesAbsents?equipe=Camion');
+		const b = await res.json();
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + b.erreur;
+		} else {
+			benevolesAbsentsVisible = 'flex';
+			benevolesSansReponses = await b.benevoles;
+			console.table('benevoles ' + benevolesSansReponses.length);
 		}
 	}
 
@@ -284,6 +301,14 @@
 	>
 		Soirées
 	</button>
+	<button
+		type="submit"
+		name="benevolesAbsents"
+		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
+		on:click={showBenevolesAbsents}
+	>
+		Absences
+	</button>
 </div>
 <div class={dateVisible}>
 	<div class="py-2  ">
@@ -408,5 +433,22 @@
 		{#each benevolesSansReponses as b}
 			<p>{b}</p>
 		{/each}
+	</div>
+</div>
+<div class={benevolesAbsentsVisible}>
+	<div class="py-2 grid gap-1 w-full md:w-1/4">
+		<p class="text-2xl font-bold text-gray-800 md:text-xl">Absences depuis 1 an</p>
+		<div class="flex flex-col h-screen">
+			<div class="flex-grow overflow-y-auto">
+				<table id="BenevolesListe" class="text-sm text-gray-500 w-full">
+					{#each benevolesSansReponses as b}
+						<tr>
+							<td class="w-1/2">{b._id.benevole}</td>
+							<td class="w-1/12">{b.absent}</td>
+						</tr>
+					{/each}
+				</table>
+			</div>
+		</div>
 	</div>
 </div>
