@@ -3,31 +3,43 @@ import { ObjectId } from 'mongodb';
 import { YYYYMM, YYYYMMDD } from '$lib/date_functions';
 
 export async function get(request) {
-	// récupère le nombre d'absences par bénévoles depuis 1 an
+	// récupère la dernière soirée des bénévoles
 	const equipe = request.query.get('equipe');
 	try {
 		const pipeline = [
 			{
+				$lookup: {
+					from: 'Benevoles',
+					localField: 'email',
+					foreignField: 'email',
+					as: 'ben'
+				}
+			},
+			{
+				$unwind: { path: '$ben' }
+			},
+			{
 				$match: {
-					soiree: { $gte: YYYYMMDD(-1).date },
-					statut: 'Absent',
-					lieu: { $in: ['gp', 'gare'] },
-					equipe: equipe
+					statut: {
+						$in: ['RS', 'Oui', 'Vaisselle']
+					},
+					soiree: {
+						$lte: YYYYMMDD().date
+					}
 				}
 			},
 			{
 				$group: {
-					_id: { benevole: '$benevole', soiree: '$soiree' }
+					_id: '$benevole',
+					last_soiree: {
+						$max: '$soiree'
+					}
 				}
 			},
 			{
-				$group: {
-					_id: { benevole: '$_id.benevole' },
-					absent: { $sum: 1 }
+				$sort: {
+					last_soiree: 1
 				}
-			},
-			{
-				$sort: { absent: -1 }
 			}
 		];
 

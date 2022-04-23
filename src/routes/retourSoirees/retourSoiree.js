@@ -107,7 +107,8 @@ export async function put(request) {
 					{
 						benevole: retourSoiree.benevoles[i].benevole,
 						soiree: retourSoiree.soiree,
-						lieu: { $in: ['gare', 'gp'] }
+						lieu: { $in: ['gare', 'gp'] },
+						statut: { $in: ['Oui', 'Vaisselle'] }
 					},
 					{ $set: { statut: 'Absent' } }
 				);
