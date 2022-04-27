@@ -309,7 +309,7 @@
 			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
 			on:click={showCamionPlanningM}
 		>
-			Camion {MM(new Date().getMonth()).mois}
+			Camion {MM(new Date().getMonth(1)).mois}
 		</button>
 	</div>
 	<div class="mr-3 md:py-4 inline-block text-gray-600">

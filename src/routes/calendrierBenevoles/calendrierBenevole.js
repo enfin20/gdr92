@@ -1,6 +1,6 @@
 import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
-import { YYYYMM } from '$lib/date_functions';
+import { YYYYMM, YYYYMMDD } from '$lib/date_functions';
 
 export async function get(request) {
 	// récupération du mois suivant pour un bénévole (email)
@@ -21,7 +21,7 @@ export async function get(request) {
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = await collection
 			.find({
-				soiree: { $regex: YYYYMM(1).date },
+				soiree: { $gt: YYYYMM(1).date.concat('00') },
 				email: email,
 				actif: { $ne: 'Non' },
 				equipe: { $in: equipeFilter }

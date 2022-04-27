@@ -27,6 +27,8 @@
 		rowbg = 'bg-gray-100';
 	} else if (soiree.substring(0, 3) === 'mer') {
 		rowbg = 'bg-gray-300';
+	} else {
+		rowbg = 'bg-amber-200';
 	}
 	if (calendrier.lieu === 'maraude') {
 		rowbg = 'bg-indigo-100';
