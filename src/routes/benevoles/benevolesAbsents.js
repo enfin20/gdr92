@@ -8,6 +8,17 @@ export async function get(request) {
 	try {
 		const pipeline = [
 			{
+				$lookup: {
+					from: 'Benevoles',
+					localField: 'email',
+					foreignField: 'email',
+					as: 'ben'
+				}
+			},
+			{
+				$unwind: { path: '$ben' }
+			},
+			{
 				$match: {
 					soiree: { $gte: YYYYMMDD(-1).date },
 					statut: 'Absent',
