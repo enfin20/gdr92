@@ -309,7 +309,7 @@
 			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
 			on:click={showCamionPlanningM}
 		>
-			Camion {MM(new Date().getMonth(1)).mois}
+			Camion {MM(new Date().getMonth()).mois}
 		</button>
 	</div>
 	<div class="mr-3 md:py-4 inline-block text-gray-600">
@@ -322,7 +322,7 @@
 			Camion {MM(new Date().getMonth() + 1).mois}
 		</button>
 	</div>
-	<div class="mr-3 md:py-4 inline-block text-gray-600 hidden">
+	<div class="mr-3 md:py-4 inline-block text-gray-600">
 		<button
 			type="submit"
 			name="s"
@@ -332,7 +332,7 @@
 			Maraude {MM(new Date().getMonth()).mois}
 		</button>
 	</div>
-	<div class="mr-3 md:py-4 inline-block text-gray-600 hidden">
+	<div class="mr-3 md:py-4 inline-block text-gray-600">
 		<button
 			type="submit"
 			name="s"
