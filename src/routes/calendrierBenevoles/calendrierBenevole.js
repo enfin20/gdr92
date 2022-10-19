@@ -66,7 +66,9 @@ export async function put(request) {
 			{
 				$match: {
 					equipe: 'Camion',
-					statut: 'Non',
+					statut: {
+						$in: ['Oui', 'Non']
+					},
 					email: calendrier[0].email,
 					lieu: {
 						$in: ['gp', 'gare']
