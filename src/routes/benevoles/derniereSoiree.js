@@ -25,6 +25,9 @@ export async function get(request) {
 					},
 					soiree: {
 						$lte: YYYYMMDD().date
+					},
+					lieu: {
+						$in: ['gare', 'gp']
 					}
 				}
 			},

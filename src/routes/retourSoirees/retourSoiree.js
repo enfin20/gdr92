@@ -13,7 +13,8 @@ export async function get(request) {
 					soiree: date_YYYYMMDD(soiree).date,
 					statut: {
 						$in: ['Oui', 'Vaisselle', 'RS']
-					}
+					},
+					equipe: 'Camion'
 				}
 			},
 			{
