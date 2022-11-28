@@ -118,17 +118,43 @@ export async function get(request) {
 
 export async function put(request) {
 	// Mise à jour des statuts des bénévoles à partir du tableau de présence (calendrier)
+
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = JSON.parse(request.body);
+		let soiree = [];
+		let statut = '';
 
 		for (var i = 0; i < calendrier.length; i++) {
 			await collection.update(
 				{ _id: ObjectId(calendrier[i]._id) },
 				{ $set: { statut: calendrier[i].statut } }
 			);
+			// on récupère tous les détails de la soirée mise à jour
+			soiree = await collection.find({ _id: ObjectId(calendrier[i]._id) }).toArray();
+
+			// si maraude, on met à jour le calendrier du camion pour éviter les doublons
+			if (soiree[0].equipe === 'Maraude') {
+				if (soiree[0].statut === 'Oui') {
+					statut = 'Maraude';
+				}
+				if (soiree[0].statut === 'Dispo') {
+					statut = 'Dispo';
+				}
+				if (statut !== '') {
+					await collection.update(
+						{
+							soiree: soiree[0].soiree,
+							email: soiree[0].email,
+							equipe: 'Camion',
+							lieu: { $in: ['gp', 'gare'] }
+						},
+						{ $set: { statut: statut } }
+					);
+				}
+			}
 		}
 
 		return {

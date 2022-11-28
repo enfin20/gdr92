@@ -91,6 +91,7 @@ export async function post(request) {
 		const benevole = JSON.parse(request.body);
 		// insertion du bénévole
 		console.log('Camion ' + benevole.camion);
+		console.log('Maraude ' + benevole.maraude);
 
 		b = await collection.insertOne(benevole);
 

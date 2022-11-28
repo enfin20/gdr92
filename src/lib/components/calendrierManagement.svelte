@@ -41,6 +41,7 @@
 		// pour éviter les boucles
 		let changed = false;
 
+		// pour récupérer row & col du bouton sélectionné
 		let row = -1;
 		let col = -1;
 		let presence = '';
@@ -55,6 +56,7 @@
 				}
 			}
 		}
+
 		if (presence === '') {
 			changed = true;
 			calendriers[row][col].presence = 'Oui';

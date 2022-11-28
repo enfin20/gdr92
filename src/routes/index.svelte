@@ -96,6 +96,7 @@
 
 	export async function updateCalendrier() {
 		//enregistrement du calendrier
+		console.log('Cour');
 		statutSauvegarde = '    ... en cours';
 		const res = await fetch('/calendrierBenevoles/calendrierBenevole', {
 			method: 'PUT',
