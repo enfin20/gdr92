@@ -179,7 +179,7 @@
 		soirees = [];
 		erreurMessage = '';
 		statutEnregistrement = '';
-
+		console.log('getCalendrier ' + soiree);
 		try {
 			const res = await fetch(
 				'./calendrierBenevoles?soiree=' + soiree + '&equipe=' + currentEquipe

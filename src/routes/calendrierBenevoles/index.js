@@ -40,6 +40,7 @@ export async function get(request) {
 			.toArray();
 		// récupération des soirées
 		const soirees = [...new Set(calendrier.map((x) => x.soiree + ' : ' + x.lieu))];
+
 		// récupération des bénévoles
 		const benevoles = [...new Set(calendrier.map((x) => x.benevole))];
 

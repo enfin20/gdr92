@@ -36,7 +36,9 @@ export function YYYYMM(shift = 0) {
 
 export function MM(date) {
 	// date = indice
-
+	if (date === 12) {
+		date = 0;
+	}
 	const mois = [
 		'Janvier',
 		'Février',
