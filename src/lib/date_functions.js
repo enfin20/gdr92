@@ -25,10 +25,10 @@ export function YYYYMM(shift = 0) {
 	}
 	// cas du mois de décembre
 	if (currentMonth > 12) {
-		currentMonth = '01';
+		currentMonth = currentMonth - 12;
+		currentMonth = '0'.concat(currentMonth);
 		currentYear = currentYear + 1;
 	}
-
 	return {
 		date: currentYear.toString().concat(currentMonth)
 	};
@@ -68,7 +68,8 @@ export function MM_YYYY(shift = 0) {
 	}
 	// cas du mois de décembre
 	if (currentMonth > 12) {
-		currentMonth = '01';
+		currentMonth = currentMonth - 12;
+		currentMonth = '0'.concat(currentMonth);
 		currentYear = currentYear + 1;
 	}
 

@@ -5,6 +5,7 @@ import { YYYYMM } from '$lib/date_functions';
 export async function get(request) {
 	// récupère la liste des email des bénéficiaires n'ayant pas répondu pour le mois suivant
 	const equipe = request.query.get('equipe');
+	console.log('YYYYMM(2) ' + YYYYMM(2).date.concat('00'));
 	try {
 		const pipeline = [
 			{
