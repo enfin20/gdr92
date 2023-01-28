@@ -90,8 +90,9 @@ export async function post(request) {
 		const collection = db.collection('Benevoles');
 		const benevole = JSON.parse(request.body);
 		// insertion du bénévole
-		console.log('Camion ' + benevole.camion);
-		console.log('Maraude ' + benevole.maraude);
+		let soiree = '';
+		let lieu = '';
+		let plage = '';
 
 		b = await collection.insertOne(benevole);
 
@@ -107,24 +108,30 @@ export async function post(request) {
 				...new Set(calendrier.map((x) => x.soiree + ' / ' + x.plage + ' : ' + x.lieu))
 			];
 
+			var obj = [];
 			for (var i = 0; i < soirees.length; i++) {
-				var obj = new Object();
-				obj.soiree = soirees[i].substring(0, soirees[i].indexOf(' /'));
+				soiree = soirees[i].substring(0, soirees[i].indexOf(' /'));
 				soirees[i] = soirees[i].substring(soirees[i].indexOf('/ ') + 2);
-				obj.plage = soirees[i].substring(0, soirees[i].indexOf(' :'));
+				plage = soirees[i].substring(0, soirees[i].indexOf(' :'));
 				soirees[i] = soirees[i].substring(soirees[i].indexOf(': ') + 2);
-				obj.lieu = soirees[i];
-				obj.benevole = benevole.prenom + ' ' + benevole.nom;
-				obj.email = benevole.email;
-				obj.b_id = b.insertedId.toString();
-				obj.statut = '';
-				obj.equipe = 'Camion';
-
-				c = await coll2.insertOne(obj);
+				lieu = soirees[i];
+				obj.push({
+					soiree: soiree,
+					lieu: lieu,
+					plage: plage,
+					benevole: benevole.prenom + ' ' + benevole.nom,
+					email: benevole.email,
+					b_id: b.insertedId.toString(),
+					statut: '',
+					equipe: 'Camion'
+				});
 			}
+			c = await coll2.insertMany(obj);
 		}
 
+		obj = [];
 		if (benevole.maraude) {
+			console.log('maraude');
 			let calendrier = await coll2
 				.find({ soiree: { $gt: YYYYMM(0).date }, equipe: 'Maraude' })
 				.sort({ soiree: 1, plage: 1 })
@@ -133,26 +140,29 @@ export async function post(request) {
 				...new Set(calendrier.map((x) => x.soiree + ' / ' + x.plage + ' : ' + x.lieu))
 			];
 			for (var i = 0; i < soirees.length; i++) {
-				var obj = new Object();
-				obj.soiree = soirees[i].substring(0, soirees[i].indexOf(' /'));
+				soiree = soirees[i].substring(0, soirees[i].indexOf(' /'));
 				soirees[i] = soirees[i].substring(soirees[i].indexOf('/ ') + 2);
-				obj.plage = soirees[i].substring(0, soirees[i].indexOf(' :'));
+				plage = soirees[i].substring(0, soirees[i].indexOf(' :'));
 				soirees[i] = soirees[i].substring(soirees[i].indexOf(': ') + 2);
-				obj.lieu = soirees[i];
-				obj.benevole = benevole.prenom + ' ' + benevole.nom;
-				obj.email = benevole.email;
-				obj.b_id = b.insertedId.toString();
-				obj.statut = '';
-				obj.equipe = 'Maraude';
-
-				c = await coll2.insertOne(obj);
+				lieu = soirees[i];
+				obj.push({
+					soiree: soiree,
+					lieu: lieu,
+					plage: plage,
+					benevole: benevole.prenom + ' ' + benevole.nom,
+					email: benevole.email,
+					b_id: b.insertedId.toString(),
+					statut: '',
+					equipe: 'Maraude'
+				});
 			}
+			c = await coll2.insertMany(obj);
 		}
 
 		return {
 			status: 200,
 			body: {
-				message: 'Success'
+				message: 'enregistré'
 			}
 		};
 	} catch (err) {
@@ -193,7 +203,7 @@ export async function put(request) {
 				}
 			}
 		);
-		await coll2.update(
+		await coll2.updateMany(
 			{ b_id: benevole._id },
 			{ $set: { benevole: benevole.prenom + ' ' + benevole.nom, email: benevole.email } }
 		);

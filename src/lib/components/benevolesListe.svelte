@@ -15,6 +15,8 @@
 	let new_chauffeur = false;
 	let new_rsm = false;
 	let new_rm = false;
+	let erreurMessage = '';
+	let BenevoleStatus = 'Gérer les bénévoles';
 
 	import { createEventDispatcher } from 'svelte';
 
@@ -61,6 +63,11 @@
 			method: 'PUT',
 			body: JSON.stringify(obj)
 		});
+		if (res.status === 200) {
+			BenevoleStatus = prenom + ' ' + nom.toUpperCase() + ' mis à jour';
+		} else {
+			BenevoleStatus = '';
+		}
 	}
 
 	export async function insertBenevole(
@@ -78,43 +85,60 @@
 		rsm,
 		rm
 	) {
-		var obj = new Object();
-		obj.prenom = prenom;
-		obj.nom = nom.toUpperCase();
-		obj.email = email;
-		obj.tel = tel;
-		obj.camion = camion ? true : false;
-		obj.prepa = prepa ? true : false;
-		obj.rs = rs ? true : false;
-		obj.rg = rg ? true : false;
-		obj.maraude = maraude ? true : false;
-		obj.homme = homme ? true : false;
-		obj.chauffeur = chauffeur ? true : false;
-		obj.rsm = rsm ? true : false;
-		obj.rm = rm ? true : false;
+		let doublon = false;
+		erreurMessage = '';
+		for (var i = 0; i < benevoles.length; i++) {
+			if (email === benevoles[i].email) {
+				doublon = true;
+				erreurMessage =
+					'email ' + email + ' déjà existant : ' + benevoles[i].prenom + ' ' + benevoles[i].nom;
+			}
+		}
+		if (!doublon) {
+			var obj = new Object();
+			obj.prenom = prenom;
+			obj.nom = nom.toUpperCase();
+			obj.email = email;
+			obj.tel = tel;
+			obj.camion = camion ? true : false;
+			obj.prepa = prepa ? true : false;
+			obj.rs = rs ? true : false;
+			obj.rg = rg ? true : false;
+			obj.maraude = maraude ? true : false;
+			obj.homme = homme ? true : false;
+			obj.chauffeur = chauffeur ? true : false;
+			obj.rsm = rsm ? true : false;
+			obj.rm = rm ? true : false;
 
-		const res = await fetch('/benevoles/benevole', {
-			method: 'POST',
-			body: JSON.stringify(obj)
-		});
-		new_prenom = '';
-		new_nom = '';
-		new_email = '';
-		new_tel = '';
-		new_camion = false;
-		new_rs = false;
-		new_rg = false;
-		new_maraude = false;
-		new_homme = false;
-		new_chauffeur = false;
-		new_rsm = false;
-		new_rm = false;
-		showBenevoles();
+			const res = await fetch('/benevoles/benevole', {
+				method: 'POST',
+				body: JSON.stringify(obj)
+			});
+			if (res.status === 200) {
+				BenevoleStatus = prenom + ' ' + nom.toUpperCase() + ' enregistré';
+			} else {
+				BenevoleStatus = '';
+			}
+			new_prenom = '';
+			new_nom = '';
+			new_email = '';
+			new_tel = '';
+			new_camion = false;
+			new_rs = false;
+			new_rg = false;
+			new_maraude = false;
+			new_homme = false;
+			new_chauffeur = false;
+			new_rsm = false;
+			new_rm = false;
+			showBenevoles();
+		}
 	}
 </script>
 
 <div class="py-2 grid gap-1">
-	<p class="text-2xl font-bold text-gray-800 md:text-xl">Gérer les bénévoles</p>
+	<p class="text-xl font-bold text-white bg-red-600">{erreurMessage}</p>
+	<p class="text-2xl font-bold text-gray-800 md:text-xl">{BenevoleStatus}</p>
 
 	<div class="flex flex-col h-screen">
 		<div class="flex-grow overflow-y-auto">

@@ -3,6 +3,8 @@ import { MongoClient } from 'mongodb';
 //const MONGODB_URI = process.env.MONGODB_URI; //'mongodb+srv://enfin:iRpLDsDY8iD3nNs@cluster0.qqdfc.mongodb.net/gdrColombes';
 //const MONGODB_DB = process.env.MONGODB_DB; //'gdrColombes';
 
+//const MONGODB_URI = 'mongodb+srv://enfin:iRpLDsDY8iD3nNs@cluster0.qqdfc.mongodb.net/gdrColombes';
+//const MONGODB_DB = 'gdrColombes';
 const MONGODB_URI = 'mongodb+srv://enfin:iRpLDsDY8iD3nNs@cluster0.qqdfc.mongodb.net/gdrColombes';
 const MONGODB_DB = 'gdrColombes';
 

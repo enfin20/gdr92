@@ -96,7 +96,7 @@
 
 	export async function updateCalendrier() {
 		//enregistrement du calendrier
-		console.log('Cour');
+
 		statutSauvegarde = '    ... en cours';
 		const res = await fetch('/calendrierBenevoles/calendrierBenevole', {
 			method: 'PUT',
@@ -253,7 +253,7 @@
 			for (var i = cal.tableau[0].length; i > 0; i--) {
 				cal.tableau[0][i] =
 					date_DD_MM(cal.tableau[0][i - 1]).date +
-					'<div class="flex items-center justify-center"><img src="https://www.orientsport.fr/oflash/img/' +
+					'<div class="flex items-center justify-center"><img src="/images/' +
 					cal.tableau[0][i - 1].substring(11) +
 					'.png" alt ="' +
 					cal.tableau[0][i - 1].substring(11) +
@@ -300,7 +300,7 @@
 <div class="block md:flex w-full">
 	<div class="mr-3 hidden md:inline-block text-gray-600 md:w-1/12">
 		<button type="submit" name="s2" on:click={reload}>
-			<img src="https://www.orientsport.fr/oflash/img/logo.webp" alt="Restos du coeur" /></button
+			<img src="/images/logo.webp" alt="Restos du coeur" /></button
 		>
 	</div>
 	<div class="mr-3 md:py-4 inline-block text-gray-600 ">

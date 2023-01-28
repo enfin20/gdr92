@@ -38,7 +38,7 @@ export async function post(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = JSON.parse(request.body);
-		await collection.insertOne(calendrier);
+		await collection.insertMany(calendrier);
 
 		return {
 			status: 200,
@@ -50,7 +50,7 @@ export async function post(request) {
 		return {
 			status: 500,
 			body: {
-				erreur: err.message
+				erreur: 'addCalendrierBenevoles: ' + err.message
 			}
 		};
 	}

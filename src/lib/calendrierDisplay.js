@@ -11,7 +11,7 @@ export function lieux_formatte(tableau) {
 	var l = [];
 	for (var i = tableau[0].length; i > 0; i--) {
 		l[i] =
-			'<img src="https://www.orientsport.fr/oflash/img/' +
+			'<img src="/images/' +
 			tableau[0][i - 1].substring(11) +
 			'.png" alt ="' +
 			tableau[0][i - 1].substring(11) +

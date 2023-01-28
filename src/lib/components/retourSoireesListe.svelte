@@ -14,7 +14,7 @@
 					<th colspan="3" class="w-[15%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/entrepot.png"
+								src="/images/entrepot.png"
 								class="h-8 w-8 object-contain"
 								alt="repas"
 								style="display: inline"
@@ -24,7 +24,7 @@
 					<th colspan="2" class="w-[10%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/present.png"
+								src="/images/present.png"
 								class="h-8 w-8 object-contain"
 								alt="present"
 								style="display: inline"
@@ -34,7 +34,7 @@
 					<th colspan="2" class="w-[10%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/absent.png"
+								src="/images/absent.png"
 								class="h-8 w-8 object-contain"
 								alt="gare"
 								style="display: inline"
@@ -48,7 +48,7 @@
 					<th class="w-[5%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/gare.png"
+								src="/images/gare.png"
 								class="h-8 w-8 object-contain"
 								alt="gare"
 								style="display: inline"
@@ -58,7 +58,7 @@
 					<th class="w-[5%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/gp.png"
+								src="/images/gp.png"
 								class="h-8 w-8 object-contain"
 								alt="gp"
 								style="display: inline"
@@ -68,7 +68,7 @@
 					<th class="w-[5%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/repas.png"
+								src="/images/repas.png"
 								class="h-8 w-8 object-contain"
 								alt="total"
 								style="display: inline"
@@ -78,7 +78,7 @@
 					<th class="w-[5%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/gare.png"
+								src="/images/gare.png"
 								class="h-8 w-8 object-contain"
 								alt="gare"
 								style="display: inline"
@@ -88,7 +88,7 @@
 					<th class="w-[5%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/gp.png"
+								src="/images/gp.png"
 								class="h-8 w-8 object-contain"
 								alt="gp"
 								style="display: inline"
@@ -98,7 +98,7 @@
 					<th class="w-[5%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/gare.png"
+								src="/images/gare.png"
 								class="h-8 w-8 object-contain"
 								alt="gare"
 								style="display: inline"
@@ -108,7 +108,7 @@
 					<th class="w-[5%] sticky top-0 bg-white">
 						<div class="flex items-center justify-center">
 							<img
-								src="https://www.orientsport.fr/oflash/img/gp.png"
+								src="/images/gp.png"
 								class="h-8 w-8 object-contain"
 								alt="gp"
 								style="display: inline"

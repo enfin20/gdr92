@@ -29,12 +29,7 @@
 	<div class="w-1/4">
 		<span class="block text-gray-500 md:text-left mb-1 md:mb-0 pr-4 text-sm">
 			<a href="tel:+{benevole.tel}"
-				><img
-					src="https://www.orientsport.fr/oflash/img/phone.png"
-					alt="appel"
-					width="32px"
-					height="32px"
-				/>
+				><img src="/images/phone.png" alt="appel" width="32px" height="32px" />
 			</a>
 		</span>
 	</div>

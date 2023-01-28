@@ -48,7 +48,7 @@ export async function get(request) {
 
 export async function put(request) {
 	// mise à jour des statuts du calendrier d'un bénévole (email)
-	console.log('coucou');
+
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
@@ -56,12 +56,11 @@ export async function put(request) {
 		const calendrier = JSON.parse(request.body);
 
 		for (var i = 0; i < calendrier.length; i++) {
-			await collection.update(
+			await collection.updateOne(
 				{ _id: ObjectId(calendrier[i]._id) },
 				{ $set: { statut: calendrier[i].statut } }
 			);
 		}
-		console.log('email ' + calendrier[0].email);
 		// récupère toutes les soirées de maraude, pour modifier le statut à 'Maraude' dans les autres lieux
 		let pipeline = [
 			{
@@ -123,7 +122,10 @@ export async function put(request) {
 		const soirees = await collection.aggregate(pipeline).toArray();
 		console.log('soirees maraude ' + soirees.length);
 		for (var j = 0; j < soirees.length; j++) {
-			await collection.update({ _id: ObjectId(soirees[j]._id) }, { $set: { statut: 'Maraude' } });
+			await collection.updateOne(
+				{ _id: ObjectId(soirees[j]._id) },
+				{ $set: { statut: 'Maraude' } }
+			);
 		}
 
 		return {

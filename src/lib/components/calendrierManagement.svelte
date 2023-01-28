@@ -128,6 +128,9 @@
 				var obj = new Object();
 				obj._id = calendriers[i][j]._id;
 				obj.statut = calendriers[i][j].presence;
+				obj.soiree = soirees[j];
+				obj.equipe = currentEquipe;
+				obj.b_id = calendriers[i][0].b_id;
 				obj.updated = '';
 				if (calendriers[i][j].updated === 'Oui') {
 					// on n'intègre que les zones qui ont été mise à jour par CalendrierChangeStatut
@@ -193,17 +196,19 @@
 			else {
 				// remise au format des dates et des entêtes DD/MM
 				for (var i = cal.tableau[0].length; i > 0; i--) {
-					cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
+					//cal.tableau[0][i] = date_DD_MM(cal.tableau[0][i - 1]).date;
+					//gestion de la date
+					cal.tableau[0][i] = cal.tableau[0][i - 1];
 					lieux[i] =
-						'<img src="https://www.orientsport.fr/oflash/img/' +
+						'<img src="/images/' +
 						cal.tableau[0][i - 1].substring(11) +
 						'.png" alt ="' +
 						cal.tableau[0][i - 1].substring(11) +
 						'" width="32px" height="32px" />';
 				}
 				lieux[0] = '';
-				cal.tableau[0][0] = 'Calendrier ';
 				soirees = await cal.tableau[0];
+				soirees[0] = '';
 				// suppression de l'entête
 				calendriers = await cal.tableau.slice(1);
 
@@ -320,7 +325,7 @@
 		<thead class="">
 			<tr class="">
 				{#each soirees as cell}
-					<th class="">{cell}</th>
+					<th class="">{date_DD_MM(cell).date}</th>
 				{/each}
 			</tr>
 			<tr class="">

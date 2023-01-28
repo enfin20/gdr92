@@ -43,7 +43,8 @@ export async function get(request) {
 
 		// récupération des bénévoles
 		const benevoles = [...new Set(calendrier.map((x) => x.benevole))];
-
+		// récupération des b_id
+		const b_id = [...new Set(calendrier.map((x) => x.b_id))];
 		// récupération des vaisselles
 		const vaisselle = await collection.aggregate(pipeline).toArray();
 
@@ -58,6 +59,7 @@ export async function get(request) {
 			// pour chaque bénévole, on lui attache le nb de vaisselles et la date de la dernière
 			var ben = new Object();
 			ben.benevole = benevoles[i].substring(0, benevoles[i].indexOf(' ') + 2) + '.';
+			ben.b_id = b_id[i];
 			ben.nbVaisselle = '';
 			ben.lastVaisselle = '';
 			for (var k = 0; k < vaisselle.length; k++) {
@@ -125,35 +127,43 @@ export async function put(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = JSON.parse(request.body);
-		let soiree = [];
-		let statut = '';
 
 		for (var i = 0; i < calendrier.length; i++) {
-			await collection.update(
-				{ _id: ObjectId(calendrier[i]._id) },
-				{ $set: { statut: calendrier[i].statut } }
-			);
-			// on récupère tous les détails de la soirée mise à jour
-			soiree = await collection.find({ _id: ObjectId(calendrier[i]._id) }).toArray();
-
+			calendrier[i].soiree = calendrier[i].soiree.substring(0, 8);
+			try {
+				await collection.updateOne(
+					{ _id: ObjectId(calendrier[i]._id) },
+					{ $set: { statut: calendrier[i].statut } }
+				);
+			} catch (err) {
+				console.log(err.message);
+			}
 			// si maraude, on met à jour le calendrier du camion pour éviter les doublons
-			if (soiree[0].equipe === 'Maraude') {
-				if (soiree[0].statut === 'Oui') {
-					statut = 'Maraude';
+			if (calendrier[i].equipe === 'Maraude') {
+				if (calendrier[i].statut === 'Oui' || calendrier[i].statut === 'RS') {
+					calendrier[i].statut = 'Maraude';
 				}
-				if (soiree[0].statut === 'Dispo') {
-					statut = 'Dispo';
+				if (calendrier[i].statut === 'Dispo') {
+					calendrier[i].statut = 'Dispo';
 				}
-				if (statut !== '') {
-					await collection.update(
+			} else {
+				calendrier[i].statut = '';
+			}
+
+			if (calendrier[i].statut !== '') {
+				try {
+					await collection.updateMany(
 						{
-							soiree: soiree[0].soiree,
-							email: soiree[0].email,
+							soiree: calendrier[i].soiree,
+							b_id: calendrier[i].b_id,
 							equipe: 'Camion',
 							lieu: { $in: ['gp', 'gare'] }
 						},
-						{ $set: { statut: statut } }
+
+						{ $set: { statut: calendrier[i].statut } }
 					);
+				} catch (err) {
+					console.log(err.message);
 				}
 			}
 		}
