@@ -78,6 +78,15 @@ export function MM_YYYY(shift = 0) {
 	};
 }
 
+export function YYYY0101(shift = 0) {
+	// shift : -1 --> année précente
+	let currentYear = new Date().getFullYear() + shift;
+
+	return {
+		date: currentYear.toString() + '0101'
+	};
+}
+
 export function YYYY_MM_DD(shift = 0) {
 	// shift : 1 --> mois suivant
 	let currentYear = new Date().getFullYear();

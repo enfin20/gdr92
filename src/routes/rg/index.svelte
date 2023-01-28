@@ -18,9 +18,11 @@
 	import CalendrierManagement from '/src/lib/components/calendrierManagement.svelte';
 
 	let benevoles = [];
+	let benevoleSelected = '';
 	let benevolesSansReponses = [];
 	let benevolesAbsents = [];
 	let benevolesLastSoiree = [];
+	let presences = [];
 	let soiree = '';
 	let retourSoirees = [];
 	let currentEquipe = 'Camion';
@@ -35,6 +37,7 @@
 	let benevolesSansReponseVisible = 'hidden';
 	let benevolesAbsentsVisible = 'hidden';
 	let benevolesLastSoireeVisible = 'hidden';
+	let benevolesPresencesVisible = 'hidden';
 	let erreurMessageRG = '';
 
 	// nouvelle soirée
@@ -59,6 +62,7 @@
 		benevolesSansReponseVisible = 'hidden';
 		benevolesAbsentsVisible = 'hidden';
 		benevolesLastSoireeVisible = 'hidden';
+		benevolesPresencesVisible = 'hidden';
 		erreurMessageRG = '';
 		statutEnregistrement = '';
 	}
@@ -160,7 +164,33 @@
 		} else {
 			benevolesLastSoireeVisible = 'flex';
 			benevolesLastSoiree = await b.benevoles;
-			console.table('benevoles ' + benevolesLastSoiree.length);
+		}
+	}
+	export async function showBenevolesPresences() {
+		divHidden();
+
+		// presentation de la liste des benevoles avec leur présence depuis N-1
+		let res = await fetch('/benevoles/presences?equipe=Camion');
+		const b = await res.json();
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + b.erreur;
+		} else {
+			benevolesPresencesVisible = 'flex';
+			presences = await b.presences;
+			res = await fetch('/benevoles');
+			const ben = await res.json();
+
+			if (res.status === 500) {
+				erreurMessageRG = 'Erreur (contacte Olivier): ' + ben.erreur;
+			} else {
+				benevoles = await ben.benevoles;
+				for (var i = benevoles.length - 1; i >= 0; i--) {
+					benevoles[i].benevole = benevoles[i].prenom + ' ' + benevoles[i].nom;
+					if (!benevoles[i].camion) {
+						benevoles.splice(i, 1);
+					}
+				}
+			}
 		}
 	}
 
@@ -332,6 +362,14 @@
 		on:click={showBenevolesAbsents}
 	>
 		Absences
+	</button>
+	<button
+		type="submit"
+		name="benevolesPresences"
+		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
+		on:click={showBenevolesPresences}
+	>
+		Présences
 	</button>
 	<button
 		type="submit"
@@ -509,6 +547,41 @@
 									b.last_soiree.substring(0, 4)}
 							</td>
 						</tr>
+					{/each}
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div class={benevolesPresencesVisible}>
+	<div class="py-2 grid gap-1 w-full md:w-1/2">
+		<p class="text-2xl font-bold text-gray-800 md:text-xl">Présences</p>
+		<div class="flex flex-col h-screen">
+			<select
+				class="text-xs appearance-none border-2 border-gray-200 rounded w-full py-1 px-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+				bind:value={benevoleSelected}
+			>
+				{#each benevoles as b}
+					<option value={b.benevole}>
+						{b.benevole}
+					</option>
+				{/each}
+			</select>
+			<div class="flex-grow overflow-y-auto">
+				<table id="BenevolesListe" class="text-sm text-gray-500 w-full">
+					{#each presences as p}
+						{#if p.benevole === benevoleSelected}
+							<tr>
+								<td class="w-1/2">{p.benevole}</td>
+								<td class="w-1/12"
+									>{p.soiree.substring(6, 8) +
+										'/' +
+										p.soiree.substring(4, 6) +
+										'/' +
+										p.soiree.substring(0, 4)}
+								</td>
+							</tr>
+						{/if}
 					{/each}
 				</table>
 			</div>

@@ -78,10 +78,6 @@ export async function get(request) {
 			.toArray();
 
 		const presents = await coll2.aggregate(pipeline_presents).toArray();
-
-		console.log('presents : ' + presents[0]._id.soiree);
-		console.log('retourSoiree : ' + retourSoirees[0].soiree);
-
 		const absents = await coll2.aggregate(pipeline_absents).toArray();
 
 		// rajput des presents & absents à retour soirée

@@ -29,7 +29,6 @@
 			}
 		} else {
 			if (benevoleRole === 'rg') {
-				console.log('Ok');
 				try {
 					if (!benevole.benevole.rg) {
 						erreurMessage = 'Mot de passe non valide !';

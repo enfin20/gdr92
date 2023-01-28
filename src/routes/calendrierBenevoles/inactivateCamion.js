@@ -9,7 +9,6 @@ export async function put(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const soiree = JSON.parse(request.body);
-		console.log('soiree ' + soiree);
 
 		await collection.update(
 			{ soiree: { $regex: date_YYYYMM(soiree).date }, equipe: 'Camion' },

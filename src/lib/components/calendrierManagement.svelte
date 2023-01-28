@@ -25,7 +25,6 @@
 	function selectCol(col) {
 		for (var i = 0; i < calendriers.length; i++) {
 			for (var j = 0; j < calendriers[i].length; j++) {
-				console.log('col ' + calendriers[i].length);
 				if (j === col) {
 					calendriers[i][j].background = 'bg-slate-200';
 				} else {
@@ -149,7 +148,6 @@
 			erreurMessage = 'Erreur (contacte Olivier): ' + ret.erreur;
 			statutEnregistrement = '';
 		} else {
-			console.log('oui 3');
 			statutEnregistrement = '    Calendrier enregistré';
 		}
 	}
@@ -182,7 +180,7 @@
 		soirees = [];
 		erreurMessage = '';
 		statutEnregistrement = '';
-		console.log('getCalendrier ' + soiree);
+
 		try {
 			const res = await fetch(
 				'./calendrierBenevoles?soiree=' + soiree + '&equipe=' + currentEquipe

@@ -47,7 +47,6 @@ export async function get(request) {
 		const collection = db.collection('CalendrierBenevoles');
 		const benevoles = await collection.aggregate(pipeline).toArray();
 
-		console.log('nb ' + benevoles.length);
 		return {
 			status: 200,
 			body: {

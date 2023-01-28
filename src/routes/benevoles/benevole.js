@@ -131,7 +131,6 @@ export async function post(request) {
 
 		obj = [];
 		if (benevole.maraude) {
-			console.log('maraude');
 			let calendrier = await coll2
 				.find({ soiree: { $gt: YYYYMM(0).date }, equipe: 'Maraude' })
 				.sort({ soiree: 1, plage: 1 })

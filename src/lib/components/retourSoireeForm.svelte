@@ -5,7 +5,6 @@
 
 	function ChangeStatus() {
 		var changed = false;
-		console.log(benevole.benevole);
 		if (benevole.statut === 'Non') {
 			changed = true;
 			benevole.statut = 'Oui';

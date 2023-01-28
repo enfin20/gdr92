@@ -1,6 +1,6 @@
 import { connectToDatabase } from '$lib/db';
 import { ObjectId } from 'mongodb';
-import { YYYYMM, YYYYMMDD } from '$lib/date_functions';
+import { YYYY0101 } from '$lib/date_functions';
 
 export async function get(request) {
 	// récupère la dernière soirée des bénévoles
@@ -8,40 +8,43 @@ export async function get(request) {
 	try {
 		const pipeline = [
 			{
-				$lookup: {
-					from: 'Benevoles',
-					localField: 'email',
-					foreignField: 'email',
-					as: 'ben'
-				}
-			},
-			{
-				$unwind: { path: '$ben' }
-			},
-			{
 				$match: {
 					statut: {
-						$in: ['RS', 'Oui', 'Vaisselle']
+						$in: ['Vaisselle', 'Oui', 'RS']
 					},
-					soiree: {
-						$lte: YYYYMMDD().date
-					},
+					equipe: equipe,
 					lieu: {
 						$in: ['gare', 'gp']
+					},
+					soiree: {
+						$gt: YYYY0101(-1).date
 					}
 				}
 			},
 			{
 				$group: {
-					_id: '$benevole',
-					last_soiree: {
-						$max: '$soiree'
+					_id: {
+						benevole: '$benevole',
+						soiree: '$soiree'
+					},
+					nb: {
+						$sum: 1
 					}
 				}
 			},
 			{
+				$set: {
+					benevole: '$_id.benevole',
+					soiree: '$_id.soiree'
+				}
+			},
+			{
+				$unset: ['_id', 'nb']
+			},
+			{
 				$sort: {
-					last_soiree: 1
+					benevole: 1,
+					soiree: 1
 				}
 			}
 		];
@@ -49,12 +52,12 @@ export async function get(request) {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
-		const benevoles = await collection.aggregate(pipeline).toArray();
+		const presences = await collection.aggregate(pipeline).toArray();
 
 		return {
 			status: 200,
 			body: {
-				benevoles
+				presences
 			}
 		};
 	} catch (err) {

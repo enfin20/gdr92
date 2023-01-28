@@ -28,7 +28,6 @@ export async function get(request) {
 			})
 			.sort({ soiree: 1, plage: 1 })
 			.toArray();
-		console.log('calendrier ' + calendrier.length);
 		return {
 			status: 200,
 			body: {
@@ -36,7 +35,6 @@ export async function get(request) {
 			}
 		};
 	} catch (err) {
-		console.log('err ' + err.message);
 		return {
 			status: 500,
 			body: {
@@ -120,7 +118,6 @@ export async function put(request) {
 			}
 		];
 		const soirees = await collection.aggregate(pipeline).toArray();
-		console.log('soirees maraude ' + soirees.length);
 		for (var j = 0; j < soirees.length; j++) {
 			await collection.updateOne(
 				{ _id: ObjectId(soirees[j]._id) },
