@@ -14,7 +14,7 @@ export async function get(request) {
 					},
 					equipe: equipe,
 					lieu: {
-						$in: ['gare', 'gp']
+						$in: ['gare', 'gp', 'entrepot']
 					},
 					soiree: {
 						$gt: YYYY0101(-1).date
