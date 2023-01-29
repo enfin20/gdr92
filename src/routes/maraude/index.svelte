@@ -160,55 +160,6 @@
 		}
 	}
 
-	/*
-	export async function addCalendrier() {
-		var obj = new Object();
-		var obj2 = new Object();
-		let isMaraude = '';
-		statutEnregistrement = '.... en cours';
-		obj.soiree = soiree.replaceAll('-', '');
-		obj.statut = '';
-
-		// récupération des bénévoles
-		const res = await fetch('/benevoles');
-		let benevoles = await res.json();
-
-		if (res.status === 500) {
-			erreurMessageRG = 'Erreur (contacte Olivier): ' + benevoles.erreur;
-		} else {
-			for (var i = 0; i < benevoles.benevoles.length; i++) {
-				obj.email = benevoles.benevoles[i].email;
-				obj.benevole = benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom;
-				obj.b_id = benevoles.benevoles[i]._id;
-				for (var j = 0; j <= 0; j++) {
-					if (plageActive[j]) {
-						// planning uniquement pour les benevoles de la bonne équipe
-						if (
-							(benevoles.benevoles[i].camion && equipe[j] === 'Camion') ||
-							(benevoles.benevoles[i].maraude && equipe[j] === 'Maraude')
-						) {
-							obj.plage = plage[j];
-							obj.lieu = lieu[j];
-							obj.equipe = equipe[j];
-							const res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
-								method: 'POST',
-								body: JSON.stringify(obj)
-							});
-							let ret = await res.json();
-							if (res.status === 500) {
-								erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
-								isCamion = 'Non';
-								statutEnregistrement = '';
-								i = 10000;
-							}
-						}
-					}
-				}
-			}
-			statutEnregistrement = soiree + ' : enregistrée';
-		}
-	}
-*/
 	export async function inactivateCalendrier() {
 		if (inactivateMaraude) {
 			statutEnregistrement = '... en cours';
@@ -238,38 +189,40 @@
 	</div>
 </span>
 <div class={menuVisible}>
-	<button
-		type="submit"
-		name="benevoles"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showBenevoles}
-	>
-		Bénévoles
-	</button>
-	<button
-		type="submit"
-		name="date"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showDate}
-	>
-		Ajout date
-	</button>
-	<button
-		type="submit"
-		name="calendrier"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={ShowCalendrier}
-	>
-		Calendrier
-	</button>
-	<button
-		type="submit"
-		name="benevolesSansReponse"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showBenevolesSansReponse}
-	>
-		Bén. sans réponse
-	</button>
+	<div class="grid grid-cols-4 text-xs md:text-base bg-pink-200 w-full">
+		<button
+			type="submit"
+			name="benevoles"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showBenevoles}
+		>
+			Bénévoles
+		</button>
+		<button
+			type="submit"
+			name="date"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showDate}
+		>
+			Ajout date
+		</button>
+		<button
+			type="submit"
+			name="calendrier"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={ShowCalendrier}
+		>
+			Calendrier
+		</button>
+		<button
+			type="submit"
+			name="benevolesSansReponse"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showBenevolesSansReponse}
+		>
+			Sans réponse
+		</button>
+	</div>
 </div>
 <div class={dateVisible}>
 	<div class="py-2  ">

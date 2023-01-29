@@ -315,70 +315,72 @@
 	</div>
 </span>
 <div class={menuVisible}>
-	<button
-		type="submit"
-		name="benevoles"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showBenevoles}
-	>
-		Bénévoles
-	</button>
-	<button
-		type="submit"
-		name="date"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showDate}
-	>
-		Ajout date
-	</button>
-	<button
-		type="submit"
-		name="calendrier"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={ShowCalendrier}
-	>
-		Calendrier
-	</button>
-	<button
-		type="submit"
-		name="benevolesSansReponse"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showBenSansReponse}
-	>
-		Bén. sans réponse
-	</button>
-	<button
-		type="submit"
-		name="soiree"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showSoiree}
-	>
-		Soirées
-	</button>
-	<button
-		type="submit"
-		name="benevolesAbsents"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showBenevolesAbsents}
-	>
-		Absences
-	</button>
-	<button
-		type="submit"
-		name="benevolesPresences"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showBenevolesPresences}
-	>
-		Présences
-	</button>
-	<button
-		type="submit"
-		name="lastSoiree"
-		class="mr-3 inline-block   bg-pink-200 hover:bg-pink-300 rounded py-1 px-3  text-gray-600"
-		on:click={showBenevolesLastSoiree}
-	>
-		Dernières soirées
-	</button>
+	<div class="grid grid-cols-4 md:grid-cols-8 text-xs md:text-base bg-pink-200 w-full">
+		<button
+			type="submit"
+			name="benevoles"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showBenevoles}
+		>
+			Bénévoles
+		</button>
+		<button
+			type="submit"
+			name="date"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showDate}
+		>
+			Ajout date
+		</button>
+		<button
+			type="submit"
+			name="calendrier"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={ShowCalendrier}
+		>
+			Calendrier
+		</button>
+		<button
+			type="submit"
+			name="benevolesSansReponse"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showBenSansReponse}
+		>
+			Sans réponse
+		</button>
+		<button
+			type="submit"
+			name="soiree"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showSoiree}
+		>
+			Soirées
+		</button>
+		<button
+			type="submit"
+			name="benevolesAbsents"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showBenevolesAbsents}
+		>
+			Absences
+		</button>
+		<button
+			type="submit"
+			name="benevolesPresences"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showBenevolesPresences}
+		>
+			Présences
+		</button>
+		<button
+			type="submit"
+			name="lastSoiree"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			on:click={showBenevolesLastSoiree}
+		>
+			Dernières soirées
+		</button>
+	</div>
 </div>
 <div class={dateVisible}>
 	<div class="py-2  ">

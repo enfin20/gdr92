@@ -66,7 +66,7 @@
 				if (benevole.benevole.rs === undefined || !benevole.benevole.rs) {
 					menuVisible = 'hidden';
 				} else {
-					menuVisible = 'block md:inline-block py-2 md:py-0';
+					menuVisible = '';
 					rs = loggedBenevole;
 					equipe = 'Camion';
 				}
@@ -298,75 +298,68 @@
 </svelte:head>
 <p class="text-center text-xl font-bold text-white bg-red-600">{erreurMessage}</p>
 <div class="block md:flex w-full">
-	<div class="mr-3 hidden md:inline-block text-gray-600 md:w-1/12">
+	<div class="grid grid-cols-5 text-xs md:text-base bg-white w-full">
 		<button type="submit" name="s2" on:click={reload}>
-			<img src="/images/logo.webp" alt="Restos du coeur" /></button
+			<img src="/images/logo.webp" alt="Restos du coeur" class="w-1/2 md:w-1/4" /></button
 		>
-	</div>
-	<div class="mr-3 md:py-4 inline-block text-gray-600 ">
 		<button
 			type="submit"
-			name="s"
-			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+			name="benevoles"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
 			on:click={showCamionPlanningM}
 		>
 			Camion {MM(new Date().getMonth()).mois}
 		</button>
-	</div>
-	<div class="mr-3 md:py-4 inline-block text-gray-600">
 		<button
 			type="submit"
-			name="s"
-			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
+			name="date"
+			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
 			on:click={showCamionPlanningM2}
 		>
 			Camion {MM(new Date().getMonth() + 1).mois}
 		</button>
-	</div>
-	<div class="mr-3 md:py-4 inline-block text-gray-600">
 		<button
 			type="submit"
-			name="s"
-			class="bg-purple-300 hover:bg-purple-400 rounded py-1 px-3 text-gray-600"
+			name="calendrier"
+			class="mr-3 inline-block bg-purple-300 hover:bg-purple-400 rounded py-1 px-3 text-gray-600 uppercase font-bold"
 			on:click={showMaraudePlanningM}
 		>
 			Maraude {MM(new Date().getMonth()).mois}
 		</button>
-	</div>
-	<div class="mr-3 md:py-4 inline-block text-gray-600">
 		<button
 			type="submit"
-			name="s"
-			class="bg-purple-300 hover:bg-purple-400 rounded py-1 px-3 text-gray-600"
+			name="benevolesSansReponse"
+			class="mr-3 inline-block bg-purple-300 hover:bg-purple-400 rounded py-1 px-3 text-gray-600 uppercase font-bold"
 			on:click={showMaraudePlanningM2}
 		>
 			Maraude {MM(new Date().getMonth() + 1).mois}
 		</button>
 	</div>
-	<div class={menuVisible}>
-		<div class="mr-3 md:py-4 inline-block text-gray-600 ">
-			<input
-				id="soiree"
-				type="date"
-				bind:value={soiree}
-				class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
-			/>
-		</div>
-		<div class="mr-3 md:py-4 inline-block text-gray-600 ">
-			<button
-				type="submit"
-				name="s"
-				class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600"
-				on:click={showSoiree}
-			>
-				Retour soirée
-			</button>
-		</div>
-	</div>
-	<div class="mr-3 md:py-4 inline-block text-gray-600">
-		{chargement}
+</div>
+
+<div class="{menuVisible} grid grid-cols-1 text-xs md:text-base bg-white w-full">
+	<div class="mr-3 md:py-4 inline-block text-gray-600 ">
+		<input
+			id="soiree"
+			type="date"
+			bind:value={soiree}
+			class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
+		/>
+
+		<button
+			type="submit"
+			name="s"
+			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600 text-base uppercase font-bold"
+			on:click={showSoiree}
+		>
+			Retour soirée
+		</button>
 	</div>
 </div>
+<div class="mr-3 md:py-4 inline-block text-gray-600">
+	{chargement}
+</div>
+
 <span class={loginVisible}>
 	<div class="py-4 grid gap-1">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">Login</h1>
