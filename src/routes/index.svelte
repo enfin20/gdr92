@@ -337,17 +337,15 @@
 	</div>
 </div>
 
-<div class="{menuVisible} grid grid-cols-3 text-xs md:text-base bg-white w-full">
+<div class="{menuVisible} grid grid-cols-2 text-xs md:text-base bg-white w-full">
 	<div />
-	<div class="mr-3 py-2 md:py-4 inline-block text-gray-600 ">
+	<div class="py-2 md:py-4 inline-block text-gray-600">
 		<input
 			id="soiree"
 			type="date"
 			bind:value={soiree}
 			class="bg-gray-200 appearance-none border-2 border-gray-200 rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-pink-400"
 		/>
-	</div>
-	<div class="mr-3 py-2 md:py-4 inline-block text-gray-600 ">
 		<button
 			type="submit"
 			name="s"
