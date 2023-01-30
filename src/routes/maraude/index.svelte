@@ -193,7 +193,7 @@
 		<button
 			type="submit"
 			name="benevoles"
-			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			class="inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
 			on:click={showBenevoles}
 		>
 			Bénévoles
@@ -201,7 +201,7 @@
 		<button
 			type="submit"
 			name="date"
-			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			class="inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
 			on:click={showDate}
 		>
 			Ajout date
@@ -209,7 +209,7 @@
 		<button
 			type="submit"
 			name="calendrier"
-			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			class="inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
 			on:click={ShowCalendrier}
 		>
 			Calendrier
@@ -217,7 +217,7 @@
 		<button
 			type="submit"
 			name="benevolesSansReponse"
-			class="mr-3 inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
+			class="inline-block bg-pink-200 hover:bg-pink-300 rounded py-1 px-3 text-gray-600 uppercase font-bold"
 			on:click={showBenevolesSansReponse}
 		>
 			Sans réponse
