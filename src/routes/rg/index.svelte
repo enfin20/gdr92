@@ -3,19 +3,12 @@
 
 <script>
 	import { MM_YYYY, date_YYYYMM, date_DD_MM, MM, YYYYMM, date_YYYYMMDD } from '$lib/date_functions';
-	import { respond } from '@sveltejs/kit/ssr';
-	import {
-		claim_element,
-		clear_loops,
-		each,
-		text,
-		time_ranges_to_array,
-		to_number
-	} from 'svelte/internal';
-	import LoginForm from '/src/lib/components/loginForm.svelte';
-	import RetourSoireeListe from '/src/lib/components/retourSoireesListe.svelte';
-	import BenevolesListe from '/src/lib/components/benevolesListe.svelte';
-	import CalendrierManagement from '/src/lib/components/calendrierManagement.svelte';
+	import LoginForm from '$lib/components/loginForm.svelte';
+	import RetourSoireeListe from '$lib/components/retourSoireesListe.svelte';
+	import BenevolesListe from '$lib/components/benevolesListe.svelte';
+	import CalendrierManagement from '$lib/components/calendrierManagement.svelte';
+	import chartjs, { registerables } from 'chart.js/auto';
+	import { onMount } from 'svelte';
 
 	let benevoles = [];
 	let benevoleSelected = '';
@@ -25,6 +18,10 @@
 	let presences = [];
 	let soiree = '';
 	let retourSoirees = [];
+	let nbBeneficiairesGare = [];
+	let nbBeneficiairesPeri = [];
+	let nbBeneficiairesTotal = [];
+	let soirees = [];
 	let currentEquipe = 'Camion';
 
 	let loginVisible = 'flex';
@@ -53,6 +50,32 @@
 	let statutEnregistrement = '';
 	let email = '';
 	let benevoleRole = 'rg';
+
+	let chartNbBeneficiaires;
+	let ctxNbBeneficiaires;
+	var chartNbBeneficiairesData = [];
+
+	onMount(async (promise) => {
+		const res = await fetch('./retourSoirees?equipe=Camion');
+		const soir = await res.json();
+
+		if (res.status === 500) {
+			erreurMessageRG = 'Erreur (contacte Olivier): ' + soir.erreur;
+		} else {
+			retourSoirees = await soir.retourSoirees;
+			nbBeneficiairesGare = [];
+			for (var i = retourSoirees.length - 1; i >= 0; i--) {
+				soirees.push(date_DD_MM(retourSoirees[i].soiree).date);
+				nbBeneficiairesGare.push(retourSoirees[i].nbGare);
+				nbBeneficiairesPeri.push(retourSoirees[i].nbPeri);
+				nbBeneficiairesTotal.push(
+					Number(retourSoirees[i].nbPeri) + Number(retourSoirees[i].nbGare)
+				);
+			}
+		}
+		ctxNbBeneficiaires = chartNbBeneficiaires.getContext('2d');
+		chartNbBeneficiairesData = new chartjs(ctxNbBeneficiaires, {});
+	});
 
 	export function divHidden() {
 		calendrierVisible = 'hidden';
@@ -112,17 +135,27 @@
 
 	export async function showSoiree() {
 		// affichage des retours de soirée
+		divHidden();
+		soireeVisible = 'flex';
 
-		const res = await fetch('./retourSoirees?equipe=Camion');
-		const soir = await res.json();
-
-		if (res.status === 500) {
-			erreurMessageRG = 'Erreur (contacte Olivier): ' + soir.erreur;
-		} else {
-			divHidden();
-			soireeVisible = 'flex';
-			retourSoirees = await soir.retourSoirees;
-		}
+		chartNbBeneficiairesData.destroy();
+		chartNbBeneficiairesData = new chartjs(ctxNbBeneficiaires, {
+			type: 'line',
+			data: {
+				labels: soirees,
+				datasets: [
+					{ label: 'Gare', data: nbBeneficiairesGare },
+					{ label: 'Péri', data: nbBeneficiairesPeri },
+					{ label: 'Total', data: nbBeneficiairesTotal }
+				]
+			},
+			options: {
+				responsive: true,
+				plugins: { legend: { labels: { boxWidth: 20 } } },
+				borderWidth: 2,
+				pointStyle: false
+			}
+		});
 	}
 
 	export async function showBenSansReponse() {
@@ -494,7 +527,13 @@
 	<BenevolesListe {benevoles} on:showBenevoles={showBenevoles} />
 </div>
 <div class={soireeVisible}>
-	<div class="py-2 grid gap-1 w-full flex-grow">
+	<div class="grid grid-cols-1 w-full">
+		<div class="grid  w-full">
+			<canvas bind:this={chartNbBeneficiaires} id="nbBeneficiairesGare" />
+		</div>
+	</div>
+
+	<div class="grid w-full">
 		<p class="text-2xl font-bold text-gray-800 md:text-xl">Soirées</p>
 		<RetourSoireeListe {retourSoirees} />
 	</div>

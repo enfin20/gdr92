@@ -25,6 +25,7 @@
 		"dotenv": "^10.0.0",
 		"mongodb": "^4.2.2",
 		"svelte-chartjs": "^1.1.3",
-		"minimist": ">=1.2.6"
+		"minimist": ">=1.2.6",
+		"chart.js": "^4.1.1"
 	}
 }

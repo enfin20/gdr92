@@ -6,7 +6,7 @@
 
 <div class="flex flex-col h-screen">
 	<div class="flex-grow overflow-y-auto">
-		<table id="RetourSoirees" class="text-sm text-gray-500 w-full md:w-1/2 relative">
+		<table id="RetourSoirees" class="text-sm text-gray-500 w-full">
 			<thead>
 				<tr>
 					<th class="w-[15%] sticky top-0 bg-white" />
