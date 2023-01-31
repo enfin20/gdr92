@@ -16,6 +16,47 @@ export function YYYYMMDD(shift = 0) {
 	};
 }
 
+export function YYYYMMDD_1() {
+	// 13 mois glissants
+	let lastYear = new Date().getFullYear() - 1;
+	let currentMonth = new Date().getMonth();
+	if (currentMonth <= 0) {
+		lastYear = lastYear - 1;
+		currentMonth = 12;
+	}
+	let currentDay = new Date().getDate();
+	if (currentMonth <= 9) {
+		currentMonth = '0'.concat(currentMonth);
+	}
+	if (currentDay <= 9) {
+		currentDay = '0'.concat(currentDay);
+	}
+	return {
+		date: lastYear.toString().concat(currentMonth).concat(currentDay)
+	};
+}
+
+export function date_YYYYMMDD_1() {
+	// 13 mois glissants
+	let lastYear = new Date().getFullYear() - 1;
+	let currentMonth = new Date().getMonth();
+	if (currentMonth <= 0) {
+		lastYear = lastYear - 1;
+		currentMonth = 12;
+	}
+	let currentDay = new Date().getDate();
+	if (currentMonth <= 9) {
+		currentMonth = '0'.concat(currentMonth);
+	}
+	if (currentDay <= 9) {
+		currentDay = '0'.concat(currentDay);
+	}
+
+	return {
+		date: currentDay.toString().concat('/').concat(currentMonth).concat('/').concat(lastYear)
+	};
+}
+
 export function YYYYMM(shift = 0) {
 	// shift : 1 --> mois suivant
 	let currentYear = new Date().getFullYear();

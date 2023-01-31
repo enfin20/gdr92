@@ -2,7 +2,7 @@
 </script>
 
 <script>
-	import { MM_YYYY, date_YYYYMM, date_DD_MM, MM, YYYYMM, date_YYYYMMDD } from '$lib/date_functions';
+	import { MM_YYYY, date_DD_MM, YYYYMMDD_1, date_YYYYMMDD_1 } from '$lib/date_functions';
 	import LoginForm from '$lib/components/loginForm.svelte';
 	import RetourSoireeListe from '$lib/components/retourSoireesListe.svelte';
 	import BenevolesListe from '$lib/components/benevolesListe.svelte';
@@ -21,6 +21,18 @@
 	let nbBeneficiairesGare = [];
 	let nbBeneficiairesPeri = [];
 	let nbBeneficiairesTotal = [];
+	let nbBeneficiairesGare_max = 0;
+	let nbBeneficiairesGare_min = 100;
+	let nbBeneficiairesPeri_max = 0;
+	let nbBeneficiairesPeri_min = 100;
+	let nbPresentsGare_max = 0;
+	let nbPresentsGare_min = 100;
+	let nbPresentsPeri_max = 0;
+	let nbPresentsPeri_min = 100;
+	let nbAbsentsGare_max = 0;
+	let nbAbsentsGare_min = 100;
+	let nbAbsentsPeri_max = 0;
+	let nbAbsentsPeri_min = 100;
 	let soirees = [];
 	let currentEquipe = 'Camion';
 
@@ -63,7 +75,7 @@
 			erreurMessageRG = 'Erreur (contacte Olivier): ' + soir.erreur;
 		} else {
 			retourSoirees = await soir.retourSoirees;
-			nbBeneficiairesGare = [];
+
 			for (var i = retourSoirees.length - 1; i >= 0; i--) {
 				soirees.push(date_DD_MM(retourSoirees[i].soiree).date);
 				nbBeneficiairesGare.push(retourSoirees[i].nbGare);
@@ -71,6 +83,42 @@
 				nbBeneficiairesTotal.push(
 					Number(retourSoirees[i].nbPeri) + Number(retourSoirees[i].nbGare)
 				);
+				if (Number(retourSoirees[i].nbGare) >= nbBeneficiairesGare_max) {
+					nbBeneficiairesGare_max = Number(retourSoirees[i].nbGare);
+				}
+				if (Number(retourSoirees[i].nbGare) <= nbBeneficiairesGare_min) {
+					nbBeneficiairesGare_min = Number(retourSoirees[i].nbGare);
+				}
+				if (Number(retourSoirees[i].nbPeri) >= nbBeneficiairesPeri_max) {
+					nbBeneficiairesPeri_max = Number(retourSoirees[i].nbPeri);
+				}
+				if (Number(retourSoirees[i].nbPeri) <= nbBeneficiairesPeri_min) {
+					nbBeneficiairesPeri_min = Number(retourSoirees[i].nbPeri);
+				}
+				if (retourSoirees[i].gare_present >= nbPresentsGare_max) {
+					nbPresentsGare_max = retourSoirees[i].gare_present;
+				}
+				if (retourSoirees[i].gare_present <= nbPresentsGare_min) {
+					nbPresentsGare_min = retourSoirees[i].gare_present;
+				}
+				if (retourSoirees[i].gp_present >= nbPresentsPeri_max) {
+					nbPresentsPeri_max = retourSoirees[i].gp_present;
+				}
+				if (retourSoirees[i].gp_present <= nbPresentsPeri_min) {
+					nbPresentsPeri_min = retourSoirees[i].gp_present;
+				}
+				if (retourSoirees[i].gare_absent >= nbAbsentsGare_max) {
+					nbAbsentsGare_max = retourSoirees[i].gare_absent;
+				}
+				if (retourSoirees[i].gare_absent <= nbAbsentsGare_min) {
+					nbAbsentsGare_min = retourSoirees[i].gare_absent;
+				}
+				if (retourSoirees[i].gp_absent >= nbAbsentsPeri_max) {
+					nbAbsentsPeri_max = retourSoirees[i].gp_absent;
+				}
+				if (retourSoirees[i].gp_absent <= nbAbsentsPeri_min) {
+					nbAbsentsPeri_min = retourSoirees[i].gp_absent;
+				}
 			}
 		}
 		ctxNbBeneficiaires = chartNbBeneficiaires.getContext('2d');
@@ -528,11 +576,70 @@
 </div>
 <div class={soireeVisible}>
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-1">
-		<div>
+		<div class="w-full">
+			<p class="text-base font-bold text-gray-800 mt-2 mb-2">
+				Nombre de personnes accueillies depuis le {date_YYYYMMDD_1().date}
+			</p>
 			<canvas bind:this={chartNbBeneficiaires} id="nbBeneficiairesGare" />
+			<table class="text-base text-gray-500 w-1/2 mt-3">
+				<tr>
+					<th />
+					<th colspan="2">
+						<div class="flex items-center justify-center">
+							<img
+								src="/images/entrepot.png"
+								class="h-8 w-8 object-contain"
+								alt="present"
+								style="display: inline"
+							/>
+						</div>
+					</th>
+					<th colspan="2">
+						<div class="flex items-center justify-center">
+							<img
+								src="/images/present.png"
+								class="h-8 w-8 object-contain"
+								alt="present"
+								style="display: inline"
+							/>
+						</div>
+					</th>
+					<th colspan="2">
+						<div class="flex items-center justify-center">
+							<img
+								src="/images/absent.png"
+								class="h-8 w-8 object-contain"
+								alt="gare"
+								style="display: inline"
+							/>
+						</div>
+					</th>
+				</tr>
+				<tr>
+					<th />
+					<th>Max</th><th>Min</th><th>Max</th><th>Min</th><th>Max</th><th>Min</th>
+				</tr>
+				<tr>
+					<td>Gare</td>
+					<td class="text-center">{nbBeneficiairesGare_max}</td>
+					<td class="text-center">{nbBeneficiairesGare_min}</td>
+					<td class="text-center">{nbPresentsGare_max}</td>
+					<td class="text-center">{nbPresentsGare_min}</td>
+					<td class="text-center">{nbAbsentsGare_max}</td>
+					<td class="text-center">{nbAbsentsGare_min}</td>
+				</tr>
+				<tr>
+					<td>Gabriel Péri</td>
+					<td class="text-center">{nbBeneficiairesPeri_max}</td>
+					<td class="text-center">{nbBeneficiairesPeri_min}</td>
+					<td class="text-center">{nbPresentsPeri_max}</td>
+					<td class="text-center">{nbPresentsPeri_min}</td>
+					<td class="text-center">{nbAbsentsPeri_max}</td>
+					<td class="text-center">{nbAbsentsPeri_min}</td>
+				</tr>
+			</table>
 		</div>
-		<div>
-			<p class="text-2xl font-bold text-gray-800 md:text-xl">Soirées</p>
+		<div class="mt-2">
 			<RetourSoireeListe {retourSoirees} />
 		</div>
 	</div>

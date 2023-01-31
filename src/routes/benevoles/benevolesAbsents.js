@@ -18,12 +18,14 @@ export async function get(request) {
 			{
 				$unwind: { path: '$ben' }
 			},
+			{ $set: { camion: '$ben.camion' } },
 			{
 				$match: {
 					soiree: { $gte: YYYYMMDD(-1).date },
 					statut: 'Absent',
 					lieu: { $in: ['gp', 'gare'] },
-					equipe: equipe
+					equipe: equipe,
+					camion: true
 				}
 			},
 			{

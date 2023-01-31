@@ -18,6 +18,7 @@ export async function get(request) {
 			{
 				$unwind: { path: '$ben' }
 			},
+			{ $set: { camion: '$ben.camion' } },
 			{
 				$match: {
 					statut: {
@@ -28,7 +29,8 @@ export async function get(request) {
 					},
 					lieu: {
 						$in: ['gare', 'gp']
-					}
+					},
+					camion: true
 				}
 			},
 			{
