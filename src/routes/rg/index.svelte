@@ -527,15 +527,14 @@
 	<BenevolesListe {benevoles} on:showBenevoles={showBenevoles} />
 </div>
 <div class={soireeVisible}>
-	<div class="grid grid-cols-1 w-full">
-		<div class="grid  w-full">
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-1">
+		<div>
 			<canvas bind:this={chartNbBeneficiaires} id="nbBeneficiairesGare" />
 		</div>
-	</div>
-
-	<div class="grid w-full">
-		<p class="text-2xl font-bold text-gray-800 md:text-xl">Soirées</p>
-		<RetourSoireeListe {retourSoirees} />
+		<div>
+			<p class="text-2xl font-bold text-gray-800 md:text-xl">Soirées</p>
+			<RetourSoireeListe {retourSoirees} />
+		</div>
 	</div>
 </div>
 <div class={benevolesSansReponseVisible}>
