@@ -198,63 +198,63 @@
 						<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 							<input
 								type="checkbox"
-								bind:value={new_camion}
+								bind:checked={new_camion}
 								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 							/>
 						</td>
 						<td class=" align-middle py-1 px-1 w-[10%] bg-blue-100">
 							<input
 								type="checkbox"
-								bind:value={new_prepa}
+								bind:checked={new_prepa}
 								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
 						<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 							<input
 								type="checkbox"
-								bind:value={new_rs}
+								bind:checked={new_rs}
 								class="appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 float-center cursor-pointer"
 							/></td
 						>
 						<td class="align-middle py-1 px-1 w-[10%] bg-blue-100">
 							<input
 								type="checkbox"
-								bind:value={new_rg}
+								bind:checked={new_rg}
 								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-blue-300 checked:border-blue-300 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
 						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
-								bind:value={new_maraude}
+								bind:checked={new_maraude}
 								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
 						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
-								bind:value={new_homme}
+								bind:checked={new_homme}
 								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
 						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
-								bind:value={new_chauffeur}
+								bind:checked={new_chauffeur}
 								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
 						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
-								bind:value={new_rsm}
+								bind:checked={new_rsm}
 								class=" appearance-none h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/></td
 						>
 						<td class="align-middle py-1 px-1 w-[10%] bg-amber-200">
 							<input
 								type="checkbox"
-								bind:value={new_rm}
+								bind:checked={new_rm}
 								class=" h-6 w-6 border border-slate-300 rounded-sm bg-white checked:bg-amber-400 checked:border-amber-400 focus:outline-none float-center cursor-pointer"
 							/>
 						</td>
