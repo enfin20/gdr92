@@ -224,13 +224,13 @@ export async function put(request) {
 
 export async function del(request) {
 	try {
+		const body = JSON.parse(request.body);
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('Benevoles');
-		const b_id = JSON.parse(request.body);
-		await collection.deleteOne({ _id: ObjectId(b_id) });
+		await collection.deleteOne({ email: body.email });
 		const coll2 = db.collection('CalendrierBenevoles');
-		await coll2.deleteMany({ b_id: b_id });
+		await coll2.deleteMany({ email: body.email, soiree: { $regex: YYYYMM(1).date } });
 
 		return {
 			status: 200,
