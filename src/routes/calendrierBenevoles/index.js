@@ -127,17 +127,17 @@ export async function put(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = JSON.parse(request.body);
-
+		console.info('length', calendrier.length);
+		var updates = [];
 		for (var i = 0; i < calendrier.length; i++) {
 			calendrier[i].soiree = calendrier[i].soiree.substring(0, 8);
-			try {
-				await collection.updateOne(
-					{ _id: ObjectId(calendrier[i]._id) },
-					{ $set: { statut: calendrier[i].statut } }
-				);
-			} catch (err) {
-				console.log(err.message);
-			}
+			updates.push({
+				updateOne: {
+					filter: { _id: ObjectId(calendrier[i]._id) },
+					update: { $set: { statut: calendrier[i].statut } }
+				}
+			});
+
 			// si maraude, on met à jour le calendrier du camion pour éviter les doublons
 			if (calendrier[i].equipe === 'Maraude') {
 				if (calendrier[i].statut === 'Oui' || calendrier[i].statut === 'RS') {
@@ -151,22 +151,20 @@ export async function put(request) {
 			}
 
 			if (calendrier[i].statut !== '') {
-				try {
-					await collection.updateMany(
-						{
+				updates.push({
+					updateMany: {
+						filter: {
 							soiree: calendrier[i].soiree,
 							b_id: calendrier[i].b_id,
 							equipe: 'Camion',
 							lieu: { $in: ['gp', 'gare'] }
 						},
-
-						{ $set: { statut: calendrier[i].statut } }
-					);
-				} catch (err) {
-					console.log(err.message);
-				}
+						update: { $set: { statut: calendrier[i].statut } }
+					}
+				});
 			}
 		}
+		await collection.bulkWrite(updates);
 
 		return {
 			status: 200,

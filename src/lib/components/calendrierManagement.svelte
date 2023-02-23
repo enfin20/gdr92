@@ -124,15 +124,16 @@
 		statutEnregistrement = '... en cours';
 		for (var i = 0; i < calendriers.length; i++) {
 			for (var j = 1; j < calendriers[i].length; j++) {
-				var obj = new Object();
-				obj._id = calendriers[i][j]._id;
-				obj.statut = calendriers[i][j].presence;
-				obj.soiree = soirees[j];
-				obj.equipe = currentEquipe;
-				obj.b_id = calendriers[i][0].b_id;
-				obj.updated = '';
 				if (calendriers[i][j].updated === 'Oui') {
 					// on n'intègre que les zones qui ont été mise à jour par CalendrierChangeStatut
+					var obj = new Object();
+					obj._id = calendriers[i][j]._id;
+					obj.statut = calendriers[i][j].presence;
+					obj.soiree = soirees[j];
+					obj.equipe = currentEquipe;
+					obj.b_id = calendriers[i][0].b_id;
+					obj.updated = '';
+
 					calUpdated.push(obj);
 				}
 			}
