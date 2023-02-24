@@ -4,7 +4,7 @@ import { YYYYMMDD, YYYYMMDD_1 } from '$lib/date_functions';
 
 export async function get(request) {
 	// récupération des données des anciennes soirees
-	console.log('new Date ' + YYYYMMDD_1().date);
+
 	try {
 		const equipe = request.query.get('equipe');
 		// pour compter le nombre de présents par lieu

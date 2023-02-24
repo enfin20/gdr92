@@ -277,77 +277,87 @@
 
 	export async function addCalendrier() {
 		var calBenevoles = [];
+		let currentSoiree = soiree.replaceAll('-', '');
 		let isCamion = '';
 		statutEnregistrement = '.... en cours';
+		// test pour éviter de saisir 2 fois la même date
+		let res = await fetch(
+			'/calendrierBenevoles/isSoiree?soiree=' + currentSoiree + '&equipe=Camion'
+		);
+		let soireeExiste = await res.json();
 
-		// récupération des bénévoles
-		let res = await fetch('/benevoles');
-		let benevoles = await res.json();
-
-		if (res.status === 500) {
-			erreurMessageRG = 'Erreur (contacte Olivier): ' + benevoles.erreur;
+		if (soireeExiste.length > 0) {
+			statutEnregistrement = 'Soirée déjà enregistrée !!';
 		} else {
-			for (var i = 0; i < benevoles.benevoles.length; i++) {
-				for (var j = 0; j <= 3; j++) {
-					if (plageActive[j]) {
-						// planning uniquement pour les benevoles de la bonne équipe
-						if (
-							(benevoles.benevoles[i].camion && equipe[j] === 'Camion') ||
-							(benevoles.benevoles[i].maraude && equipe[j] === 'Maraude')
-						) {
-							calBenevoles.push({
-								soiree: soiree.replaceAll('-', ''),
-								statut: '',
-								email: benevoles.benevoles[i].email,
-								benevole: benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom,
-								b_id: benevoles.benevoles[i]._id,
-								plage: plage[j],
-								lieu: lieu[j],
-								equipe: equipe[j]
-							});
+			// récupération des bénévoles
+			res = await fetch('/benevoles');
+			let benevoles = await res.json();
+
+			if (res.status === 500) {
+				erreurMessageRG = 'Erreur (contacte Olivier): ' + benevoles.erreur;
+			} else {
+				for (var i = 0; i < benevoles.benevoles.length; i++) {
+					for (var j = 0; j <= 3; j++) {
+						if (plageActive[j]) {
+							// planning uniquement pour les benevoles de la bonne équipe
+							if (
+								(benevoles.benevoles[i].camion && equipe[j] === 'Camion') ||
+								(benevoles.benevoles[i].maraude && equipe[j] === 'Maraude')
+							) {
+								calBenevoles.push({
+									soiree: soiree.replaceAll('-', ''),
+									statut: '',
+									email: benevoles.benevoles[i].email,
+									benevole: benevoles.benevoles[i].prenom + ' ' + benevoles.benevoles[i].nom,
+									b_id: benevoles.benevoles[i]._id,
+									plage: plage[j],
+									lieu: lieu[j],
+									equipe: equipe[j]
+								});
+							}
 						}
 					}
 				}
-			}
-			if (calBenevoles.length > 0) {
-				let res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
-					method: 'POST',
-					body: JSON.stringify(calBenevoles)
-				});
-				let ret = await res.json();
-				if (res.status === 500) {
-					erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
-					isCamion = 'Non';
-					statutEnregistrement = '';
-					i = 10000;
-				}
-			}
-			for (var j = 0; j <= 3; j++) {
-				if (plageActive[j]) {
-					if (equipe[j] === 'Camion') {
-						isCamion = 'Oui';
+				if (calBenevoles.length > 0) {
+					let res = await fetch('/calendrierBenevoles/addCalendrierBenevoles', {
+						method: 'POST',
+						body: JSON.stringify(calBenevoles)
+					});
+					let ret = await res.json();
+					if (res.status === 500) {
+						erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
+						isCamion = 'Non';
+						statutEnregistrement = '';
+						i = 10000;
 					}
 				}
-			}
-			// enregistrement du retour de soirée
-			if (isCamion === 'Oui') {
-				const retourSoiree = await fetch('/retourSoirees', {
-					method: 'POST',
-					body: JSON.stringify({
-						soiree: soiree.replaceAll('-', ''),
-						nbGare: 0,
-						nbPeri: 0,
-						Commentaires: '',
-						rs: '',
-						equipe: 'Camion'
-					})
-				});
-				let ret = await retourSoiree.json();
-				if (retourSoiree.status === 500) {
-					erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
-					statutEnregistrement = '';
-				} else {
-					statutEnregistrement = soiree + ' : enregistrée';
+				for (var j = 0; j <= 3; j++) {
+					if (plageActive[j]) {
+						if (equipe[j] === 'Camion') {
+							isCamion = 'Oui';
+						}
+					}
+				}
+				// enregistrement du retour de soirée
+				if (isCamion === 'Oui') {
+					const retourSoiree = await fetch('/retourSoirees', {
+						method: 'POST',
+						body: JSON.stringify({
+							soiree: soiree.replaceAll('-', ''),
+							nbGare: 0,
+							nbPeri: 0,
+							Commentaires: '',
+							rs: '',
+							equipe: 'Camion'
+						})
+					});
+					let ret = await retourSoiree.json();
+					if (retourSoiree.status === 500) {
+						erreurMessageRG = 'Erreur (contacte Olivier): ' + ret.erreur;
+						statutEnregistrement = '';
+					} else {
+						statutEnregistrement = soiree + ' : enregistrée';
+					}
 				}
 			}
 		}

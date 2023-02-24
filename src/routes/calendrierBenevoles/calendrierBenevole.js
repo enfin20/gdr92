@@ -52,13 +52,16 @@ export async function put(request) {
 		const db = dbConnection.db;
 		const collection = db.collection('CalendrierBenevoles');
 		const calendrier = JSON.parse(request.body);
-
+		var updates = [];
 		for (var i = 0; i < calendrier.length; i++) {
-			await collection.updateOne(
-				{ _id: ObjectId(calendrier[i]._id) },
-				{ $set: { statut: calendrier[i].statut } }
-			);
+			updates.push({
+				updateOne: {
+					filter: { _id: ObjectId(calendrier[i]._id) },
+					update: { $set: { statut: calendrier[i].statut } }
+				}
+			});
 		}
+		await collection.bulkWrite(updates);
 		// récupère toutes les soirées de maraude, pour modifier le statut à 'Maraude' dans les autres lieux
 		let pipeline = [
 			{
@@ -117,12 +120,18 @@ export async function put(request) {
 				}
 			}
 		];
+		updates = [];
 		const soirees = await collection.aggregate(pipeline).toArray();
-		for (var j = 0; j < soirees.length; j++) {
-			await collection.updateOne(
-				{ _id: ObjectId(soirees[j]._id) },
-				{ $set: { statut: 'Maraude' } }
-			);
+		for (var i = 0; i < soirees.length; i++) {
+			updates.push({
+				updateOne: {
+					filter: { _id: ObjectId(soirees[i]._id) },
+					update: { $set: { statut: 'Maraude' } }
+				}
+			});
+		}
+		if (updates.length > 0) {
+			await collection.bulkWrite(updates);
 		}
 
 		return {
