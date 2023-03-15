@@ -57,7 +57,7 @@ export async function put(request) {
 			updates.push({
 				updateOne: {
 					filter: { _id: ObjectId(calendrier[i]._id) },
-					update: { $set: { statut: calendrier[i].statut } }
+					update: { $set: { statut: calendrier[i].statut ? calendrier[i].statut : 'Non' } }
 				}
 			});
 		}
