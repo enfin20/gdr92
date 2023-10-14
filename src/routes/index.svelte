@@ -11,6 +11,7 @@
 	let menuVisible = 'hidden';
 	let retourVisible = 'hidden';
 	let planningVisible = 'hidden';
+	let soireesVisible = 'hidden';
 	let erreurMessage = '';
 
 	let loggedBenevole = '';
@@ -151,6 +152,7 @@
 			if (soir.retourSoirees.length === 1) {
 				// affichage des soirées pour les rs
 				retourVisible = 'block';
+				soireesVisible = 'block';
 				calendrierVisible = 'hidden';
 				getBenevolesSoiree();
 				getRetourSoirees();
@@ -159,6 +161,18 @@
 			}
 			chargement = '';
 		}
+	}
+
+	export async function showPrevSoiree() {
+		chargement = 'Chargement en cours ...';
+		// vérification de l'existence de la soirée à la date saisie
+
+		soireesVisible = 'block';
+		retourVisible = 'hidden';
+		calendrierVisible = 'hidden';
+		getRetourSoirees();
+
+		chargement = '';
 	}
 
 	export async function showCamionPlanningM() {
@@ -328,7 +342,7 @@
 		</button>
 		<button
 			type="submit"
-			name="benevolesSansReponse"
+			name="MaraudeM2"
 			class="mr-1 md:mr-3 inline-block bg-purple-200 hover:bg-purple-300 rounded py-1 px-3 text-gray-600 uppercase md:font-bold  "
 			on:click={showMaraudePlanningM2}
 		>
@@ -352,7 +366,15 @@
 			class="bg-pink-300 hover:bg-pink-400 rounded py-1 px-3 text-gray-600 text-base uppercase md:font-bold"
 			on:click={showSoiree}
 		>
-			Retour soirée
+			Soirée à remplir
+		</button>
+		<button
+			type="submit"
+			name="s2"
+			class="bg-pink-200 hover:bg-pink-400 rounded py-1 px-3 text-gray-600 text-base uppercase md:font-bold"
+			on:click={showPrevSoiree}
+		>
+			Retour précédentes soirées
 		</button>
 	</div>
 </div>
@@ -459,11 +481,13 @@
 			</div>
 		</form>
 	</div>
-
+</div>
+<div class={soireesVisible}>
 	<div class="py-2 grid gap-1 w-full">
 		<RetourSoireeListe {retourSoirees} />
 	</div>
 </div>
+
 <div class={planningVisible}>
 	<div class="flex py-2 w-full">
 		<h1 class="text-2xl my-8 font-bold text-gray-800 md:text-3xl">
