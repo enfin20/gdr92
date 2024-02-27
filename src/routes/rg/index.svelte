@@ -346,7 +346,7 @@
 							soiree: soiree.replaceAll('-', ''),
 							nbGare: 0,
 							nbPeri: 0,
-							Commentaires: '',
+							commentaires: '',
 							rs: '',
 							equipe: 'Camion'
 						})
@@ -474,7 +474,7 @@
 	</div>
 </div>
 <div class={dateVisible}>
-	<div class="py-2  ">
+	<div class="py-2">
 		<div class=" w-full">
 			<p class="text-2xl font-bold text-gray-800 md:text-xl">Ajouter une soirée</p>
 		</div>
@@ -571,7 +571,7 @@
 			<div class="py-2 w-full">
 				<button
 					type="submit"
-					class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700  py-2 px-4 rounded"
+					class="shadow bg-green-400 hover:bg-green-500 focus:shadow-outline focus:outline-none text-gray-700 py-2 px-4 rounded"
 					>Entrer</button
 				>
 			</div>
